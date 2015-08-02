@@ -143,15 +143,16 @@ And now, my famous members
 """
 
 # http://www.python.org/doc/2.2.3/whatsnew/node5.html
-from __future__ import generators
+from __future__ import generators,print_function
 
 __version__ = "0.0.17"
 
 from array import array
-try: # See :pyver:old
-    import itertools
+try:
+    from itertools import imap
 except ImportError:
-    pass
+    imap = map
+from itertools import starmap
 import math
 # http://www.python.org/doc/2.4.4/lib/module-operator.html
 import operator
@@ -325,7 +326,7 @@ def check_color(c, greyscale, which):
         return c
     if greyscale:
         try:
-            l = len(c)
+            len(c)
         except TypeError:
             c = (c,)
         if len(c) != 1:
@@ -376,7 +377,10 @@ class Writer:
                  planes=None,
                  colormap=None,
                  maxval=None,
-                 chunk_limit=2**20):
+                 chunk_limit=2**20,
+                 x_pixels_per_unit = None,
+                 y_pixels_per_unit = None,
+                 unit_is_meter = False):
         """
         Create a PNG encoder object.
 
@@ -407,6 +411,13 @@ class Writer:
           Create an interlaced image.
         chunk_limit
           Write multiple ``IDAT`` chunks to save memory.
+        x_pixels_per_unit (pHYs chunk)
+          Number of pixels a unit along the x axis
+        y_pixels_per_unit (pHYs chunk)
+          Number of pixels a unit along the y axis    
+          With x_pixel_unit, give the pixel size ratio
+        unit_is_meter (pHYs chunk)
+          Indicates if unit is meter or not
 
         The image size (in pixels) can be specified either by using the
         `width` and `height` arguments, or with the single `size`
@@ -527,10 +538,11 @@ class Writer:
             bitdepth = int(8*bytes_per_sample)
         del bytes_per_sample
         if not isinteger(bitdepth) or bitdepth < 1 or 16 < bitdepth:
-            raise ValueError("bitdepth (%r) must be a postive integer <= 16" %
+            raise ValueError("bitdepth (%r) must be a positive integer <= 16" %
               bitdepth)
 
         self.rescale = None
+        palette = check_palette(palette)
         if palette:
             if bitdepth not in (1,2,4,8):
                 raise ValueError("with palette, bitdepth must be 1, 2, 4, or 8")
@@ -588,7 +600,10 @@ class Writer:
         self.compression = compression
         self.chunk_limit = chunk_limit
         self.interlace = bool(interlace)
-        self.palette = check_palette(palette)
+        self.palette = palette
+        self.x_pixels_per_unit = x_pixels_per_unit
+        self.y_pixels_per_unit = y_pixels_per_unit
+        self.unit_is_meter = bool(unit_is_meter)
 
         self.color_type = 4*self.alpha + 2*(not greyscale) + 1*self.colormap
         assert self.color_type in (0,2,3,4,6)
@@ -637,12 +652,12 @@ class Writer:
             fmt = 'BH'[self.bitdepth > 8]
             a = array(fmt, itertools.chain(*rows))
             return self.write_array(outfile, a)
-        else:
-            nrows = self.write_passes(outfile, rows)
-            if nrows != self.height:
-                raise ValueError(
-                  "rows supplied (%d) does not match height (%d)" %
-                  (nrows, self.height))
+
+        nrows = self.write_passes(outfile, rows)
+        if nrows != self.height:
+            raise ValueError(
+              "rows supplied (%d) does not match height (%d)" %
+              (nrows, self.height))
 
     def write_passes(self, outfile, rows, packed=False):
         """
@@ -714,6 +729,11 @@ class Writer:
             else:
                 write_chunk(outfile, 'bKGD',
                             struct.pack("!3H", *self.background))
+
+        # http://www.w3.org/TR/PNG/#11pHYs
+        if self.x_pixels_per_unit is not None and self.y_pixels_per_unit is not None:
+            tup = (self.x_pixels_per_unit, self.y_pixels_per_unit, int(self.unit_is_meter))
+            write_chunk(outfile, 'pHYs', struct.pack("!LLB",*tup))
 
         # http://www.w3.org/TR/PNG/#11IDAT
         if self.compression is not None:
@@ -1030,9 +1050,12 @@ def filter_scanline(type, line, fo, prev=None):
             pa = abs(p - a)
             pb = abs(p - b)
             pc = abs(p - c)
-            if pa <= pb and pa <= pc: Pr = a
-            elif pb <= pc: Pr = b
-            else: Pr = c
+            if pa <= pb and pa <= pc:
+                Pr = a
+            elif pb <= pc:
+                Pr = b
+            else:
+                Pr = c
 
             x = (x - Pr) & 0xff
             out.append(x)
@@ -1413,7 +1436,7 @@ class Reader:
                   % (type, length))
             checksum = self.file.read(4)
             if len(checksum) != 4:
-                raise ValueError('Chunk %s too short for checksum.', tag)
+                raise ChunkError('Chunk %s too short for checksum.' % type)
             if seek and type != seek:
                 continue
             verify = zlib.crc32(strtobytes(type))
@@ -1628,11 +1651,10 @@ class Reader:
             spb = 8//self.bitdepth
             out = array('B')
             mask = 2**self.bitdepth - 1
-            shifts = map(self.bitdepth.__mul__, reversed(range(spb)))
+            shifts = list(map(self.bitdepth.__mul__, reversed(range(spb))))
             for o in raw:
-                out.extend(map(lambda i: mask&(o>>i), shifts))
+                out.extend(list(map(lambda i: mask&(o>>i), shifts)))
             return out[:width]
-
         return itertools.imap(asvalues, rows)
 
     def serialtoflat(self, bytes, width=None):
@@ -1747,7 +1769,7 @@ class Reader:
     def process_chunk(self, lenient=False):
         """Process the next chunk and its data.  This only processes the
         following chunk types, all others are ignored: ``IHDR``,
-        ``PLTE``, ``bKGD``, ``tRNS``, ``gAMA``, ``sBIT``.
+        ``PLTE``, ``bKGD``, ``tRNS``, ``gAMA``, ``sBIT``, ``pHYs``.
 
         If the optional `lenient` argument evaluates to True,
         checksum failures will raise warnings rather than exceptions.
@@ -1866,6 +1888,15 @@ class Reader:
             not self.colormap and len(data) != self.planes):
             raise FormatError("sBIT chunk has incorrect length.")
 
+    def _process_pHYs(self, data):
+        # http://www.w3.org/TR/PNG/#11pHYs
+        self.phys = data
+        fmt = "!LLB"
+        if len(data) != struct.calcsize(fmt):
+            raise FormatError("pHYs chunk has incorrect length.")
+        self.x_pixels_per_unit, self.y_pixels_per_unit, unit = struct.unpack(fmt,data)
+        self.unit_is_meter = bool(unit)
+
     def read(self, lenient=False):
         """
         Read the PNG file and decode it.  Returns (`width`, `height`,
@@ -1884,8 +1915,8 @@ class Reader:
             while True:
                 try:
                     type, data = self.chunk(lenient=lenient)
-                except ValueError, e:
-                    raise ChunkError(e.args[0])
+                except ValueError:
+                    raise ChunkError(sys.exc_info()[1].args[0])
                 if type == 'IEND':
                     # http://www.w3.org/TR/PNG/#11IEND
                     break
@@ -1902,8 +1933,8 @@ class Reader:
             be an iterator that yields the ``IDAT`` chunk data.
             """
 
-            # Currently, with no max_length paramter to decompress, this
-            # routine will do one yield per IDAT chunk.  So not very
+            # Currently, with no max_length parameter to decompress,
+            # this routine will do one yield per IDAT chunk: Not very
             # incremental.
             d = zlib.decompressobj()
             # Each IDAT chunk is passed to the decompressor, then any
@@ -1916,7 +1947,6 @@ class Reader:
 
         self.preamble(lenient=lenient)
         raw = iterdecomp(iteridat())
-
         if self.interlace:
             raw = array('B', itertools.chain(*raw))
             arraycode = 'BH'[self.bitdepth>8]
@@ -2031,10 +2061,10 @@ class Reader:
             meta['alpha'] = bool(self.trns)
             meta['bitdepth'] = 8
             meta['planes'] = 3 + bool(self.trns)
-            plte = self.palette()
+            plte = list(self.palette())
             def iterpal(pixels):
                 for row in pixels:
-                    row = map(plte.__getitem__, row)
+                    row = list(map(plte.__getitem__, row))
                     yield array('B', itertools.chain(*row))
             pixels = iterpal(pixels)
         elif self.trns:
@@ -2590,7 +2620,7 @@ def write_pnm(file, width, height, pixels, meta):
         else:
             # PPM
             fmt = 'P6'
-        file.write('%s %d %d %d\n' % (fmt, width, height, maxval))
+        header = '%s %d %d %d\n' % (fmt, width, height, maxval)
     if planes in (2,4):
         # PAM
         # See http://netpbm.sourceforge.net/doc/pam.html
@@ -2598,9 +2628,10 @@ def write_pnm(file, width, height, pixels, meta):
             tupltype = 'GRAYSCALE_ALPHA'
         else:
             tupltype = 'RGB_ALPHA'
-        file.write('P7\nWIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL %d\n'
-                   'TUPLTYPE %s\nENDHDR\n' %
-                   (width, height, planes, maxval, tupltype))
+        header = ('P7\nWIDTH %d\nHEIGHT %d\nDEPTH %d\nMAXVAL %d\n'
+                  'TUPLTYPE %s\nENDHDR\n' %
+                  (width, height, planes, maxval, tupltype))
+    file.write(header.encode('ascii'))
     # Values per row
     vpr = planes * width
     # struct format
@@ -2747,5 +2778,6 @@ def _main(argv):
 if __name__ == '__main__':
     try:
         _main(sys.argv)
-    except Error, e:
-        print >>sys.stderr, e
+    except Error:
+        print (sys.exc_info()[1], file=e)
+

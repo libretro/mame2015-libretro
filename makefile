@@ -593,6 +593,7 @@ CCOMFLAGS += \
 	-Wformat-security \
 	-Wwrite-strings \
 	-Wno-sign-compare \
+	-Wno-narrowing \
 	-Wno-conversion
 
 CCOMFLAGS_INCOMPATIBLE ?= -Wcast-align
