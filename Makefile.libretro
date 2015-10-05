@@ -163,7 +163,7 @@ include makefile
 CPPONLYFLAGS += -fpermissive
 DEFS += $(CORE_DEFINE)
 
-TARGETNAME = mame2014
+TARGETNAME = $(TARGET)2014
 
 ## Unix
 ifeq ($(platform), unix)
