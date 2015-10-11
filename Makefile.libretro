@@ -45,13 +45,13 @@ VRENDER ?= soft
 EXECUTABLE_DEFINED = 1
 
 # Dunno if MAME ever used this, but the retro OSD does for now
-TARGET ?= mame
-ifeq ($(TARGET), mess)
-	CORE_DEFINE := -DWANT_MESS
-else ifeq ($(TARGET), mame)
-	CORE_DEFINE := -DWANT_MAME
-else
+# TARGET ?= mame
+ifeq ($(TARGET), ume)
 	CORE_DEFINE := -DWANT_UME
+else ifeq ($(TARGET), mess)
+	CORE_DEFINE := -DWANT_MESS
+else
+	CORE_DEFINE := -DWANT_MAME
 endif
 
 # Ensure $(EMULATOR) has no suffixes

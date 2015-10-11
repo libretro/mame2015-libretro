@@ -65,14 +65,14 @@ extern float retro_aspect;
 extern float retro_fps;
 
 #if defined(WANT_MAME)
-static const char core[] = "mame";
+static const char core[] = "mame2014";
 #elif defined(WANT_MESS)
-static const char core[] = "mess";
+static const char core[] = "mess2014";
 #elif defined(WANT_UME)
-static const char core[] = "ume";
+static const char core[] = "ume2014";
 #else
 /* fallback */
-static const char core[] = "mame";
+static const char core[] = "mame2014";
 #endif
 
 /* libretro callbacks */
@@ -94,7 +94,7 @@ void process_mouse_state(void);
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+
 int mmain(int argc, const char *argv);
 
 #ifdef __cplusplus
