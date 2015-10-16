@@ -238,8 +238,10 @@ else ifeq ($(platform), osx)
 	endif
 	PLATCFLAGS += -DSDLMAME_NO64BITIO -DOSX
 	CCOMFLAGS += $(PLATCFLAGS)
-## iOS
-else ifeq ($(platform), ios)
+
+# iOS
+else ifneq (,$(findstring ios,$(platform)))
+
 	armplatform := 1
 	TARGETLIB := $(TARGETNAME)_libretro_ios.dylib
 	fpic := -fPIC
