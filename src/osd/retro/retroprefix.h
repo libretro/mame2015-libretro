@@ -1,20 +1,19 @@
-// license:BSD-3-Clause
-// copyright-holders:Aaron Giles
-//============================================================
-//
-//  retroprefix.h - Libretro prefix file, included by ALL files
-//
-//============================================================
+/*============================================================
+ *
+ *  retroprefix.h - Libretro prefix file, included by ALL files
+ *
+ *============================================================
+ */
 
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501 // Windows XP
+#define _WIN32_WINNT 0x0501 /* Windows XP */
 #endif
 
 #ifdef _MSC_VER
 #include <malloc.h>
-#if _MSC_VER < 1900 // < VS2015
+#if _MSC_VER < 1900 /* < VS2015 */
 #define snprintf _snprintf
-#if _MSC_VER < 1800 // VS2013 or earlier
+#if _MSC_VER < 1800 /* VS2013 or earlier */
 #define alloca _alloca
 #define round(x) floor((x) + 0.5)
 #define strtoll _strtoi64
@@ -23,11 +22,11 @@
 static __inline double fmin(double x, double y){ return (x < y) ? x : y; }
 static __inline double fmax(double x, double y){ return (x > y) ? x : y; }
 static __inline double log2(double x) { return log(x) * M_LOG2E; }
-#if _MSC_VER < 1500 // VS2008 or earlier
+#if _MSC_VER < 1500 /* VS2008 or earlier */
 #define vsnprintf _vsnprintf
-#endif // VS2008
-#endif // VS2013
-#else // VS2015
+#endif /* VS2008 */
+#endif /* VS2013 */
+#else /* VS2015 */
 #pragma warning (disable: 4091)
 #pragma warning (disable: 4267)
 #pragma warning (disable: 4456 4457 4458 4459)
@@ -39,5 +38,7 @@ static __inline double log2(double x) { return log(x) * M_LOG2E; }
 #elif defined(ANDROID)
 #include <math.h>
 
-//static inline double log2(double x) { return log(x) * M_LOG2E; }
+#if 0
+static inline double log2(double x) { return log(x) * M_LOG2E; }
+#endif
 #endif
