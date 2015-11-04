@@ -374,6 +374,9 @@ else
 	TARGETOS = win32
 	CC = g++
 	LD = g++
+	REALCC   = gcc
+	NATIVECC = g++
+	NATIVECFLAGS = -std=gnu99
 	SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=src/osd/retro/link.T
 	CCOMFLAGS += -D__WIN32__
 	LDFLAGS += $(SHARED)
