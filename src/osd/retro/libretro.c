@@ -167,9 +167,9 @@ void retro_set_environment(retro_environment_t cb)
     { option_throttle, "Enable throttle; disabled|enabled" },
     { option_cheats, "Enable cheats; disabled|enabled" },
 //  { option_nobuffer, "Nobuffer patch; disabled|enabled" },
-//  { option_nag, "Hide nag screen; disabled|enabled" },
-//  { option_info, "Hide gameinfo screen; disabled|enabled" },
-//  { option_warnings, "Hide warnings screen; disabled|enabled" },
+    { option_nag, "Hide nag screen; disabled|enabled" },
+    { option_info, "Hide gameinfo screen; disabled|enabled" },
+    { option_warnings, "Hide warnings screen; disabled|enabled" },
     { option_renderer, "Alternate render method; disabled|enabled" },
 
     /* ONLY FOR MESS/UME */
