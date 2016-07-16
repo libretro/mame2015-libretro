@@ -272,9 +272,9 @@ static void check_variables(void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
       if (strcmp(var.value, "disabled") == 0)
-         hide_gameinfo = false;
+         hide_infoscreen = false;
       if (strcmp(var.value, "enabled") == 0)
-         hide_gameinfo = true;
+         hide_infoscreen = true;
    }
 
    var.key   = option_warnings;
