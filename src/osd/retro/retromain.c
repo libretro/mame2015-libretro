@@ -59,10 +59,10 @@ int mame_reset = -1;
 
 /* core options */
 bool hide_nagscreen = false;
+bool hide_infoscreen = false;
 bool hide_warnings = false;
 bool nobuffer_enable = false;
 
-bool hide_gameinfo = false;
 bool mouse_enable = false;
 bool cheats_enable = false;
 bool alternate_renderer = false;
@@ -1047,11 +1047,6 @@ static void Set_Default_Option(void)
       Add_Option("-mouse");
    else
       Add_Option("-nomouse");
-
-   if(hide_gameinfo)
-      Add_Option("-skip_gameinfo");
-   else
-      Add_Option("-noskip_gameinfo");
 
    if(write_config_enable)
       Add_Option("-writeconfig");
