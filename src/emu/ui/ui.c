@@ -25,7 +25,7 @@
 #include "ui/sliders.h"
 #include "ui/viewgfx.h"
 #include "imagedev/cassette.h"
-#include "osd/retro/libretro_shared.h"
+#include "../osd/retro/libretro_shared.h"
 
 
 /***************************************************************************
