@@ -30,7 +30,6 @@ extern const char *retro_content_directory;
 extern int retro_pause;
 
 extern bool experimental_cmdline;
-extern bool hide_gameinfo;
 extern bool mouse_enable;
 extern bool cheats_enable;
 extern bool alternate_renderer;
