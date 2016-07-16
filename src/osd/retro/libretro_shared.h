@@ -41,6 +41,7 @@ extern bool softlist_auto;
 extern bool write_config_enable;
 extern bool read_config_enable;
 extern bool hide_nagscreen;
+extern bool hide_infoscreen;
 extern bool hide_warnings;
 extern bool throttle_enable;
 extern bool auto_save_enable;
