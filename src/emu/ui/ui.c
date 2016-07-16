@@ -325,14 +325,12 @@ void ui_manager::display_startup_screens(bool first_time, bool show_disclaimer)
 	#endif
 
 	#ifdef OSD_RETRO
-		#ifdef hide_infoscreen
-			if(hide_nagscreen)
-				show_disclaimer = FALSE;
-			if(hide_infoscreen)
-				show_gameinfo = FALSE;
-			if(hide_warnings)
-				show_warnings = FALSE;
-		#endif
+		if(hide_nagscreen)
+			show_disclaimer = FALSE;
+		if(hide_infoscreen)
+			show_gameinfo = FALSE;
+		if(hide_warnings)
+			show_warnings = FALSE;
 	#endif
 
 	// loop over states
