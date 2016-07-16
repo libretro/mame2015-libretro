@@ -258,13 +258,7 @@ static void check_variables(void)
    var.key   = option_nag;
    var.value = NULL;
 
-   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-      if (strcmp(var.value, "disabled") == 0)
-         hide_nagscreen = false;
-      if (strcmp(var.value, "enabled") == 0)
-         hide_nagscreen = true;
-   }
+   hide_nagscreen = true;
 
    var.key   = option_info;
    var.value = NULL;
