@@ -146,6 +146,9 @@ else ifeq ($(platform), android)
 	TARGETOS=linux
 	fpic := -fPIC
 	SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
+	$(warning CC is $(CC))
+	$(warning AR is $(AR))
+	$(warning LD is $(LD))
 	CC = @arm-linux-androideabi-g++
 	AR = @arm-linux-androideabi-ar
 	LD = @arm-linux-androideabi-g++
@@ -164,6 +167,9 @@ else ifeq ($(platform), android)
 	CCOMFLAGS += $(PLATCFLAGS)
 	LIBS += -lstdc++
 	#-lpthread
+	$(warning CC is $(CC))
+	$(warning AR is $(AR))
+	$(warning LD is $(LD))
 
 # OS X
 else ifeq ($(platform), osx)
