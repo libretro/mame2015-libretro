@@ -352,7 +352,7 @@ public:
 	const char *bios() const { return value(OPTION_BIOS); }
 	bool cheat() const { return bool_value(OPTION_CHEAT); }
 	bool skip_gameinfo() const { return bool_value(OPTION_SKIP_GAMEINFO); }
-	bool skip_nagscreen() const { return bool_value(OPTION_SKIP_NAGSCREEN); 
+	bool skip_nagscreen() const { return bool_value(OPTION_SKIP_NAGSCREEN); }
 	bool skip_warnings() const { return bool_value(OPTION_SKIP_WARNINGS); }
 	const char *ui_font() const { return value(OPTION_UI_FONT); }
 	const char *ram_size() const { return value(OPTION_RAMSIZE); }
