@@ -1050,8 +1050,12 @@ static void Set_Default_Option(void)
 
    if(hide_gameinfo)
       Add_Option("-skip_gameinfo");
-   else
-      Add_Option("-noskip_gameinfo");
+
+   if(hide_nagscreen)
+      Add_Option("-skip_nagscreen");
+
+   if(hide_warnings)
+      Add_Option("-skip_warnings");
 
    if(write_config_enable)
       Add_Option("-writeconfig");
