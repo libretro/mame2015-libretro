@@ -312,7 +312,6 @@ void ui_manager::display_startup_screens(bool first_time, bool show_disclaimer)
 	int str = machine().options().seconds_to_run();
 	bool show_gameinfo = !machine().options().skip_gameinfo();
 	bool show_warnings = !machine().options().skip_warnings();
-	show_disclaimer = !machine().options().skip_nagscreen();
 	bool show_mandatory_fileman = true;
 	int state;
 
