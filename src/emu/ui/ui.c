@@ -306,18 +306,14 @@ UINT32 ui_manager::set_handler(ui_callback callback, UINT32 param)
 //  various startup screens
 //-------------------------------------------------
 
-#ifdef OSD_RETRO
-	extern bool hide_nagscreen;
-	extern bool hide_gameinfo;
-	extern bool hide_warnings;
-#endif
-
 void ui_manager::display_startup_screens(bool first_time, bool show_disclaimer)
 {
 	const int maxstate = 4;
 	int str = machine().options().seconds_to_run();
 	bool show_gameinfo = !machine().options().skip_gameinfo();
-	bool show_warnings = true, show_mandatory_fileman = true;
+	bool show_warnings = !machine().options().skip_warnings();
+	bool show_disclaimer = !machine().options().skip_nagscreen();
+	bool show_mandatory_fileman = true;
 	int state;
 
 	// disable everything if we are using -str for 300 or fewer seconds, or if we're the empty driver,
@@ -325,18 +321,9 @@ void ui_manager::display_startup_screens(bool first_time, bool show_disclaimer)
 	if (!first_time || (str > 0 && str < 60*5) || &machine().system() == &GAME_NAME(___empty) || (machine().debug_flags & DEBUG_FLAG_ENABLED) != 0)
 		show_gameinfo = show_warnings = show_disclaimer = show_mandatory_fileman = FALSE;
 
-	#ifdef SDLMAME_EMSCRIPTEN
 	// also disable for the JavaScript port since the startup screens do not run asynchronously
-	show_gameinfo = show_warnings = show_disclaimer = FALSE;
-	#endif
-
-	#ifdef OSD_RETRO
-		if(hide_nagscreen)
-			show_disclaimer = FALSE;
-		if(hide_gameinfo)
-			show_gameinfo = FALSE;
-		if(hide_warnings)
-			show_warnings = FALSE;
+	#ifdef SDLMAME_EMSCRIPTEN
+		show_gameinfo = show_warnings = show_disclaimer = FALSE;
 	#endif
 
 	// loop over states
