@@ -464,7 +464,7 @@ static void retro_wrap_emulator(void)
 
    retro_pause = -1;
 
-   environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, 0);
+//   environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, 0);
 
    /* Were done here. */
    co_switch(mainThread);
