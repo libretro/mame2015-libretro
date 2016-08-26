@@ -41,7 +41,7 @@ class sh4_frontend;
 #define FP_XS(r) m_xf[(r)] // binary representation of extended single precision floating point register r
 #define FP_XFS(r) *( (float  *)(m_xf+(r)) ) // single precision extended floating point register r
 #define FP_XFD(r) *( (double *)(m_xf+(r)) ) // double precision extended floating point register r
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 #define FP_RS2(r) m_fr[(r) ^ m_fpu_pr]
 #define FP_RFS2(r) *( (float  *)(m_fr+((r) ^ m_fpu_pr)) )
 #define FP_XS2(r) m_xf[(r) ^ m_fpu_pr]

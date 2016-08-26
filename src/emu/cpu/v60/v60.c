@@ -60,7 +60,7 @@ offs_t v70_device::disasm_disassemble(char *buffer, offs_t pc, const UINT8 *opro
 
 
 // memory accessors
-#if defined(LSB_FIRST) && !defined(ALIGN_INTS)
+#if !defined(MSB_FIRST) && !defined(ALIGN_INTS)
 #define OpRead8(a)   (m_direct->read_decrypted_byte(a))
 #define OpRead16(a)  (m_direct->read_decrypted_word(a))
 #define OpRead32(a)  (m_direct->read_decrypted_dword(a))

@@ -115,7 +115,7 @@ bool apexc_cylinder_image_device::call_load()
 	m_writable = !is_readonly();
 
 	fread( machine().root_device().memregion("maincpu")->base(), 0x1000);
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 	{   /* fix endianness */
 		UINT32 *RAM = (UINT32 *)(machine().root_device().memregion("maincpu")->base());
 
@@ -136,7 +136,7 @@ void apexc_cylinder_image_device::call_unload()
 	{   /* save RAM contents */
 		/* rewind file */
 		fseek(0, SEEK_SET);
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 		{   /* fix endianness */
 			UINT32 *RAM = (UINT32 *)(machine().root_device().memregion("maincpu")->base());
 

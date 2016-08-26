@@ -135,8 +135,6 @@ ifeq ($(platform), unix)
 	endif
 	ifneq (,$(findstring ppc,$(UNAME)))
 		BIGENDIAN=1
-	else
-		PLATCFLAGS += -DLSB_FIRST
 	endif
 
 # Android
@@ -151,7 +149,7 @@ else ifeq ($(platform), android)
 	LD = @arm-linux-androideabi-g++
 	FORCE_DRC_C_BACKEND = 1
 	CCOMFLAGS += -fPIC -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
-	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DANDROID -DALIGN_INTS -DALIGN_SHORTS -DLSB_FIRST -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
+	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DANDROID -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
 	ifeq ($(VRENDER),opengl)
 		PLATCFLAGS += -DHAVE_GL
 		LIBS += -lGLESv2
@@ -195,8 +193,6 @@ else ifeq ($(platform), osx)
 	endif
 	ifneq (,$(findstring Power,$(UNAME)))
 		BIGENDIAN=1
-	else
-		PLATCFLAGS += -DLSB_FIRST
 	endif
 	PLATCFLAGS += -DSDLMAME_NO64BITIO -DOSX
 	CCOMFLAGS += $(PLATCFLAGS)
@@ -313,7 +309,7 @@ else ifneq (,$(findstring armv,$(platform)))
 	fpic := -fPIC
 	SHARED := -shared -Wl,--version-script=src/osd/retro/link.T -Wl,--no-undefined
 	CCOMFLAGS += $(fpic) -mstructure-size-boundary=32 -falign-functions=16 -fsigned-char -finline -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
-	PLATCFLAGS += -march=armv7-a -DALIGN_INTS -DALIGN_SHORTS -DLSB_FIRST -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
+	PLATCFLAGS += -march=armv7-a -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
 	LDFLAGS += -Wl,--fix-cortex-a8 -Wl,--no-as-needed $(fpic) $(SHARED)
 	REALCC   = gcc
 	NATIVECC = g++
@@ -532,11 +528,6 @@ endif
 #-------------------------------------------------
 # map the INLINE to something digestible by GCC
 DEFS += -DINLINE="static inline"
-
-# define LSB_FIRST if we are a little-endian target
-ifndef BIGENDIAN
-DEFS += -DLSB_FIRST
-endif
 
 # define PTR64 if we are a 64-bit target
 ifeq ($(PTR64),1)

@@ -123,17 +123,17 @@ private:
 
 	CDPOS loc, curpos;
 
-#ifdef LSB_FIRST
-	enum {
-		M = 2,
-		S = 1,
-		F = 0
-	};
-#else
+#ifdef MSB_FIRST
 	enum {
 		M = 1,
 		S = 2,
 		F = 3
+	};
+#else
+	enum {
+		M = 2,
+		S = 1,
+		F = 0
 	};
 #endif
 

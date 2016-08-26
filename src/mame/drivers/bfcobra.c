@@ -99,12 +99,12 @@
 
 union ADDR_REG
 {
-#ifdef LSB_FIRST
-	struct { UINT16 loword, hiword ; } ;
-	struct { UINT8 addr0, addr1, addr2; };
-#else
+#ifdef MSB_FIRST
 	struct { UINT16 hiword, loword ; } ;
 	struct { UINT8 addr2, addr1, addr0; };
+#else
+	struct { UINT16 loword, hiword ; } ;
+	struct { UINT8 addr0, addr1, addr2; };
 #endif
 	UINT32 addr;
 };

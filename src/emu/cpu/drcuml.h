@@ -46,10 +46,10 @@ class drcuml_state;
 // an integer register, with low/high parts
 union drcuml_ireg
 {
-#ifdef LSB_FIRST
-	struct { UINT32 l,h; } w;               // 32-bit low, high parts of the register
-#else
+#ifdef MSB_FIRST
 	struct { UINT32 h,l; } w;               // 32-bit low, high parts of the register
+#else
+	struct { UINT32 l,h; } w;               // 32-bit low, high parts of the register
 #endif
 	UINT64              d;                  // 64-bit full register
 };
@@ -58,10 +58,10 @@ union drcuml_ireg
 // a floating-point register, with low/high parts
 union drcuml_freg
 {
-#ifdef LSB_FIRST
-	struct { float l,h; } s;                // 32-bit low, high parts of the register
-#else
+#ifdef MSB_FIRST
 	struct { float h,l; } s;                // 32-bit low, high parts of the register
+#else
+	struct { float l,h; } s;                // 32-bit low, high parts of the register
 #endif
 	double              d;                  // 64-bit full register
 };

@@ -348,16 +348,6 @@ void validity_checker::validate_core()
 #else
 	if (sizeof(void *) != 4) osd_printf_error("PTR64 flag not enabled, but was compiled for 64-bit target\n");
 #endif
-
-	// TODO: check if this is actually working
-	// check endianness definition
-	UINT16 lsbtest = 0;
-	*(UINT8 *)&lsbtest = 0xff;
-#ifdef LSB_FIRST
-	if (lsbtest == 0xff00) osd_printf_error("LSB_FIRST specified, but running on a big-endian machine\n");
-#else
-	if (lsbtest == 0x00ff) osd_printf_error("LSB_FIRST not specified, but running on a little-endian machine\n");
-#endif
 }
 
 

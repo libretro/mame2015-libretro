@@ -39,12 +39,12 @@
 #define FORMAT_IA               3
 #define FORMAT_I                4
 
-#ifdef LSB_FIRST
-#define BYTE_XOR_DWORD_SWAP 7
-#define WORD_XOR_DWORD_SWAP 3
-#else
+#ifdef MSB_FIRST
 #define BYTE_XOR_DWORD_SWAP 4
 #define WORD_XOR_DWORD_SWAP 2
+#else
+#define BYTE_XOR_DWORD_SWAP 7
+#define WORD_XOR_DWORD_SWAP 3
 #endif
 #define DWORD_XOR_DWORD_SWAP 1
 
@@ -144,10 +144,10 @@ class Color
 		union
 		{
 			UINT32 c;
-#ifdef LSB_FIRST
-			struct { UINT8 a, b, g, r; } i;
-#else
+#ifdef MSB_FIRST
 			struct { UINT8 r, g, b, a; } i;
+#else
+			struct { UINT8 a, b, g, r; } i;
 #endif
 		};
 };
@@ -166,10 +166,10 @@ class SpanParam
 		union
 		{
 			UINT32 w;
-#ifdef LSB_FIRST
-			struct { UINT16 l; INT16 h; } h;
-#else
+#ifdef MSB_FIRST
 			struct { INT16 h; UINT16 l; } h;
+#else
+			struct { UINT16 l; INT16 h; } h;
 #endif
 		};
 };

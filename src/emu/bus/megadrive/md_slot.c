@@ -533,7 +533,7 @@ int base_md_cart_slot_device::load_nonlist()
 
 
 // CPU needs to access ROM as a ROM_REGION16_BE, so we need to compensate on LE machines
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 	unsigned char fliptemp;
 	for (int ptr = 0; ptr < len; ptr += 2)
 	{

@@ -137,7 +137,7 @@ static void FLAC__MD5Transform(FLAC__uint32 buf[4], FLAC__uint32 const in[16])
 	buf[3] += d;
 }
 
-#if WORDS_BIGENDIAN
+#ifdef MSB_FIRST
 //@@@@@@ OPT: use bswap/intrinsics
 static void byteSwap(FLAC__uint32 *buf, unsigned words)
 {
@@ -280,8 +280,7 @@ static void format_input_(FLAC__byte *buf, const FLAC__int32 * const signal[], u
 	register FLAC__int32 a_word;
 	register FLAC__byte *buf_ = buf;
 
-#if WORDS_BIGENDIAN
-#else
+#ifndef MSB_FIRST
 	if(channels == 2 && bytes_per_sample == 2) {
 		FLAC__int16 *buf1_ = ((FLAC__int16*)buf_) + 1;
 		memcpy(buf_, signal[0], sizeof(FLAC__int32) * samples);

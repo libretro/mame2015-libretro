@@ -2138,7 +2138,7 @@ inline void sh34_base_device::LDSMFPSCR(const UINT16 opcode)
 	m_r[Rn] += 4;
 	if ((s & FR) != (m_fpscr & FR))
 		sh4_swap_fp_registers();
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 	if ((s & PR) != (m_fpscr & PR))
 		sh4_swap_fp_couples();
 #endif
@@ -2195,7 +2195,7 @@ inline void sh34_base_device::LDSFPSCR(const UINT16 opcode)
 	m_fpscr = m_r[Rn] & 0x003FFFFF;
 	if ((s & FR) != (m_fpscr & FR))
 		sh4_swap_fp_registers();
-#ifdef LSB_FIRST
+#ifndef MSB_FIRST
 	if ((s & PR) != (m_fpscr & PR))
 		sh4_swap_fp_couples();
 #endif
@@ -2669,11 +2669,11 @@ inline void sh34_base_device::FABS(const UINT16 opcode)
 	UINT32 n = Rn;
 
 	if (m_fpu_pr) { /* PR = 1 */
-#ifdef LSB_FIRST
-		n = n | 1; // n & 14 + 1
+#ifdef MSB_FIRST
+		n = n & 14;
 		m_fr[n] = m_fr[n] & 0x7fffffff;
 #else
-		n = n & 14;
+		n = n | 1; // n & 14 + 1
 		m_fr[n] = m_fr[n] & 0x7fffffff;
 #endif
 	} else {              /* PR = 0 */
@@ -4169,10 +4169,10 @@ void sh34_base_device::device_start()
 
 void sh34_base_device::state_import(const device_state_entry &entry)
 {
-#ifdef LSB_FIRST
-	UINT8 fpu_xor = m_fpu_pr;
-#else
+#ifdef MSB_FIRST
 	UINT8 fpu_xor = 0;
+#else
+	UINT8 fpu_xor = m_fpu_pr;
 #endif
 
 	switch (entry.index())
@@ -4330,10 +4330,10 @@ void sh34_base_device::state_export(const device_state_entry &entry)
 
 void sh34_base_device::state_string_export(const device_state_entry &entry, astring &string)
 {
-#ifdef LSB_FIRST
-	UINT8 fpu_xor = m_fpu_pr;
-#else
+#ifdef MSB_FIRST
 	UINT8 fpu_xor = 0;
+#else
+	UINT8 fpu_xor = m_fpu_pr;
 #endif
 
 	switch (entry.index())

@@ -323,10 +323,10 @@ protected:
 	// the SHIFT result register is 32 bits
 	union adsp_shift
 	{
-#ifdef LSB_FIRST
-		struct { adsp_reg16 sr0, sr1; } srx;
-#else
+#ifdef MSB_FIRST
 		struct { adsp_reg16 sr1, sr0; } srx;
+#else
+		struct { adsp_reg16 sr0, sr1; } srx;
 #endif
 		UINT32 sr;
 	};
@@ -334,12 +334,12 @@ protected:
 	// the MAC result register is 40 bits
 	union adsp_mac
 	{
-#ifdef LSB_FIRST
-		struct { adsp_reg16 mr0, mr1, mr2, mrzero; } mrx;
-		struct { UINT32 mr0, mr1; } mry;
-#else
+#ifdef MSB_FIRST
 		struct { adsp_reg16 mrzero, mr2, mr1, mr0; } mrx;
 		struct { UINT32 mr1, mr0; } mry;
+#else
+		struct { adsp_reg16 mr0, mr1, mr2, mrzero; } mrx;
+		struct { UINT32 mr0, mr1; } mry;
 #endif
 		UINT64 mr;
 	};
