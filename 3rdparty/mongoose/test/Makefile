@@ -11,7 +11,7 @@ all: $(PROG)
 	gcov -b $(PROG).c | egrep '^(File|Lines)'
 
 $(PROG): $(SOURCES) Makefile ../mongoose.c clean
-	$(CC) -o $(PROG) $(SOURCES) $(CFLAGS) -ldl -lssl
+	$(CC) -o $(PROG) $(SOURCES) $(CFLAGS) -lssl
 
 win:
 	wine cl $(SOURCES) /MD /nologo /DNDEBUG /O1 /Fe$(PROG).exe
