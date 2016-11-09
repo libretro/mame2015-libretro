@@ -941,28 +941,24 @@ $(LIBCOOBJ)/armeabi_asm.o:
 endif
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
-	@echo Compiling $<...
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 ifdef CPPCHECK
 	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
 endif
 
 $(OBJ)/%.o: $(OBJ)/%.c | $(OSPREBUILD)
-	@echo Compiling $<...
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 ifdef CPPCHECK
 	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
 endif
 
 $(OBJ)/%.pp: $(SRC)/%.c | $(OSPREBUILD)
-	@echo Compiling $<...
 	$(CC) $(CDEFS) $(CFLAGS) -E $< -o $@
 ifdef CPPCHECK
 	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
 endif
 
 $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
-	@echo Compiling $<...
 	$(CC) $(CDEFS) $(CFLAGS) -S $< -o $@
 ifdef CPPCHECK
 	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
@@ -978,7 +974,6 @@ $(OBJ)/%.fh: $(SRC)/%.png $(SRC)/build/png2bdc.py $(SRC)/build/file2str.py
 	$(PYTHON) $(SRC)/build/file2str.py $(OBJ)/temp.bdc $@ font_$(basename $(notdir $<)) UINT8
 
 $(DRIVLISTOBJ): $(DRIVLISTSRC)
-	@echo Compiling $<...
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 ifdef CPPCHECK
 	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
