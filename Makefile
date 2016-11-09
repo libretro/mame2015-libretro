@@ -614,10 +614,10 @@ include $(SRC)/build/cc_detection.mak
 # add core include paths
 INCPATH += \
 	-I$(SRC)/$(TARGET) \
-	-I$(OBJ)/$(TARGET)/layout \
+	-I$(SRC)/$(TARGET)/layout \
 	-I$(SRC)/emu \
 	-I$(OBJ)/emu \
-	-I$(OBJ)/emu/layout \
+	-I$(SRC)/emu/layout \
 	-I$(SRC)/lib/util \
 	-I$(SRC)/lib \
 	-I$(3RDPARTY) \
@@ -963,10 +963,6 @@ $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
 ifdef CPPCHECK
 	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
 endif
-
-$(OBJ)/%.lh: $(SRC)/%.lay $(SRC)/build/file2str.py
-	@echo Converting $<...
-	$(PYTHON) $(SRC)/build/file2str.py $< $@ layout_$(basename $(notdir $<))
 
 $(OBJ)/%.fh: $(SRC)/%.png $(SRC)/build/png2bdc.py $(SRC)/build/file2str.py
 	@echo Converting $<...

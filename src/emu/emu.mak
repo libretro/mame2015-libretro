@@ -262,21 +262,3 @@ $(LIBBUS): $(BUSOBJS)
 $(EMUOBJ)/rendfont.o:   $(EMUOBJ)/uismall.fh
 
 $(EMUOBJ)/video.o:  $(EMUSRC)/rendersw.inc
-
-#-------------------------------------------------
-# core layouts
-#-------------------------------------------------
-
-$(EMUOBJ)/rendlay.o:    $(EMULAYOUT)/dualhovu.lh \
-						$(EMULAYOUT)/dualhsxs.lh \
-						$(EMULAYOUT)/dualhuov.lh \
-						$(EMULAYOUT)/horizont.lh \
-						$(EMULAYOUT)/triphsxs.lh \
-						$(EMULAYOUT)/quadhsxs.lh \
-						$(EMULAYOUT)/vertical.lh \
-						$(EMULAYOUT)/lcd.lh \
-						$(EMULAYOUT)/lcd_rot.lh \
-						$(EMULAYOUT)/noscreens.lh \
-
-$(EMUOBJ)/video.o:      $(EMULAYOUT)/snap.lh
-

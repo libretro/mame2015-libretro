@@ -8,9 +8,9 @@
 CFLAGS += \
 	-I$(SRC)/ume \
 	-I$(SRC)/mame \
-	-I$(OBJ)/mame/layout \
+	-I$(SRC)/mame/layout \
 	-I$(SRC)/mess \
-	-I$(OBJ)/mess/layout \
+	-I$(SRC)/mess/layout \
 	-I$(SRC)/mess/osd \
 	-I$(SRC)/mess/osd/$(OSD)
 
