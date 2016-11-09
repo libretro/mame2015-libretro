@@ -367,16 +367,6 @@ $(LIBOBJ)/libjpeg/%.o: $(3RDPARTY)/libjpeg/%.c | $(OSPREBUILD)
 # libflac library objects
 #-------------------------------------------------
 
-ifeq ($(TARGETOS),macosx)
-ifdef BIGENDIAN
-ARCHFLAGS = -DWORDS_BIGENDIAN=1
-else
-ARCHFLAGS = -DWORDS_BIGENDIAN=0
-endif
-else
-ARCHFLAGS = -DWORDS_BIGENDIAN=0
-endif
-
 FLACOPTS=-DFLAC__NO_ASM -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DFLAC__HAS_OGG=0 -Wno-unused-function $(ARCHFLAGS) -O0
 ifdef MSVC_BUILD
 	# vconv will convert the \" to just a "
