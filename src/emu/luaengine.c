@@ -17,7 +17,6 @@
 #include "osdepend.h"
 #include "drivenum.h"
 #include "ui/ui.h"
-#include "mongoose/mongoose.h"
 
 #ifdef OSD_RETRO
 #ifdef __ANDROID__
