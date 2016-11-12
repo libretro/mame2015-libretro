@@ -774,9 +774,6 @@ include Makefile.common
 CCOMFLAGS += $(INCPATH)
 CDEFS = $(DEFS)
 
-# TODO: -x c++ should not be hard-coded
-CPPCHECKFLAGS = $(CDEFS) $(INCPATH) -x c++ --enable=style
-
 #-------------------------------------------------
 # sanity check OSD additions
 #-------------------------------------------------
@@ -942,27 +939,15 @@ endif
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
-ifdef CPPCHECK
-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
-endif
 
 $(OBJ)/%.o: $(OBJ)/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
-ifdef CPPCHECK
-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
-endif
 
 $(OBJ)/%.pp: $(SRC)/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -E $< -o $@
-ifdef CPPCHECK
-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
-endif
 
 $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -S $< -o $@
-ifdef CPPCHECK
-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
-endif
 
 $(OBJ)/%.fh: $(SRC)/%.png $(SRC)/build/png2bdc.py $(SRC)/build/file2str.py
 	@echo Converting $<...
@@ -971,9 +956,6 @@ $(OBJ)/%.fh: $(SRC)/%.png $(SRC)/build/png2bdc.py $(SRC)/build/file2str.py
 
 $(DRIVLISTOBJ): $(DRIVLISTSRC)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
-ifdef CPPCHECK
-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
-endif
 
 $(DRIVLISTSRC): $(SRC)/$(TARGET)/$(SUBTARGET).lst $(SRC)/build/makelist.py
 	@echo Building driver list $<...

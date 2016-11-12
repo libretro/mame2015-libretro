@@ -97,9 +97,6 @@ $(LIBOSD): $(OSDOBJS)
 $(LIBCOOBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
 	@echo Compiling $< FOR C ONLY...
 	$(REALCC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) $(INCPATH) -c $< -o $@
-ifdef CPPCHECK
-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
-endif
 
 ifeq ($(armplatform), 1)
 $(LIBCOOBJ)/armeabi_asm.o:
