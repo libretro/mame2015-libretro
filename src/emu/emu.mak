@@ -34,7 +34,6 @@ OBJDIRS += \
 	$(EMUOBJ)/ui \
 	$(EMUOBJ)/video \
 
-OSDSRC = $(SRC)/osd
 OSDOBJ = $(OBJ)/osd
 
 OBJDIRS += \

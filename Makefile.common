@@ -9,22 +9,22 @@ DEFS += -DOSD_RETRO
 # object and source roots
 #-------------------------------------------------
 
-MINISRC = $(SRC)/osd/$(OSD)
-MINIOBJ = $(OBJ)/osd/$(OSD)
+MINISRC = $(SRC)/osd/retro
+MINIOBJ = $(OBJ)/osd/retro
 
-LIBCOOBJ = $(OBJ)/osd/$(OSD)/libretro-common/libco
+LIBCOOBJ = $(OBJ)/osd/retro/libretro-common/libco
 
-OSDSRC = $(SRC)/osd
 OSDOBJ = $(OBJ)/osd
 
-OBJDIRS += $(MINIOBJ) $(LIBCOOBJ) \
-	$(OSDOBJ)/modules/sync \
-	$(OSDOBJ)/modules/font \
-	$(OSDOBJ)/modules/lib \
-	$(OSDOBJ)/modules/midi
+OBJDIRS += $(MINIOBJ) \
+			  $(LIBCOOBJ) \
+			  $(OSDOBJ)/modules/sync \
+			  $(OSDOBJ)/modules/font \
+			  $(OSDOBJ)/modules/lib \
+			  $(OSDOBJ)/modules/midi
 
 ifeq ($(VRENDER),opengl)
-GLOBJ = $(OBJ)/osd/$(OSD)/libretro-common/glsym
+GLOBJ = $(OBJ)/osd/retro/libretro-common/glsym
 OBJDIRS += $(GLOBJ)
 endif
 
@@ -44,11 +44,7 @@ OSDCOREOBJS := \
 
 INCPATH += -I$(SRC)/osd/retro/libretro-common/include
 
-ifdef NOASM
-OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_mini.o
-else
 OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_osd.o
-endif
 
 #-------------------------------------------------
 # OSD mini library
@@ -98,9 +94,133 @@ $(LIBCOOBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
 
 ifeq ($(armplatform), 1)
 $(LIBCOOBJ)/armeabi_asm.o:
-	$(REALCC) -I$(SRC)/osd/$(OSD)/libretro-common/include -c $(SRC)/osd/$(OSD)/libretro-common/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
+	$(REALCC) -I$(SRC)/osd/retro/libretro-common/include -c $(SRC)/osd/retro/libretro-common/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
 endif
 
+# In order to keep dependencies reasonable, we exclude objects in the base of
+# $(SRC)/emu, as well as all the OSD objects and anything in the $(OBJ) tree
+depend: maketree $(MAKEDEP_TARGET)
+	@echo Rebuilding depend_emu.mak...
+	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/emu > depend_emu.mak
+	@echo Rebuilding depend_$(TARGET).mak...
+	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/$(TARGET) > depend_$(TARGET).mak
+
+#-------------------------------------------------
+# specify available CPU cores
+#-------------------------------------------------
+CPUS += Z80
+CPUS += Z180
+CPUS += I8085
+CPUS += I8089
+CPUS += M6502
+CPUS += H6280
+CPUS += I86
+CPUS += I386
+CPUS += NEC
+CPUS += V30MZ
+CPUS += V60
+CPUS += MCS48
+CPUS += MCS51
+CPUS += MCS96
+CPUS += M6800
+CPUS += M6805
+CPUS += HD6309
+CPUS += M6809
+CPUS += KONAMI
+CPUS += M680X0
+CPUS += T11
+CPUS += S2650
+CPUS += TMS340X0
+CPUS += TMS9900
+CPUS += TMS9995
+CPUS += TMS9900L
+CPUS += Z8000
+CPUS += Z8001
+CPUS += TMS32010
+CPUS += TMS32025
+CPUS += TMS32031
+CPUS += TMS32051
+CPUS += TMS32082
+CPUS += TMS57002
+CPUS += CCPU
+CPUS += ADSP21XX
+CPUS += ASAP
+CPUS += AM29000
+CPUS += UPD7810
+CPUS += ARM
+CPUS += ARM7
+CPUS += JAGUAR
+CPUS += CUBEQCPU
+CPUS += ESRIP
+CPUS += MIPS
+CPUS += PSX
+CPUS += SH2
+CPUS += SH4
+CPUS += DSP16A
+CPUS += DSP32C
+CPUS += PIC16C5X
+CPUS += PIC16C62X
+CPUS += G65816
+CPUS += SPC700
+CPUS += E1
+CPUS += I860
+CPUS += I960
+CPUS += H8
+CPUS += V810
+CPUS += M37710
+CPUS += POWERPC
+CPUS += SE3208
+CPUS += MC68HC11
+CPUS += ADSP21062
+CPUS += DSP56156
+CPUS += RSP
+CPUS += ALPHA8201
+CPUS += COP400
+CPUS += TLCS90
+CPUS += TLCS900
+CPUS += MB88XX
+CPUS += MB86233
+CPUS += MB86235
+CPUS += SSP1601
+CPUS += APEXC
+CPUS += CP1610
+CPUS += F8
+CPUS += LH5801
+CPUS += PDP1
+CPUS += SATURN
+CPUS += SC61860
+CPUS += LR35902
+CPUS += TMS7000
+CPUS += SM8500
+CPUS += MINX
+CPUS += SSEM
+CPUS += AVR8
+CPUS += TMS0980
+CPUS += I4004
+CPUS += SUPERFX
+CPUS += Z8
+CPUS += I8008
+CPUS += SCMP
+CPUS += MN10200
+CPUS += COSMAC
+CPUS += UNSP
+CPUS += HCD62121
+CPUS += PPS4
+CPUS += UPD7725
+CPUS += HD61700
+CPUS += LC8670
+CPUS += SCORE
+CPUS += ES5510
+CPUS += SCUDSP
+CPUS += IE15
+CPUS += 8X300
+CPUS += ALTO2
+#CPUS += W65816
+CPUS += ARC
+CPUS += ARCOMPACT
+CPUS += AMIS2000
+CPUS += UCOM4
+CPUS += HMCS40
 
 # then the various core pieces
 ifeq ($(TARGET),mame)

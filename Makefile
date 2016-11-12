@@ -596,8 +596,8 @@ INCPATH += \
 	-I$(3RDPARTY) \
 	-I$(3RDPARTY)/lua/src \
 	-I$(SRC)/osd \
-	-I$(SRC)/osd/$(OSD) \
-	-I$(SRC)/osd/$(OSD)/libretro-common/include
+	-I$(SRC)/osd/retro \
+	-I$(SRC)/osd/retro/libretro-common/include
 
 
 #-------------------------------------------------
@@ -862,7 +862,7 @@ $(EMULATOR): $(EMUINFOOBJ) $(DRIVLISTOBJ) $(DRVLIBS) $(LIBOSD) $(LIBBUS) $(LIBOP
 
 ifeq ($(armplatform), 1)
 $(LIBCOOBJ)/armeabi_asm.o:
-	$(CC) -I$(SRC)/osd/$(OSD)/libretro-common/include -c $(SRC)/osd/$(OSD)/libretro-common/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
+	$(CC) -I$(SRC)/osd/retro/libretro-common/include -c $(SRC)/osd/retro/libretro-common/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
 endif
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
