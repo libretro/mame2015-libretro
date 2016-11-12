@@ -6,7 +6,6 @@
 #
 ###########################################################################
 
-ifeq ($(TARGET),mess)
 # In order to keep dependencies reasonable, we exclude objects in the base of
 # $(SRC)/emu, as well as all the OSD objects and anything in the $(OBJ) tree
 depend: maketree $(MAKEDEP_TARGET)
@@ -14,11 +13,9 @@ depend: maketree $(MAKEDEP_TARGET)
 	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/emu > depend_emu.mak
 	@echo Rebuilding depend_$(TARGET).mak...
 	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/$(TARGET) > depend_$(TARGET).mak
-endif
 
 # include MESS core defines
 include $(SRC)/mess/messcore.mak
-
 
 #-------------------------------------------------
 # specify available CPU cores
@@ -2084,10 +2081,3 @@ $(MESS_DRIVERS)/apollo.o:   $(MESSSRC)/drivers/apollo.c | $(OSPREBUILD)
 $(MESS_MACHINE)/apollo_dbg.o: $(MESSSRC)/machine/apollo_dbg.c | $(OSPREBUILD)
 	@echo Compiling $<...
 	$(CC) $(CDEFS) $(CFLAGS) -I$(CPUOBJ)/m68000 -c $< -o $@
-
-#-------------------------------------------------
-# MESS-specific tools
-#-------------------------------------------------
-
-include $(MESSSRC)/tools/tools.mak
-

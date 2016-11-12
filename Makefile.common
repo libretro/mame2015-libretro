@@ -105,7 +105,13 @@ endif
 
 
 # then the various core pieces
-include $(SRC)/$(TARGET)/$(SUBTARGET).mak
+ifeq ($(TARGET),mame)
+include $(SRC)/mame/mame.mak
+endif
+
+ifeq ($(TARGET),mess)
+include $(SRC)/mess/mess.mak
+endif
+
 include $(SRC)/emu/emu.mak
 include $(SRC)/lib/lib.mak
--include $(SRC)/osd/$(CROSS_BUILD_OSD)/build.mak

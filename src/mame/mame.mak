@@ -9,7 +9,6 @@
 #
 ###########################################################################
 
-ifeq ($(TARGET),mame)
 # In order to keep dependencies reasonable, we exclude objects in the base of
 # $(SRC)/emu, as well as all the OSD objects and anything in the $(OBJ) tree
 depend: maketree $(MAKEDEP_TARGET)
@@ -17,7 +16,6 @@ depend: maketree $(MAKEDEP_TARGET)
 	$(MAKEDEP) -I. $(INCPATH) -I$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/emu > depend_emu.mak
 	@echo Rebuilding depend_$(TARGET).mak...
 	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/$(TARGET) > depend_$(TARGET).mak
-endif
 
 MAMESRC = $(SRC)/mame
 MAMEOBJ = $(OBJ)/mame
