@@ -975,18 +975,3 @@ $(OBJ)/%.a:
 	$(RM) $@
 	$(AR) $(ARFLAGS) $@ $^
 endif
-
-ifeq ($(TARGETOS),macosx)
-$(OBJ)/%.o: $(SRC)/%.m | $(OSPREBUILD)
-	@echo Objective-C compiling $<...
-	$(CC) $(CDEFS) $(COBJFLAGS) $(CCOMFLAGS) $(INCPATH) -c $< -o $@
-endif
-
-
-
-#-------------------------------------------------
-# optional dependencies file
-#-------------------------------------------------
-
--include depend_emu.mak
--include depend_$(TARGET).mak
