@@ -8,7 +8,6 @@
 #   Visit http://mamedev.org for licensing and usage restrictions.
 #
 ###########################################################################
-NATIVE :=0
 
 UNAME=$(shell uname -a)
 
@@ -397,13 +396,6 @@ ifndef TARGET
 TARGET = mame
 endif
 
-ifndef SUBTARGET
-SUBTARGET = $(TARGET)
-endif
-
-#TARGET=mame
-#SUBTARGET=mame
-
 OSD=retro
 
 ifndef PARTIAL
@@ -414,7 +406,7 @@ endif
 # specify core target: mame, mess, etc.
 # specify subtarget: mame, mess, tiny, etc.
 # build rules will be included from
-# src/$(TARGET)/$(SUBTARGET).mak
+# src/$(TARGET)/$(TARGET).mak
 #-------------------------------------------------
 
 #-------------------------------------------------
@@ -508,11 +500,7 @@ SRC = src
 3RDPARTY = 3rdparty
 
 # build the targets in different object dirs, so they can co-exist
-ifeq ($(NATIVE),1)
-OBJ = obj/$(PREFIX)$(OSD)$(SUFFIX)$(SUFFIX64)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
-else
 OBJ = obj/$(PREFIX)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
-endif
 #-------------------------------------------------
 # compile-time definitions
 #-------------------------------------------------
@@ -628,7 +616,7 @@ INCPATH += \
 # this variable
 #-------------------------------------------------
 
-OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(SUBTARGET)
+OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(TARGET)
 
 
 #-------------------------------------------------
@@ -636,17 +624,17 @@ OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(SUBTARGET)
 #-------------------------------------------------
 
 LIBEMU = $(OBJ)/libemu.a
-LIBOPTIONAL = $(OBJ)/$(TARGET)/$(SUBTARGET)/liboptional.a
-LIBDASM = $(OBJ)/$(TARGET)/$(SUBTARGET)/libdasm.a
-LIBBUS = $(OBJ)/$(TARGET)/$(SUBTARGET)/libbus.a
+LIBOPTIONAL = $(OBJ)/$(TARGET)/$(TARGET)/liboptional.a
+LIBDASM = $(OBJ)/$(TARGET)/$(TARGET)/libdasm.a
+LIBBUS = $(OBJ)/$(TARGET)/$(TARGET)/libbus.a
 LIBUTIL = $(OBJ)/libutil.a
 LIBOCORE = $(OBJ)/libocore.a
 LIBOSD = $(OBJ)/libosd.a
 
 VERSIONOBJ = $(OBJ)/version.o
 EMUINFOOBJ = $(OBJ)/$(TARGET)/$(TARGET).o
-DRIVLISTSRC = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.c
-DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.o
+DRIVLISTSRC = $(OBJ)/$(TARGET)/$(TARGET)/drivlist.c
+DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(TARGET)/drivlist.o
 
 
 
@@ -749,10 +737,6 @@ BUILDSRC = $(SRC)/build
 BUILDOBJ = $(OBJ)/build
 BUILDOUT = $(BUILDOBJ)
 
-ifdef NATIVE_OBJ
-BUILDOUT = $(NATIVE_OBJ)/build
-endif # NATIVE_OBJ
-
 include Makefile.common
 
 # combine the various definitions to one
@@ -767,14 +751,6 @@ emulator: maketree $(BUILD) $(EMULATOR)
 
 buildtools: maketree $(BUILD)
 
-ifeq ($(NATIVE),1)
-	mkdir prec-build
-	cp -R $(OBJ)/build/* prec-build/
-	$(RM) -r $(OBJ)/osd
-	$(RM) -r $(OBJ)/lib/util
-	$(RM) -r $(OBJ)/libutil.a
-	$(RM) -r $(OBJ)/libocore.a
-endif
 tools: maketree $(TOOLS)
 
 maketree: $(sort $(OBJDIRS))
@@ -818,9 +794,9 @@ checkautodetect:
 tests: $(REGTESTS)
 
 mak: maketree $(MAKEMAK_TARGET)
-	@echo Rebuilding $(SUBTARGET).mak...
-	$(MAKEMAK) $(SRC)/targets/$(SUBTARGET).lst -I. -I$(SRC)/emu -I$(SRC)/mame -I$(SRC)/mame/layout -I$(SRC)/mess -I$(SRC)/mess/layout $(SRC) > $(SUBTARGET).mak
-	$(MAKEMAK) $(SRC)/targets/$(SUBTARGET).lst > $(SUBTARGET).lst
+	@echo Rebuilding $(TARGET).mak...
+	$(MAKEMAK) $(SRC)/targets/$(TARGET).lst -I. -I$(SRC)/emu -I$(SRC)/mame -I$(SRC)/mame/layout -I$(SRC)/mess -I$(SRC)/mess/layout $(SRC) > $(TARGET).mak
+	$(MAKEMAK) $(SRC)/targets/$(TARGET).lst > $(TARGET).lst
 
 #-------------------------------------------------
 # directory targets
@@ -837,31 +813,6 @@ else ifeq ($(platform), ios)
 BUILDTOOLS_CUSTOM = 1
 endif
 
-ifeq ($(NATIVE),0)
-ifeq ($(BUILDTOOLS_CUSTOM),1)
-$(OBJ)/build/file2str:
-	mkdir -p $(OBJ)/build
-	cp -R prec-build/file2str $(OBJ)/build
-
-$(OBJ)/build/m68kmake:
-	cp -R prec-build/m68kmake $(OBJ)/build
-
-$(OBJ)/build/png2bdc:
-	cp -R prec-build/png2bdc $(OBJ)/build
-
-$(OBJ)/build/makedep:
-	cp -R prec-build/makedep $(OBJ)/build
-
-$(OBJ)/build/makelist:
-	cp -R prec-build/makelist $(OBJ)/build
-
-$(OBJ)/build/verinfo:
-	cp -R prec-build/verinfo $(OBJ)/build
-
-$(OBJ)/build/makemak:
-	cp -R prec-build/makemak $(OBJ)/build
-endif
-endif
 #-------------------------------------------------
 # executable targets and dependencies
 #-------------------------------------------------
@@ -934,7 +885,7 @@ $(OBJ)/%.fh: $(SRC)/%.png $(SRC)/build/png2bdc.py $(SRC)/build/file2str.py
 $(DRIVLISTOBJ): $(DRIVLISTSRC)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 
-$(DRIVLISTSRC): $(SRC)/$(TARGET)/$(SUBTARGET).lst $(SRC)/build/makelist.py
+$(DRIVLISTSRC): $(SRC)/$(TARGET)/$(TARGET).lst $(SRC)/build/makelist.py
 	@echo Building driver list $<...
 	$(PYTHON) $(SRC)/build/makelist.py $< >$@
 

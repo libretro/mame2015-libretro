@@ -5,8 +5,6 @@
 # include OSD-specific rules first
 DEFS += -DOSD_RETRO
 
-CCOMFLAGS += -include $(SRC)/osd/retro/retroprefix.h
-
 #-------------------------------------------------
 # object and source roots
 #-------------------------------------------------
