@@ -406,8 +406,6 @@ endif
 
 OSD=retro
 
-NOWERROR = 1
-
 ifndef PARTIAL
 PARTIAL = 0
 endif
@@ -569,11 +567,6 @@ CCOMFLAGS += -pipe
 
 # add the optimization flag
 CCOMFLAGS += -O$(OPTIMIZE)
-
-# add the error warning flag
-ifndef NOWERROR
-CCOMFLAGS += -Werror
-endif
 
 # if we are optimizing, include optimization options
 ifneq ($(OPTIMIZE),0)
@@ -773,14 +766,6 @@ include Makefile.common
 # combine the various definitions to one
 CCOMFLAGS += $(INCPATH)
 CDEFS = $(DEFS)
-
-#-------------------------------------------------
-# sanity check OSD additions
-#-------------------------------------------------
-
-ifeq (,$(findstring -DOSD_,$(CDEFS)))
-$(error $(OSD).mak should have defined -DOSD_)
-endif
 
 #-------------------------------------------------
 # primary targets
