@@ -1053,8 +1053,6 @@ public:
 	// native read
 	_NativeType read_native(offs_t offset, _NativeType mask)
 	{
-		g_profiler.start(PROFILER_MEMREAD);
-
 		if (TEST_HANDLER) printf("[r%X,%s]", offset, core_i64_hex_format(mask, sizeof(_NativeType) * 2));
 
 		// look up the handler
@@ -1071,15 +1069,12 @@ public:
 		else if (sizeof(_NativeType) == 4) result = handler.read32(*this, offset >> 2, mask);
 		else if (sizeof(_NativeType) == 8) result = handler.read64(*this, offset >> 3, mask);
 
-		g_profiler.stop();
 		return result;
 	}
 
 	// mask-less native read
 	_NativeType read_native(offs_t offset)
 	{
-		g_profiler.start(PROFILER_MEMREAD);
-
 		if (TEST_HANDLER) printf("[r%X]", offset);
 
 		// look up the handler
@@ -1096,14 +1091,12 @@ public:
 		else if (sizeof(_NativeType) == 4) result = handler.read32(*this, offset >> 2, 0xffffffff);
 		else if (sizeof(_NativeType) == 8) result = handler.read64(*this, offset >> 3, U64(0xffffffffffffffff));
 
-		g_profiler.stop();
 		return result;
 	}
 
 	// native write
 	void write_native(offs_t offset, _NativeType data, _NativeType mask)
 	{
-		g_profiler.start(PROFILER_MEMWRITE);
 
 		// look up the handler
 		offs_t byteaddress = offset & m_bytemask;
@@ -1122,13 +1115,11 @@ public:
 		else if (sizeof(_NativeType) == 4) handler.write32(*this, offset >> 2, data, mask);
 		else if (sizeof(_NativeType) == 8) handler.write64(*this, offset >> 3, data, mask);
 
-		g_profiler.stop();
 	}
 
 	// mask-less native write
 	void write_native(offs_t offset, _NativeType data)
 	{
-		g_profiler.start(PROFILER_MEMWRITE);
 
 		// look up the handler
 		offs_t byteaddress = offset & m_bytemask;
@@ -1143,7 +1134,6 @@ public:
 		else if (sizeof(_NativeType) == 4) handler.write32(*this, offset >> 2, data, 0xffffffff);
 		else if (sizeof(_NativeType) == 8) handler.write64(*this, offset >> 3, data, U64(0xffffffffffffffff));
 
-		g_profiler.stop();
 	}
 
 	// generic direct read

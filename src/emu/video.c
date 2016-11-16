@@ -208,9 +208,7 @@ void video_manager::frame_update(bool debug)
 		update_throttle(current_time);
 
 	// ask the OSD to update
-	g_profiler.start(PROFILER_BLIT);
 	machine().osd().update(!debug && skipped_it);
-	g_profiler.stop();
 
 	// perform tasks for this frame
 	if (!debug)
@@ -651,7 +649,6 @@ osd_ticks_t video_manager::throttle_until_ticks(osd_ticks_t target_ticks)
 		allowed_to_sleep = true;
 
 	// loop until we reach our target
-	g_profiler.start(PROFILER_IDLE);
 	osd_ticks_t minimum_sleep = osd_ticks_per_second() / 1000;
 	osd_ticks_t current_ticks = osd_ticks();
 	while (current_ticks < target_ticks)
@@ -687,7 +684,6 @@ osd_ticks_t video_manager::throttle_until_ticks(osd_ticks_t target_ticks)
 		}
 		current_ticks = new_ticks;
 	}
-	g_profiler.stop();
 
 	return current_ticks;
 }

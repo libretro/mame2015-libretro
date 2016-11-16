@@ -1066,7 +1066,6 @@ input_manager::input_manager(running_machine &machine)
 
 INT32 input_manager::code_value(input_code code)
 {
-	g_profiler.start(PROFILER_INPUT);
 	INT32 result = 0;
 
 	// dummy loop to allow clean early exits
@@ -1124,8 +1123,6 @@ INT32 input_manager::code_value(input_code code)
 		}
 	} while (0);
 
-	// stop the profiler before exiting
-	g_profiler.stop();
 	return result;
 }
 

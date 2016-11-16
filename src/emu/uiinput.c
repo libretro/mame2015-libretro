@@ -253,8 +253,6 @@ bool ui_input_pressed_repeat(running_machine &machine, int code, int speed)
 	ui_input_private *uidata = machine.ui_input_data;
 	int pressed = FALSE;
 
-g_profiler.start(PROFILER_INPUT);
-
 	/* get the status of this key (assumed to be only in the defaults) */
 	assert(code >= IPT_UI_CONFIGURE && code <= IPT_OSD_16);
 	pressed = (uidata->seqpressed[code] == SEQ_PRESSED_TRUE);
@@ -280,8 +278,6 @@ g_profiler.start(PROFILER_INPUT);
 	/* if we're not pressed, reset the memory field */
 	else
 		uidata->next_repeat[code] = 0;
-
-g_profiler.stop();
 
 	return pressed;
 }

@@ -463,8 +463,6 @@ void device_scheduler::timeslice()
 					// if we're not suspended, actually execute
 					if (exec->m_suspend == 0)
 					{
-						g_profiler.start(exec->m_profiler);
-
 						// note that this global variable cycles_stolen can be modified
 						// via the call to cpu_execute
 						exec->m_cycles_stolen = 0;
@@ -484,7 +482,6 @@ void device_scheduler::timeslice()
 						ran -= *exec->m_icountptr;
 						assert(ran >= exec->m_cycles_stolen);
 						ran -= exec->m_cycles_stolen;
-						g_profiler.stop();
 					}
 
 					// account for these cycles
@@ -892,8 +889,6 @@ inline void device_scheduler::execute_timers()
 		// call the callback
 		if (was_enabled)
 		{
-			g_profiler.start(PROFILER_TIMER_CALLBACK);
-
 			if (timer.m_device != NULL)
 			{
 				LOG(("execute_timers: timer device %s timer %d\n", timer.m_device->tag(), timer.m_id));
@@ -904,8 +899,6 @@ inline void device_scheduler::execute_timers()
 				LOG(("execute_timers: timer callback %s\n", timer.m_callback.name()));
 				timer.m_callback(timer.m_ptr, timer.m_param);
 			}
-
-			g_profiler.stop();
 		}
 
 		// clear the callback timer global

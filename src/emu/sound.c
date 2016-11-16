@@ -277,11 +277,9 @@ void sound_stream::update()
 	}
 
 	// generate samples to get us up to the appropriate time
-	g_profiler.start(PROFILER_SOUND);
 	assert(m_output_sampindex - m_output_base_sampindex >= 0);
 	assert(update_sampindex - m_output_base_sampindex <= m_output_bufalloc);
 	generate_samples(update_sampindex - m_output_sampindex);
-	g_profiler.stop();
 
 	// remember this info for next time
 	m_output_sampindex = update_sampindex;
@@ -1000,8 +998,6 @@ void sound_manager::config_save(int config_type, xml_data_node *parentnode)
 
 void sound_manager::update(void *ptr, int param)
 {
-	g_profiler.start(PROFILER_SOUND);
-
 	// force all the speaker streams to generate the proper number of samples
 	int samples_this_update = 0;
 	speaker_device_iterator iter(machine().root_device());
@@ -1068,6 +1064,4 @@ void sound_manager::update(void *ptr, int param)
 	// update sample rates if they have changed
 	for (sound_stream *stream = m_stream_list.first(); stream != NULL; stream = stream->next())
 		stream->apply_sample_rate_changes();
-
-	g_profiler.stop();
 }
