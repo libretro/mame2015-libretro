@@ -594,7 +594,6 @@ INCPATH += \
 	-I$(SRC)/lib/util \
 	-I$(SRC)/lib \
 	-I$(3RDPARTY) \
-	-I$(3RDPARTY)/lua/src \
 	-I$(SRC)/osd \
 	-I$(SRC)/osd/retro \
 	-I$(SRC)/osd/retro/libretro-common/include
@@ -686,9 +685,6 @@ SOFTFLOAT = $(OBJ)/libsoftfloat.a
 
 # add formats emulation library
 FORMATS_LIB = $(OBJ)/libformats.a
-
-# add LUA library
-LUA_LIB = $(OBJ)/liblua.a
 
 # add SQLite3 library
 BUILD_SQLITE3 = 1

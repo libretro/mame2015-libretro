@@ -209,15 +209,6 @@ const char *running_machine::describe_context()
 
 TIMER_CALLBACK_MEMBER(running_machine::autoboot_callback)
 {
-	if (strlen(options().autoboot_script())!=0) {
-		manager().lua()->load_script(options().autoboot_script());
-	}
-	else if (strlen(options().autoboot_command())!=0) {
-		astring cmd = astring(options().autoboot_command());
-		cmd.replace("'","\\'");
-		astring val = astring("emu.keypost('",cmd,"')");
-		manager().lua()->load_string(val);
-	}
 }
 
 //-------------------------------------------------

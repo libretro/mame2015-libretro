@@ -28,8 +28,6 @@ OBJDIRS += \
 	$(LIBOBJ)/portmidi/pm_mac \
 	$(LIBOBJ)/portmidi/pm_win \
 	$(LIBOBJ)/portmidi/porttime \
-	$(LIBOBJ)/lua \
-	$(LIBOBJ)/lua/lsqlite3 \
 	$(LIBOBJ)/sqlite3 \
 
 #-------------------------------------------------
@@ -461,67 +459,6 @@ $(OBJ)/libportmidi.a: $(LIBPMOBJS)
 
 $(LIBOBJ)/portmidi/%.o: $(3RDPARTY)/portmidi/%.c | $(OSPREBUILD)
 	$(REALCC) $(CDEFS) $(PMOPTS) $(CCOMFLAGS) $(CONLYFLAGS) $(INCPATH) -I$(3RDPARTY)/portmidi/pm_common -I$(3RDPARTY)/portmidi/porttime -c $< -o $@
-
-#-------------------------------------------------
-# LUA library objects
-#-------------------------------------------------
-
-LUAOBJS = \
-	$(LIBOBJ)/lua/lapi.o \
-	$(LIBOBJ)/lua/lcode.o \
-	$(LIBOBJ)/lua/lctype.o \
-	$(LIBOBJ)/lua/ldebug.o \
-	$(LIBOBJ)/lua/ldo.o \
-	$(LIBOBJ)/lua/ldump.o \
-	$(LIBOBJ)/lua/lfunc.o \
-	$(LIBOBJ)/lua/lgc.o \
-	$(LIBOBJ)/lua/llex.o \
-	$(LIBOBJ)/lua/lmem.o \
-	$(LIBOBJ)/lua/lobject.o \
-	$(LIBOBJ)/lua/lopcodes.o \
-	$(LIBOBJ)/lua/lparser.o \
-	$(LIBOBJ)/lua/lstate.o \
-	$(LIBOBJ)/lua/lstring.o \
-	$(LIBOBJ)/lua/ltable.o \
-	$(LIBOBJ)/lua/ltm.o \
-	$(LIBOBJ)/lua/lundump.o \
-	$(LIBOBJ)/lua/lvm.o \
-	$(LIBOBJ)/lua/lzio.o \
-	$(LIBOBJ)/lua/lauxlib.o \
-	$(LIBOBJ)/lua/lbaselib.o \
-	$(LIBOBJ)/lua/lbitlib.o \
-	$(LIBOBJ)/lua/lcorolib.o \
-	$(LIBOBJ)/lua/ldblib.o \
-	$(LIBOBJ)/lua/liolib.o \
-	$(LIBOBJ)/lua/lmathlib.o \
-	$(LIBOBJ)/lua/loslib.o \
-	$(LIBOBJ)/lua/lstrlib.o \
-	$(LIBOBJ)/lua/ltablib.o \
-	$(LIBOBJ)/lua/loadlib.o \
-	$(LIBOBJ)/lua/linit.o \
-	$(LIBOBJ)/lua/lutf8lib.o \
-	$(LIBOBJ)/lua/lsqlite3/lsqlite3.o \
-
-$(OBJ)/liblua.a: $(LUAOBJS)
-
-LUA_FLAGS =
-ifeq ($(TARGETOS),linux)
-LUA_FLAGS += -DLUA_USE_POSIX
-endif
-
-ifeq ($(TARGETOS),macosx)
-LUA_FLAGS += -DLUA_USE_POSIX
-endif
-
-ifeq ($(platform),android)
-LUA_FLAGS += -D"getlocaledecpoint() ='.'"
-endif
-
-$(LIBOBJ)/lua/%.o: $(3RDPARTY)/lua/src/%.c | $(OSPREBUILD)
-	$(REALCC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) -DLUA_COMPAT_ALL $(LUA_FLAGS) -c $< -o $@
-
-$(LIBOBJ)/lua/lsqlite3/%.o: $(3RDPARTY)/lsqlite3/%.c | $(OSPREBUILD)
-	$(REALCC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) -DLUA_COMPAT_ALL -I$(3RDPARTY)/lua/src -I$(3RDPARTY) $(LUA_FLAGS) -c $< -o $@
 
 #-------------------------------------------------
 # SQLite3 library objects

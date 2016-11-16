@@ -157,7 +157,6 @@ void machine_manager::schedule_new_driver(const game_driver &driver)
 ***************************************************************************/
 void machine_manager::update_machine()
 {
-	m_lua.set_machine(m_machine);
 }
 
 /*-------------------------------------------------
@@ -175,10 +174,6 @@ int machine_manager::execute()
 	bool exit_pending = false;
 	int error = MAMERR_NONE;
 
-	m_lua.initialize();
-	if (m_options.console()) {
-		m_lua.start_console();
-	}
 	while (error == MAMERR_NONE && !exit_pending)
 	{
 		m_new_driver_pending = NULL;
