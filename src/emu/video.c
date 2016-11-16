@@ -100,13 +100,6 @@ video_manager::video_manager(running_machine &machine)
 		m_snap_native(true),
 		m_snap_width(0),
 		m_snap_height(0),
-		m_mng_frame_period(attotime::zero),
-		m_mng_next_frame_time(attotime::zero),
-		m_mng_frame(0),
-		m_avi_file(NULL),
-		m_avi_frame_period(attotime::zero),
-		m_avi_next_frame_time(attotime::zero),
-		m_avi_frame(0),
 		m_dummy_recording(false)
 {
 	// request a callback upon exiting
@@ -145,15 +138,6 @@ video_manager::video_manager(running_machine &machine)
 	if (sscanf(machine.options().snap_size(), "%dx%d", &m_snap_width, &m_snap_height) != 2)
 		m_snap_width = m_snap_height = 0;
 
-	// start recording movie if specified
-	const char *filename = machine.options().mng_write();
-	if (filename[0] != 0)
-		begin_recording(filename, MF_MNG);
-
-	filename = machine.options().avi_write();
-	if (filename[0] != 0)
-		begin_recording(filename, MF_AVI);
-	
 #ifdef MAME_DEBUG
 	m_dummy_recording = machine.options().dummy_write();
 #endif
@@ -356,183 +340,12 @@ void video_manager::save_active_screen_snapshots()
 	}
 }
 
-
-//-------------------------------------------------
-//  begin_recording - begin recording of a movie
-//-------------------------------------------------
-
-void video_manager::begin_recording(const char *name, movie_format format)
-{
-	// create a snapshot bitmap so we know what the target size is
-	create_snapshot_bitmap(NULL);
-
-	// start up an AVI recording
-	if (format == MF_AVI)
-	{
-		// stop any existing recording
-		end_recording(format);
-
-		// reset the state
-		m_avi_frame = 0;
-		m_avi_next_frame_time = machine().time();
-
-		// build up information about this new movie
-		avi_movie_info info;
-		info.video_format = 0;
-		info.video_timescale = 1000 * ((machine().first_screen() != NULL) ? ATTOSECONDS_TO_HZ(machine().first_screen()->frame_period().attoseconds) : screen_device::DEFAULT_FRAME_RATE);
-		info.video_sampletime = 1000;
-		info.video_numsamples = 0;
-		info.video_width = m_snap_bitmap.width();
-		info.video_height = m_snap_bitmap.height();
-		info.video_depth = 24;
-
-		info.audio_format = 0;
-		info.audio_timescale = machine().sample_rate();
-		info.audio_sampletime = 1;
-		info.audio_numsamples = 0;
-		info.audio_channels = 2;
-		info.audio_samplebits = 16;
-		info.audio_samplerate = machine().sample_rate();
-
-		// create a new temporary movie file
-		file_error filerr;
-		astring fullpath;
-		{
-			emu_file tempfile(machine().options().snapshot_directory(), OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS);
-			if (name != NULL)
-				filerr = tempfile.open(name);
-			else
-				filerr = open_next(tempfile, "avi");
-
-			// if we succeeded, make a copy of the name and create the real file over top
-			if (filerr == FILERR_NONE)
-				fullpath = tempfile.fullpath();
-		}
-
-		if (filerr == FILERR_NONE)
-		{
-			// compute the frame time
-			m_avi_frame_period = attotime::from_seconds(1000) / info.video_timescale;
-
-			// create the file and free the string
-			avi_error avierr = avi_create(fullpath, &info, &m_avi_file);
-			if (avierr != AVIERR_NONE)
-			{
-				osd_printf_error("Error creating AVI: %s\n", avi_error_string(avierr));
-				return end_recording(format);
-			}
-		}
-	}
-
-	// start up a MNG recording
-	else if (format == MF_MNG)
-	{
-		// stop any existing recording
-		end_recording(format);
-
-		// reset the state
-		m_mng_frame = 0;
-		m_mng_next_frame_time = machine().time();
-
-		// create a new movie file and start recording
-		m_mng_file.reset(global_alloc(emu_file(machine().options().snapshot_directory(), OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS)));
-		file_error filerr;
-		if (name != NULL)
-			filerr = m_mng_file->open(name);
-		else
-			filerr = open_next(*m_mng_file, "mng");
-
-		if (filerr == FILERR_NONE)
-		{
-			// start the capture
-			int rate = (machine().first_screen() != NULL) ? ATTOSECONDS_TO_HZ(machine().first_screen()->frame_period().attoseconds) : screen_device::DEFAULT_FRAME_RATE;
-			png_error pngerr = mng_capture_start(*m_mng_file, m_snap_bitmap, rate);
-			if (pngerr != PNGERR_NONE)
-			{
-				osd_printf_error("Error capturing MNG, png_error=%d\n", pngerr);
-				return end_recording(format);
-			}
-
-			// compute the frame time
-			m_mng_frame_period = attotime::from_hz(rate);
-		}
-		else
-		{
-			osd_printf_error("Error creating MNG, file_error=%d\n", filerr);
-			m_mng_file.reset();
-		}
-	}
-}
-
-
-//-------------------------------------------------
-//  end_recording - stop recording of a movie
-//-------------------------------------------------
-
-void video_manager::end_recording(movie_format format)
-{
-	if (format == MF_AVI)
-	{
-		// close the file if it exists
-		if (m_avi_file != NULL)
-		{
-			avi_close(m_avi_file);
-			m_avi_file = NULL;
-
-			// reset the state
-			m_avi_frame = 0;
-		}
-	}
-	else if (format == MF_MNG)
-	{
-		// close the file if it exists
-		if (m_mng_file != NULL)
-		{
-			mng_capture_stop(*m_mng_file);
-			m_mng_file.reset();
-
-			// reset the state
-			m_mng_frame = 0;
-		}
-	}
-}
-
-
-//-------------------------------------------------
-//  add_sound_to_recording - add sound to a movie
-//  recording
-//-------------------------------------------------
-
-void video_manager::add_sound_to_recording(const INT16 *sound, int numsamples)
-{
-	// only record if we have a file
-	if (m_avi_file != NULL)
-	{
-		g_profiler.start(PROFILER_MOVIE_REC);
-
-		// write the next frame
-		avi_error avierr = avi_append_sound_samples(m_avi_file, 0, sound + 0, numsamples, 1);
-		if (avierr == AVIERR_NONE)
-			avierr = avi_append_sound_samples(m_avi_file, 1, sound + 1, numsamples, 1);
-		if (avierr != AVIERR_NONE)
-			end_recording(MF_AVI);
-
-		g_profiler.stop();
-	}
-}
-
-
-
 //-------------------------------------------------
 //  video_exit - close down the video system
 //-------------------------------------------------
 
 void video_manager::exit()
 {
-	// stop recording any movie
-	end_recording(MF_AVI);
-	end_recording(MF_MNG);
-
 	// free the snapshot target
 	machine().render().target_free(m_snap_target);
 	m_snap_bitmap.reset();
@@ -567,10 +380,7 @@ void video_manager::screenless_update_callback(void *ptr, int param)
 
 void video_manager::postload()
 {
-	m_avi_next_frame_time = machine().time();
-	m_mng_next_frame_time = machine().time();
 }
-
 
 //-------------------------------------------------
 //  effective_autoframeskip - return the effective
@@ -661,8 +471,6 @@ bool video_manager::finish_screen_updates()
 	// update our movie recording and burn-in state
 	if (!machine().paused())
 	{
-		record_frame();
-
 		// iterate over screens and update the burnin for the ones that care
 		for (screen_device *screen = iter.first(); screen != NULL; screen = iter.next())
 			screen->update_burnin();
@@ -1226,104 +1034,10 @@ file_error video_manager::open_next(emu_file &file, const char *extension)
 
 
 //-------------------------------------------------
-//  record_frame - record a frame of a movie
-//-------------------------------------------------
-
-void video_manager::record_frame()
-{
-	// ignore if nothing to do
-	if (m_mng_file == NULL && m_avi_file == NULL && !m_dummy_recording)
-		return;
-
-	// start the profiler and get the current time
-	g_profiler.start(PROFILER_MOVIE_REC);
-	attotime curtime = machine().time();
-
-	// create the bitmap
-	create_snapshot_bitmap(NULL);
-
-	// handle an AVI recording
-	if (m_avi_file != NULL)
-	{
-		// loop until we hit the right time
-		while (m_avi_next_frame_time <= curtime)
-		{
-			// write the next frame
-			avi_error avierr = avi_append_video_frame(m_avi_file, m_snap_bitmap);
-			if (avierr != AVIERR_NONE)
-			{
-				g_profiler.stop();
-				end_recording(MF_AVI);
-				break;
-			}
-
-			// advance time
-			m_avi_next_frame_time += m_avi_frame_period;
-			m_avi_frame++;
-		}
-	}
-
-	// handle a MNG recording
-	if (m_mng_file != NULL)
-	{
-		// loop until we hit the right time
-		while (m_mng_next_frame_time <= curtime)
-		{
-			// set up the text fields in the movie info
-			png_info pnginfo = { 0 };
-			if (m_mng_frame == 0)
-			{
-				astring text1(emulator_info::get_appname(), " ", build_version);
-				astring text2(machine().system().manufacturer, " ", machine().system().description);
-				png_add_text(&pnginfo, "Software", text1);
-				png_add_text(&pnginfo, "System", text2);
-			}
-
-			// write the next frame
-			const rgb_t *palette = (machine().first_screen() !=NULL && machine().first_screen()->palette() != NULL) ? machine().first_screen()->palette()->palette()->entry_list_adjusted() : NULL;
-			int entries = (machine().first_screen() !=NULL && machine().first_screen()->palette() != NULL) ? machine().first_screen()->palette()->entries() : 0;
-			png_error error = mng_capture_frame(*m_mng_file, &pnginfo, m_snap_bitmap, entries, palette);
-			png_free(&pnginfo);
-			if (error != PNGERR_NONE)
-			{
-				g_profiler.stop();
-				end_recording(MF_MNG);
-				break;
-			}
-
-			// advance time
-			m_mng_next_frame_time += m_mng_frame_period;
-			m_mng_frame++;
-		}
-	}
-
-	g_profiler.stop();
-}
-
-//-------------------------------------------------
 //  toggle_throttle
 //-------------------------------------------------
 
 void video_manager::toggle_throttle()
 {
 	set_throttled(!throttled());
-}
-
-
-//-------------------------------------------------
-//  toggle_record_movie
-//-------------------------------------------------
-
-void video_manager::toggle_record_movie()
-{
-	if (!is_recording())
-	{
-		begin_recording(NULL, MF_MNG);
-		popmessage("REC START");
-	}
-	else
-	{
-		end_recording(MF_MNG);
-		popmessage("REC STOP");
-	}
 }

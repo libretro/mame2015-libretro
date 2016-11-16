@@ -1045,7 +1045,6 @@ void sound_manager::update(void *ptr, int param)
             audio_batch_cb(finalmix, samples_this_frame);
       }
 
-		machine().video().add_sound_to_recording(finalmix, finalmix_offset / 2);
 		if (m_wavfile != NULL)
 			wav_add_data_16(m_wavfile, finalmix, finalmix_offset);
 	}

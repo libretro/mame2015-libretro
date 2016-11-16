@@ -1621,10 +1621,6 @@ UINT32 ui_manager::handler_ingame(running_machine &machine, render_container *co
 	if (ui_input_pressed(machine, IPT_UI_TOGGLE_CHEAT))
 		machine.cheat().set_enable(!machine.cheat().enabled());
 
-	// toggle movie recording
-	if (ui_input_pressed(machine, IPT_UI_RECORD_MOVIE))
-		machine.video().toggle_record_movie();
-
 	// toggle profiler display
 	if (ui_input_pressed(machine, IPT_UI_SHOW_PROFILER))
 		machine.ui().set_show_profiler(!machine.ui().show_profiler());

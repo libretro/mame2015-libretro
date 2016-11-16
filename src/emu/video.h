@@ -64,7 +64,6 @@ public:
 	bool throttled() const { return m_throttled; }
 	float throttle_rate() const { return m_throttle_rate; }
 	bool fastforward() const { return m_fastforward; }
-	bool is_recording() const { return (m_mng_file != NULL || m_avi_file != NULL); }
 
 	// setters
 	void set_frameskip(int frameskip);
@@ -75,7 +74,6 @@ public:
 
 	// misc
 	void toggle_throttle();
-	void toggle_record_movie();
 
 	// render a frame
 	void frame_update(bool debug = false);
@@ -87,11 +85,6 @@ public:
 	// snapshots
 	void save_snapshot(screen_device *screen, emu_file &file);
 	void save_active_screen_snapshots();
-
-	// movies
-	void begin_recording(const char *name, movie_format format);
-	void end_recording(movie_format format);
-	void add_sound_to_recording(const INT16 *sound, int numsamples);
 
 private:
 	// internal helpers
@@ -165,18 +158,6 @@ private:
 	INT32               m_snap_width;               // width of snapshots (0 == auto)
 	INT32               m_snap_height;              // height of snapshots (0 == auto)
 
-	// movie recording - MNG
-	auto_pointer<emu_file> m_mng_file;              // handle to the open movie file
-	attotime            m_mng_frame_period;         // period of a single movie frame
-	attotime            m_mng_next_frame_time;      // time of next frame
-	UINT32              m_mng_frame;                // current movie frame number
-
-	// movie recording - AVI
-	avi_file *          m_avi_file;                 // handle to the open movie file
-	attotime            m_avi_frame_period;         // period of a single movie frame
-	attotime            m_avi_next_frame_time;      // time of next frame
-	UINT32              m_avi_frame;                // current movie frame number
-	
 	// movie recording - dummy
 	bool				m_dummy_recording;			// indicates if snapshot should be created of every frame
 
