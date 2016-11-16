@@ -690,9 +690,6 @@ FORMATS_LIB = $(OBJ)/libformats.a
 # add LUA library
 LUA_LIB = $(OBJ)/liblua.a
 
-# add web library
-WEB_LIB = $(OBJ)/libweb.a
-
 # add SQLite3 library
 BUILD_SQLITE3 = 1
 ifeq ($(BUILD_SQLITE3),1)
