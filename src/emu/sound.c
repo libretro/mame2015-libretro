@@ -14,17 +14,15 @@
 #include "config.h"
 #include "sound/wavwrite.h"
 
+#include "libretro.h"
+
+extern int retro_pause;
+extern retro_audio_sample_batch_t audio_batch_cb;
 
 
 //**************************************************************************
 //  DEBUGGING
 //**************************************************************************
-
-#define VERBOSE         (0)
-
-#define VPRINTF(x)      do { if (VERBOSE) osd_printf_debug x; } while (0)
-
-
 
 //**************************************************************************
 //  CONSTANTS
@@ -225,8 +223,6 @@ int sound_stream::input_source_outputnum(int inputnum) const
 
 void sound_stream::set_input(int index, sound_stream *input_stream, int output_index, float gain)
 {
-	VPRINTF(("stream_set_input(%p, '%s', %d, %p, %d, %f)\n", this, m_device.tag(), index, input_stream, output_index, gain));
-
 	// make sure it's a valid input
 	if (index >= m_input.count())
 		fatalerror("Fatal error: stream_set_input attempted to configure non-existant input %d (%d max)\n", index, m_input.count());
@@ -596,8 +592,6 @@ void sound_stream::generate_samples(int samples)
 	if (samples <= 0)
 		return;
 
-	VPRINTF(("generate_samples(%p, %d)\n", this, samples));
-
 	// ensure all inputs are up to date and generate resampled data
 	for (int inputnum = 0; inputnum < m_input.count(); inputnum++)
 	{
@@ -618,9 +612,7 @@ void sound_stream::generate_samples(int samples)
 	}
 
 	// run the callback
-	VPRINTF(("  callback(%p, %d)\n", this, samples));
 	m_callback(*this, m_input_array, m_output_array, samples);
-	VPRINTF(("  callback done\n"));
 }
 
 
@@ -808,12 +800,6 @@ sound_manager::sound_manager(running_machine &machine)
 	// handle -nosound and lower sample rate if not recording WAV or AVI
 	if (m_nosound_mode && wavfile[0] == 0 && avifile[0] == 0)
 		machine.m_sample_rate = 11025;
-
-	// count the mixers
-#if VERBOSE
-	mixer_interface_iterator iter(machine.root_device());
-	VPRINTF(("total mixers = %d\n", iter.count()));
-#endif
 
 	// open the output WAV file if specified
 	if (wavfile[0] != 0)
@@ -1014,8 +1000,6 @@ void sound_manager::config_save(int config_type, xml_data_node *parentnode)
 
 void sound_manager::update(void *ptr, int param)
 {
-	VPRINTF(("sound_update\n"));
-
 	g_profiler.start(PROFILER_SOUND);
 
 	// force all the speaker streams to generate the proper number of samples
@@ -1055,7 +1039,12 @@ void sound_manager::update(void *ptr, int param)
 	if (finalmix_offset > 0)
 	{
 		if (!m_nosound_mode)
-			machine().osd().update_audio_stream(finalmix, finalmix_offset / 2);
+      {
+         int samples_this_frame = finalmix_offset / 2;
+         if (retro_pause != -1)
+            audio_batch_cb(finalmix, samples_this_frame);
+      }
+
 		machine().video().add_sound_to_recording(finalmix, finalmix_offset / 2);
 		if (m_wavfile != NULL)
 			wav_add_data_16(m_wavfile, finalmix, finalmix_offset);

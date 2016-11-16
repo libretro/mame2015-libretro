@@ -28,7 +28,6 @@ OBJDIRS += \
 	$(LIBOBJ)/portmidi/pm_mac \
 	$(LIBOBJ)/portmidi/pm_win \
 	$(LIBOBJ)/portmidi/porttime \
-	$(LIBOBJ)/sqlite3 \
 
 #-------------------------------------------------
 # utility library objects
@@ -459,29 +458,3 @@ $(OBJ)/libportmidi.a: $(LIBPMOBJS)
 
 $(LIBOBJ)/portmidi/%.o: $(3RDPARTY)/portmidi/%.c | $(OSPREBUILD)
 	$(REALCC) $(CDEFS) $(PMOPTS) $(CCOMFLAGS) $(CONLYFLAGS) $(INCPATH) -I$(3RDPARTY)/portmidi/pm_common -I$(3RDPARTY)/portmidi/porttime -c $< -o $@
-
-#-------------------------------------------------
-# SQLite3 library objects
-#-------------------------------------------------
-
-SQLITEOBJS = \
-	$(LIBOBJ)/sqlite3/sqlite3.o \
-
-$(OBJ)/libsqlite3.a: $(SQLITEOBJS)
-
-SQLITE3_FLAGS =
-ifdef SANITIZE
-ifneq (,$(findstring thread,$(SANITIZE)))
-SQLITE3_FLAGS += -fPIC
-endif
-ifneq (,$(findstring memory,$(SANITIZE)))
-SQLITE3_FLAGS += -fPIC
-endif
-endif
-
-ifeq ($(TARGETOS),linux)
-LIBS += -ldl
-endif
-
-$(LIBOBJ)/sqlite3/sqlite3.o: $(3RDPARTY)/sqlite3/sqlite3.c | $(OSPREBUILD)
-	$(REALCC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) -Wno-bad-function-cast -Wno-undef -I$(3RDPARTY)/sqlite3 $(SQLITE3_FLAGS) -c $< -o $@

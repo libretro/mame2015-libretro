@@ -686,16 +686,6 @@ SOFTFLOAT = $(OBJ)/libsoftfloat.a
 # add formats emulation library
 FORMATS_LIB = $(OBJ)/libformats.a
 
-# add SQLite3 library
-BUILD_SQLITE3 = 1
-ifeq ($(BUILD_SQLITE3),1)
-SQLITE3_LIB = $(OBJ)/libsqlite3.a
-else
-LIBS += -lsqlite3
-SQLITE3_LIB =
-endif
-
-
 # add PortMidi MIDI library
 ifeq ($(BUILD_MIDILIB),1)
 INCPATH += -I$(SRC)/lib/portmidi
