@@ -1600,10 +1600,6 @@ UINT32 ui_manager::handler_ingame(running_machine &machine, render_container *co
 		return machine.ui().set_handler(handler_load_save, LOADSAVE_LOAD);
 	}
 
-	// handle a save snapshot request
-	if (ui_input_pressed(machine, IPT_UI_SNAPSHOT))
-		machine.video().save_active_screen_snapshots();
-
 	// toggle pause
 	if (ui_input_pressed(machine, IPT_UI_PAUSE))
 	{

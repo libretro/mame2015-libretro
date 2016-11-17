@@ -146,7 +146,6 @@ static void execute_history(running_machine &machine, int ref, int params, const
 static void execute_trackpc(running_machine &machine, int ref, int params, const char **param);
 static void execute_trackmem(running_machine &machine, int ref, int params, const char **param);
 static void execute_pcatmem(running_machine &machine, int ref, int params, const char **param);
-static void execute_snap(running_machine &machine, int ref, int params, const char **param);
 static void execute_source(running_machine &machine, int ref, int params, const char **param);
 static void execute_map(running_machine &machine, int ref, int params, const char **param);
 static void execute_memdump(running_machine &machine, int ref, int params, const char **param);
@@ -381,8 +380,6 @@ void debug_command_init(running_machine &machine)
 	debug_console_register_command(machine, "pcatmemp",  CMDFLAG_NONE, AS_PROGRAM, 1, 2, execute_pcatmem);
 	debug_console_register_command(machine, "pcatmemd",  CMDFLAG_NONE, AS_DATA,    1, 2, execute_pcatmem);
 	debug_console_register_command(machine, "pcatmemi",  CMDFLAG_NONE, AS_IO,      1, 2, execute_pcatmem);
-
-	debug_console_register_command(machine, "snap",      CMDFLAG_NONE, 0, 0, 1, execute_snap);
 
 	debug_console_register_command(machine, "source",    CMDFLAG_NONE, 0, 1, 1, execute_source);
 
@@ -2801,53 +2798,6 @@ static void execute_pcatmem(running_machine &machine, int ref, int params, const
 	else
 		debug_console_printf(machine, "UNKNOWN PC\n");
 }
-
-
-/*-------------------------------------------------
-    execute_snap - execute the snapshot command
--------------------------------------------------*/
-
-static void execute_snap(running_machine &machine, int ref, int params, const char *param[])
-{
-	/* if no params, use the default behavior */
-	if (params == 0)
-	{
-		machine.video().save_active_screen_snapshots();
-		debug_console_printf(machine, "Saved snapshot\n");
-	}
-
-	/* otherwise, we have to open the file ourselves */
-	else
-	{
-		const char *filename = param[0];
-		int scrnum = (params > 1) ? atoi(param[1]) : 0;
-
-		screen_device_iterator iter(machine.root_device());
-		screen_device *screen = iter.byindex(scrnum);
-
-		if ((screen == NULL) || !machine.render().is_live(*screen))
-		{
-			debug_console_printf(machine, "Invalid screen number '%d'\n", scrnum);
-			return;
-		}
-
-		astring fname(filename);
-		if (fname.find(0, ".png") == -1)
-			fname.cat(".png");
-		emu_file file(machine.options().snapshot_directory(), OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS);
-		file_error filerr = file.open(fname);
-
-		if (filerr != FILERR_NONE)
-		{
-			debug_console_printf(machine, "Error creating file '%s'\n", filename);
-			return;
-		}
-
-		screen->machine().video().save_snapshot(screen, file);
-		debug_console_printf(machine, "Saved screen #%d snapshot as '%s'\n", scrnum, filename);
-	}
-}
-
 
 /*-------------------------------------------------
     execute_source - execute the source command

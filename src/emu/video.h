@@ -82,10 +82,6 @@ public:
 	astring &speed_text(astring &string);
 	double speed_percent() const { return m_speed_percent; }
 
-	// snapshots
-	void save_snapshot(screen_device *screen, emu_file &file);
-	void save_active_screen_snapshots();
-
 private:
 	// internal helpers
 	void exit();

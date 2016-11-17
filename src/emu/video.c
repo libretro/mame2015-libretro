@@ -10,7 +10,6 @@
 
 #include "emu.h"
 #include "emuopts.h"
-#include "png.h"
 #include "debugger.h"
 #include "ui/ui.h"
 #include "aviio.h"
@@ -273,70 +272,6 @@ astring &video_manager::speed_text(astring &string)
 	return string;
 }
 
-
-//-------------------------------------------------
-//  save_snapshot - save a snapshot to the given
-//  file handle
-//-------------------------------------------------
-
-void video_manager::save_snapshot(screen_device *screen, emu_file &file)
-{
-	// validate
-	assert(!m_snap_native || screen != NULL);
-
-	// create the bitmap to pass in
-	create_snapshot_bitmap(screen);
-
-	// add two text entries describing the image
-	astring text1(emulator_info::get_appname(), " ", build_version);
-	astring text2(machine().system().manufacturer, " ", machine().system().description);
-	png_info pnginfo = { 0 };
-	png_add_text(&pnginfo, "Software", text1);
-	png_add_text(&pnginfo, "System", text2);
-
-	// now do the actual work
-	const rgb_t *palette = (screen !=NULL && screen->palette() != NULL) ? screen->palette()->palette()->entry_list_adjusted() : NULL;
-	int entries = (screen !=NULL && screen->palette() != NULL) ? screen->palette()->entries() : 0;
-	png_error error = png_write_bitmap(file, &pnginfo, m_snap_bitmap, entries, palette);
-	if (error != PNGERR_NONE)
-		osd_printf_error("Error generating PNG for snapshot: png_error = %d\n", error);
-
-	// free any data allocated
-	png_free(&pnginfo);
-}
-
-
-//-------------------------------------------------
-//  save_active_screen_snapshots - save a
-//  snapshot of all active screens
-//-------------------------------------------------
-
-void video_manager::save_active_screen_snapshots()
-{
-	// if we're native, then write one snapshot per visible screen
-	if (m_snap_native)
-	{
-		// write one snapshot per visible screen
-		screen_device_iterator iter(machine().root_device());
-		for (screen_device *screen = iter.first(); screen != NULL; screen = iter.next())
-			if (machine().render().is_live(*screen))
-			{
-				emu_file file(machine().options().snapshot_directory(), OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS);
-				file_error filerr = open_next(file, "png");
-				if (filerr == FILERR_NONE)
-					save_snapshot(screen, file);
-			}
-	}
-
-	// otherwise, just write a single snapshot
-	else
-	{
-		emu_file file(machine().options().snapshot_directory(), OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS);
-		file_error filerr = open_next(file, "png");
-		if (filerr == FILERR_NONE)
-			save_snapshot(NULL, file);
-	}
-}
 
 //-------------------------------------------------
 //  video_exit - close down the video system
@@ -844,14 +779,6 @@ void video_manager::recompute_speed(const attotime &emutime)
 		}
 #endif
 
-		if (machine().first_screen() != NULL)
-		{
-			// create a final screenshot
-			emu_file file(machine().options().snapshot_directory(), OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS);
-			file_error filerr = file.open(machine().basename(), PATH_SEPARATOR "final.png");
-			if (filerr == FILERR_NONE)
-				save_snapshot(machine().first_screen(), file);
-		}
 		//printf("Scheduled exit at %f\n", emutime.as_double());
 		// schedule our demise
 		machine().schedule_exit();
@@ -867,39 +794,6 @@ void video_manager::recompute_speed(const attotime &emutime)
 
 typedef software_renderer<UINT32, 0,0,0, 16,8,0, false, true> snap_renderer_bilinear;
 typedef software_renderer<UINT32, 0,0,0, 16,8,0, false, false> snap_renderer;
-
-void video_manager::create_snapshot_bitmap(screen_device *screen)
-{
-	// select the appropriate view in our dummy target
-	if (m_snap_native && screen != NULL)
-	{
-		screen_device_iterator iter(machine().root_device());
-		int view_index = iter.indexof(*screen);
-		assert(view_index != -1);
-		m_snap_target->set_view(view_index);
-	}
-
-	// get the minimum width/height and set it on the target
-	INT32 width = m_snap_width;
-	INT32 height = m_snap_height;
-	if (width == 0 || height == 0)
-		m_snap_target->compute_minimum_size(width, height);
-	m_snap_target->set_bounds(width, height);
-
-	// if we don't have a bitmap, or if it's not the right size, allocate a new one
-	if (!m_snap_bitmap.valid() || width != m_snap_bitmap.width() || height != m_snap_bitmap.height())
-		m_snap_bitmap.allocate(width, height);
-
-	// render the screen there
-	render_primitive_list &primlist = m_snap_target->get_primitives();
-	primlist.acquire_lock();
-	if (machine().options().snap_bilinear())
-		snap_renderer_bilinear::draw_primitives(primlist, &m_snap_bitmap.pix32(0), width, height, m_snap_bitmap.rowpixels());
-	else
-		snap_renderer::draw_primitives(primlist, &m_snap_bitmap.pix32(0), width, height, m_snap_bitmap.rowpixels());
-	primlist.release_lock();
-}
-
 
 //-------------------------------------------------
 //  open_next - open the next non-existing file of
