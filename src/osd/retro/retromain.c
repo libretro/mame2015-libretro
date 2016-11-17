@@ -120,7 +120,7 @@ int opt_type[NB_OPTPATH]={ // 0 for save_dir | 1 for system_dir
     1,1,1,1
 };
 
-#ifdef HAVE_GL
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
 static int init3d=1;
 #else
 #include "rendersw.inc"
@@ -1527,7 +1527,7 @@ void retro_osd_interface::osd_exit()
    if (log_cb)
       log_cb(RETRO_LOG_INFO, "OSD exit called\n");
 
-#if defined(HAVE_GL)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
    destroy_all_textures();
    if (retro)
       free(retro);
@@ -1541,7 +1541,7 @@ void retro_osd_interface::init(running_machine &machine)
 {
 	int gamRot=0;
 
-#if defined(HAVE_GL)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
 	/* allocate memory for our structures */
 	retro = (retro_info *)malloc(sizeof(*retro));
 
@@ -1668,7 +1668,7 @@ void retro_osd_interface::update(bool skip_redraw)
       /* lock them, and then render them */
       primlist.acquire_lock();
 
-#ifdef HAVE_GL
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
       gl_draw_primitives(primlist, fb_width, fb_height);
 #else
       UINT8 *surfptr = (UINT8 *)retro_get_fb_ptr();

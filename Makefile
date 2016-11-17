@@ -110,7 +110,7 @@ ifeq ($(platform), unix)
 	CCOMFLAGS += $(fpic) -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
 	PLATCFLAGS +=  -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants  $(fpic)
 	ifeq ($(VRENDER),opengl)
-		PLATCFLAGS += -DHAVE_GL
+		PLATCFLAGS += -DHAVE_OPENGL
 		LIBS += -lGL
 	endif
 	LDFLAGS +=  $(fpic) $(SHARED)
@@ -150,7 +150,7 @@ else ifeq ($(platform), android)
 	CCOMFLAGS += -fPIC -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
 	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DANDROID -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
 	ifeq ($(VRENDER),opengl)
-		PLATCFLAGS += -DHAVE_GL
+		PLATCFLAGS += -DHAVE_OPENGL
 		LIBS += -lGLESv2
 		GLES = 1
 	endif
@@ -334,7 +334,7 @@ else ifneq (,$(findstring armv,$(platform)))
 		PLATCFLAGS += -mfloat-abi=hard
 	endif
 	ifeq ($(VRENDER),opengl)
-		PLATCFLAGS += -DHAVE_GL
+		PLATCFLAGS += -DHAVE_OPENGL
 		LIBS += -lGLESv2
 		GLES = 1
 	endif
@@ -352,7 +352,7 @@ else ifeq ($(platform), wincross)
 	CCOMFLAGS += -D__WIN32__
 	LDFLAGS += $(SHARED)
 	ifeq ($(VRENDER),opengl)
-		CCOMFLAGS += -DHAVE_GL
+		CCOMFLAGS += -DHAVE_OPENGL
 		LIBS += -lopengl32
 	endif
 	EXE = .exe
@@ -375,7 +375,7 @@ else
 	CCOMFLAGS += -D__WIN32__
 	LDFLAGS += $(SHARED)
 	ifeq ($(VRENDER),opengl)
-		CCOMFLAGS += -DHAVE_GL
+		CCOMFLAGS += -DHAVE_OPENGL
 		LIBS += -lopengl32
 	endif
 	EXE = .exe

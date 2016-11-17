@@ -72,7 +72,7 @@ unsigned int videoBuffer[1600*1200];
 retro_video_refresh_t video_cb = NULL;
 retro_environment_t environ_cb = NULL;
 
-#if defined(HAVE_GL)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
 #include "retroogl.c"
 #endif
 
@@ -587,7 +587,7 @@ void retro_run (void)
    process_keyboard_state();
    process_joypad_state();
 
-#ifdef HAVE_GL
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
    do_glflush();
 #else
    if (draw_this_frame)
@@ -611,8 +611,8 @@ bool retro_load_game(const struct retro_game_info *info)
     memset(videoBuffer, 0, 1600*1200*2*2);
 #endif
 
-#if defined(HAVE_GL)
-#ifdef GLES
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
+#if defined(HAVE_OPENGLES)
     hw_render.context_type = RETRO_HW_CONTEXT_OPENGLES2;
 #else
     hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;

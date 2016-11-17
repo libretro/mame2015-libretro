@@ -7,7 +7,7 @@
 #define MAX_BUTTONS 16
 #endif
 
-#if !defined(HAVE_GL) && !defined(HAVE_RGB32)
+#if !defined(HAVE_OPENGL) && !defined(HAVE_OPENGLES) && !defined(HAVE_RGB32)
 
 #ifndef M16B
 #define M16B
