@@ -11,6 +11,9 @@
 
 #define VERBOSE_LEVEL ( 0 )
 
+#if 1
+#define verboselog(...) ((void)0)
+#else
 INLINE void ATTR_PRINTF(3,4) verboselog( running_machine& machine, int n_level, const char *s_fmt, ... )
 {
 	if( VERBOSE_LEVEL >= n_level )
@@ -23,6 +26,7 @@ INLINE void ATTR_PRINTF(3,4) verboselog( running_machine& machine, int n_level, 
 		logerror( "%s: %s", machine.describe_context(), buf );
 	}
 }
+#endif
 
 const device_type PSX_SIO0 = &device_creator<psxsio0_device>;
 const device_type PSX_SIO1 = &device_creator<psxsio1_device>;
@@ -268,10 +272,12 @@ WRITE32_MEMBER( psxsio_device::write )
 		}
 		break;
 	case 3:
+#if 0
 		if( ACCESSING_BITS_0_15 )
 		{
 			verboselog( machine(), 0, "psx_sio_w( %08x, %08x, %08x )\n", offset, data, mem_mask );
 		}
+#endif
 		if( ACCESSING_BITS_16_31 )
 		{
 			m_baud = data >> 16;
@@ -298,6 +304,7 @@ READ32_MEMBER( psxsio_device::read )
 		break;
 	case 1:
 		data = m_status;
+#if 0
 		if( ACCESSING_BITS_0_15 )
 		{
 			verboselog( machine(), 1, "psx_sio_r %s status %04x\n", tag(), data & 0xffff );
@@ -306,9 +313,11 @@ READ32_MEMBER( psxsio_device::read )
 		{
 			verboselog( machine(), 0, "psx_sio_r( %08x, %08x ) %08x\n", offset, mem_mask, data );
 		}
+#endif
 		break;
 	case 2:
 		data = ( m_control << 16 ) | m_mode;
+#if 0
 		if( ACCESSING_BITS_0_15 )
 		{
 			verboselog( machine(), 1, "psx_sio_r %s mode %04x\n", tag(), data & 0xffff );
@@ -317,9 +326,11 @@ READ32_MEMBER( psxsio_device::read )
 		{
 			verboselog( machine(), 1, "psx_sio_r %s control %04x\n", tag(), data >> 16 );
 		}
+#endif
 		break;
 	case 3:
 		data = m_baud << 16;
+#if 0
 		if( ACCESSING_BITS_0_15 )
 		{
 			verboselog( machine(), 0, "psx_sio_r( %08x, %08x ) %08x\n", offset, mem_mask, data );
@@ -328,6 +339,7 @@ READ32_MEMBER( psxsio_device::read )
 		{
 			verboselog( machine(), 1, "psx_sio_r %s baud %04x\n", tag(), data >> 16 );
 		}
+#endif
 		break;
 	default:
 		data = 0;

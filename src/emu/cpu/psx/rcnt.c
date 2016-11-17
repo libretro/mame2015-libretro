@@ -11,6 +11,9 @@
 
 #define VERBOSE_LEVEL ( 0 )
 
+#if 1
+#define verboselog(...) ((void)0)
+#else
 INLINE void ATTR_PRINTF(3,4) verboselog( running_machine& machine, int n_level, const char *s_fmt, ... )
 {
 	if( VERBOSE_LEVEL >= n_level )
@@ -23,6 +26,7 @@ INLINE void ATTR_PRINTF(3,4) verboselog( running_machine& machine, int n_level, 
 		logerror( "%s: %s", machine.describe_context(), buf );
 	}
 }
+#endif
 
 const device_type PSX_RCNT = &device_creator<psxrcnt_device>;
 

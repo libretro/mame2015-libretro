@@ -12,6 +12,9 @@
 
 #define VERBOSE_LEVEL ( 0 )
 
+#if 1
+#define verboselog(...) ((void)0)
+#else
 INLINE void ATTR_PRINTF(3,4) verboselog( running_machine& machine, int n_level, const char *s_fmt, ... )
 {
 	if( VERBOSE_LEVEL >= n_level )
@@ -24,6 +27,7 @@ INLINE void ATTR_PRINTF(3,4) verboselog( running_machine& machine, int n_level, 
 		logerror( "%s: %s", machine.describe_context(), buf );
 	}
 }
+#endif
 
 const device_type PSX_DMA = &device_creator<psxdma_device>;
 
@@ -122,10 +126,12 @@ void psxdma_device::dma_interrupt_update()
 		m_dicr |= 0x80000000;
 		m_irq_handler(1);
 	}
+#if 0
 	else if( n_int != 0 )
 	{
 		verboselog( machine(), 2, "dma_interrupt_update( %02x, %02x ) interrupt not enabled\n", n_int, n_mask );
 	}
+#endif
 	m_dicr &= 0x00ffffff | ( m_dicr << 8 );
 }
 
@@ -338,15 +344,19 @@ WRITE32_MEMBER( psxdma_device::write )
 					}
 					dma_start_timer( index, 2150 );
 				}
+#if 0
 				else
 				{
 					verboselog( machine(), 1, "dma %d unknown mode %08x\n", index, dma->n_channelcontrol );
 				}
+#endif
 			}
+#if 0
 			else if( dma->n_channelcontrol != 0 )
 			{
 				verboselog( machine(), 1, "psx_dma_w( %04x, %08x, %08x ) channel not enabled\n", offset, dma->n_channelcontrol, mem_mask );
 			}
+#endif
 			break;
 		default:
 			verboselog( machine(), 1, "psx_dma_w( %04x, %08x, %08x ) Unknown dma channel register\n", offset, data, mem_mask );

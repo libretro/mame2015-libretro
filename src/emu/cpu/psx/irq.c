@@ -14,6 +14,9 @@
 
 #define PSX_IRQ_MASK ( 0x7fd )
 
+#if 1
+#define verboselog(...) ((void)0)
+#else
 INLINE void ATTR_PRINTF(3,4) verboselog( running_machine& machine, int n_level, const char *s_fmt, ... )
 {
 	if( VERBOSE_LEVEL >= n_level )
@@ -26,6 +29,7 @@ INLINE void ATTR_PRINTF(3,4) verboselog( running_machine& machine, int n_level, 
 		logerror( "%s: %s", machine.describe_context(), buf );
 	}
 }
+#endif
 
 const device_type PSX_IRQ = &device_creator<psxirq_device>;
 
@@ -89,10 +93,12 @@ WRITE32_MEMBER( psxirq_device::write )
 	case 0x01:
 		verboselog( machine(), 2, "psx irq mask ( %08x, %08x ) %08x -> %08x\n", data, mem_mask, n_irqmask, ( n_irqmask & ~mem_mask ) | data );
 		n_irqmask = ( n_irqmask & ~mem_mask ) | data;
+#if 0
 		if( ( n_irqmask &~ PSX_IRQ_MASK ) != 0 )
 		{
 			verboselog( machine(), 0, "psx_irq_w( %08x, %08x, %08x ) unknown irq\n", offset, data, mem_mask );
 		}
+#endif
 		psx_irq_update();
 		break;
 	default:
