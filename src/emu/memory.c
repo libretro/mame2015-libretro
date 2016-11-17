@@ -181,14 +181,6 @@
 //  DEBUGGING
 //**************************************************************************
 
-#define MEM_DUMP        (0)
-#define VERBOSE         (0)
-#define TEST_HANDLER    (0)
-
-#define VPRINTF(x)  do { if (VERBOSE) printf x; } while (0)
-
-
-
 //**************************************************************************
 //  CONSTANTS
 //**************************************************************************
@@ -857,141 +849,6 @@ public:
 			m_write(*this, _Large),
 			m_setoffset(*this, _Large)
 	{
-#if (TEST_HANDLER)
-		// test code to verify the read/write handlers are touching the correct bits
-		// and returning the correct results
-
-		// install some dummy RAM for the first 16 bytes with well-known values
-		UINT8 buffer[16];
-		for (int index = 0; index < 16; index++)
-			buffer[index ^ ((_Endian == ENDIANNESS_NATIVE) ? 0 : (data_width()/8 - 1))] = index * 0x11;
-		install_ram_generic(0x00, 0x0f, 0x0f, 0, ROW_READWRITE, buffer);
-		printf("\n\naddress_space(%d, %s, %s)\n", NATIVE_BITS, (_Endian == ENDIANNESS_LITTLE) ? "little" : "big", _Large ? "large" : "small");
-
-		// walk through the first 8 addresses
-		for (int address = 0; address < 8; address++)
-		{
-			// determine expected values
-			UINT64 expected64 = ((UINT64)((address + ((_Endian == ENDIANNESS_LITTLE) ? 7 : 0)) * 0x11) << 56) |
-								((UINT64)((address + ((_Endian == ENDIANNESS_LITTLE) ? 6 : 1)) * 0x11) << 48) |
-								((UINT64)((address + ((_Endian == ENDIANNESS_LITTLE) ? 5 : 2)) * 0x11) << 40) |
-								((UINT64)((address + ((_Endian == ENDIANNESS_LITTLE) ? 4 : 3)) * 0x11) << 32) |
-								((UINT64)((address + ((_Endian == ENDIANNESS_LITTLE) ? 3 : 4)) * 0x11) << 24) |
-								((UINT64)((address + ((_Endian == ENDIANNESS_LITTLE) ? 2 : 5)) * 0x11) << 16) |
-								((UINT64)((address + ((_Endian == ENDIANNESS_LITTLE) ? 1 : 6)) * 0x11) <<  8) |
-								((UINT64)((address + ((_Endian == ENDIANNESS_LITTLE) ? 0 : 7)) * 0x11) <<  0);
-			UINT32 expected32 = (_Endian == ENDIANNESS_LITTLE) ? expected64 : (expected64 >> 32);
-			UINT16 expected16 = (_Endian == ENDIANNESS_LITTLE) ? expected32 : (expected32 >> 16);
-			UINT8 expected8 = (_Endian == ENDIANNESS_LITTLE) ? expected16 : (expected16 >> 8);
-
-			UINT64 result64;
-			UINT32 result32;
-			UINT16 result16;
-			UINT8 result8;
-
-			// validate byte accesses
-			printf("\nAddress %d\n", address);
-			printf("   read_byte = "); printf("%02X\n", result8 = read_byte(address)); assert(result8 == expected8);
-
-			// validate word accesses (if aligned)
-			if (address % 2 == 0) { printf("   read_word = "); printf("%04X\n", result16 = read_word(address)); assert(result16 == expected16); }
-			if (address % 2 == 0) { printf("   read_word (0xff00) = "); printf("%04X\n", result16 = read_word(address, 0xff00)); assert((result16 & 0xff00) == (expected16 & 0xff00)); }
-			if (address % 2 == 0) { printf("             (0x00ff) = "); printf("%04X\n", result16 = read_word(address, 0x00ff)); assert((result16 & 0x00ff) == (expected16 & 0x00ff)); }
-
-			// validate unaligned word accesses
-			printf("   read_word_unaligned = "); printf("%04X\n", result16 = read_word_unaligned(address)); assert(result16 == expected16);
-			printf("   read_word_unaligned (0xff00) = "); printf("%04X\n", result16 = read_word_unaligned(address, 0xff00)); assert((result16 & 0xff00) == (expected16 & 0xff00));
-			printf("                       (0x00ff) = "); printf("%04X\n", result16 = read_word_unaligned(address, 0x00ff)); assert((result16 & 0x00ff) == (expected16 & 0x00ff));
-
-			// validate dword acceses (if aligned)
-			if (address % 4 == 0) { printf("   read_dword = "); printf("%08X\n", result32 = read_dword(address)); assert(result32 == expected32); }
-			if (address % 4 == 0) { printf("   read_dword (0xff000000) = "); printf("%08X\n", result32 = read_dword(address, 0xff000000)); assert((result32 & 0xff000000) == (expected32 & 0xff000000)); }
-			if (address % 4 == 0) { printf("              (0x00ff0000) = "); printf("%08X\n", result32 = read_dword(address, 0x00ff0000)); assert((result32 & 0x00ff0000) == (expected32 & 0x00ff0000)); }
-			if (address % 4 == 0) { printf("              (0x0000ff00) = "); printf("%08X\n", result32 = read_dword(address, 0x0000ff00)); assert((result32 & 0x0000ff00) == (expected32 & 0x0000ff00)); }
-			if (address % 4 == 0) { printf("              (0x000000ff) = "); printf("%08X\n", result32 = read_dword(address, 0x000000ff)); assert((result32 & 0x000000ff) == (expected32 & 0x000000ff)); }
-			if (address % 4 == 0) { printf("              (0xffff0000) = "); printf("%08X\n", result32 = read_dword(address, 0xffff0000)); assert((result32 & 0xffff0000) == (expected32 & 0xffff0000)); }
-			if (address % 4 == 0) { printf("              (0x0000ffff) = "); printf("%08X\n", result32 = read_dword(address, 0x0000ffff)); assert((result32 & 0x0000ffff) == (expected32 & 0x0000ffff)); }
-			if (address % 4 == 0) { printf("              (0xffffff00) = "); printf("%08X\n", result32 = read_dword(address, 0xffffff00)); assert((result32 & 0xffffff00) == (expected32 & 0xffffff00)); }
-			if (address % 4 == 0) { printf("              (0x00ffffff) = "); printf("%08X\n", result32 = read_dword(address, 0x00ffffff)); assert((result32 & 0x00ffffff) == (expected32 & 0x00ffffff)); }
-
-			// validate unaligned dword accesses
-			printf("   read_dword_unaligned = "); printf("%08X\n", result32 = read_dword_unaligned(address)); assert(result32 == expected32);
-			printf("   read_dword_unaligned (0xff000000) = "); printf("%08X\n", result32 = read_dword_unaligned(address, 0xff000000)); assert((result32 & 0xff000000) == (expected32 & 0xff000000));
-			printf("                        (0x00ff0000) = "); printf("%08X\n", result32 = read_dword_unaligned(address, 0x00ff0000)); assert((result32 & 0x00ff0000) == (expected32 & 0x00ff0000));
-			printf("                        (0x0000ff00) = "); printf("%08X\n", result32 = read_dword_unaligned(address, 0x0000ff00)); assert((result32 & 0x0000ff00) == (expected32 & 0x0000ff00));
-			printf("                        (0x000000ff) = "); printf("%08X\n", result32 = read_dword_unaligned(address, 0x000000ff)); assert((result32 & 0x000000ff) == (expected32 & 0x000000ff));
-			printf("                        (0xffff0000) = "); printf("%08X\n", result32 = read_dword_unaligned(address, 0xffff0000)); assert((result32 & 0xffff0000) == (expected32 & 0xffff0000));
-			printf("                        (0x0000ffff) = "); printf("%08X\n", result32 = read_dword_unaligned(address, 0x0000ffff)); assert((result32 & 0x0000ffff) == (expected32 & 0x0000ffff));
-			printf("                        (0xffffff00) = "); printf("%08X\n", result32 = read_dword_unaligned(address, 0xffffff00)); assert((result32 & 0xffffff00) == (expected32 & 0xffffff00));
-			printf("                        (0x00ffffff) = "); printf("%08X\n", result32 = read_dword_unaligned(address, 0x00ffffff)); assert((result32 & 0x00ffffff) == (expected32 & 0x00ffffff));
-
-			// validate qword acceses (if aligned)
-			if (address % 8 == 0) { printf("   read_qword = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address), 16)); assert(result64 == expected64); }
-			if (address % 8 == 0) { printf("   read_qword (0xff00000000000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0xff00000000000000)), 16)); assert((result64 & U64(0xff00000000000000)) == (expected64 & U64(0xff00000000000000))); }
-			if (address % 8 == 0) { printf("              (0x00ff000000000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x00ff000000000000)), 16)); assert((result64 & U64(0x00ff000000000000)) == (expected64 & U64(0x00ff000000000000))); }
-			if (address % 8 == 0) { printf("              (0x0000ff0000000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x0000ff0000000000)), 16)); assert((result64 & U64(0x0000ff0000000000)) == (expected64 & U64(0x0000ff0000000000))); }
-			if (address % 8 == 0) { printf("              (0x000000ff00000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x000000ff00000000)), 16)); assert((result64 & U64(0x000000ff00000000)) == (expected64 & U64(0x000000ff00000000))); }
-			if (address % 8 == 0) { printf("              (0x00000000ff000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x00000000ff000000)), 16)); assert((result64 & U64(0x00000000ff000000)) == (expected64 & U64(0x00000000ff000000))); }
-			if (address % 8 == 0) { printf("              (0x0000000000ff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x0000000000ff0000)), 16)); assert((result64 & U64(0x0000000000ff0000)) == (expected64 & U64(0x0000000000ff0000))); }
-			if (address % 8 == 0) { printf("              (0x000000000000ff00) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x000000000000ff00)), 16)); assert((result64 & U64(0x000000000000ff00)) == (expected64 & U64(0x000000000000ff00))); }
-			if (address % 8 == 0) { printf("              (0x00000000000000ff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x00000000000000ff)), 16)); assert((result64 & U64(0x00000000000000ff)) == (expected64 & U64(0x00000000000000ff))); }
-			if (address % 8 == 0) { printf("              (0xffff000000000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0xffff000000000000)), 16)); assert((result64 & U64(0xffff000000000000)) == (expected64 & U64(0xffff000000000000))); }
-			if (address % 8 == 0) { printf("              (0x0000ffff00000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x0000ffff00000000)), 16)); assert((result64 & U64(0x0000ffff00000000)) == (expected64 & U64(0x0000ffff00000000))); }
-			if (address % 8 == 0) { printf("              (0x00000000ffff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x00000000ffff0000)), 16)); assert((result64 & U64(0x00000000ffff0000)) == (expected64 & U64(0x00000000ffff0000))); }
-			if (address % 8 == 0) { printf("              (0x000000000000ffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x000000000000ffff)), 16)); assert((result64 & U64(0x000000000000ffff)) == (expected64 & U64(0x000000000000ffff))); }
-			if (address % 8 == 0) { printf("              (0xffffff0000000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0xffffff0000000000)), 16)); assert((result64 & U64(0xffffff0000000000)) == (expected64 & U64(0xffffff0000000000))); }
-			if (address % 8 == 0) { printf("              (0x0000ffffff000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x0000ffffff000000)), 16)); assert((result64 & U64(0x0000ffffff000000)) == (expected64 & U64(0x0000ffffff000000))); }
-			if (address % 8 == 0) { printf("              (0x000000ffffff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x000000ffffff0000)), 16)); assert((result64 & U64(0x000000ffffff0000)) == (expected64 & U64(0x000000ffffff0000))); }
-			if (address % 8 == 0) { printf("              (0x0000000000ffffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x0000000000ffffff)), 16)); assert((result64 & U64(0x0000000000ffffff)) == (expected64 & U64(0x0000000000ffffff))); }
-			if (address % 8 == 0) { printf("              (0xffffffff00000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0xffffffff00000000)), 16)); assert((result64 & U64(0xffffffff00000000)) == (expected64 & U64(0xffffffff00000000))); }
-			if (address % 8 == 0) { printf("              (0x00ffffffff000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x00ffffffff000000)), 16)); assert((result64 & U64(0x00ffffffff000000)) == (expected64 & U64(0x00ffffffff000000))); }
-			if (address % 8 == 0) { printf("              (0x0000ffffffff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x0000ffffffff0000)), 16)); assert((result64 & U64(0x0000ffffffff0000)) == (expected64 & U64(0x0000ffffffff0000))); }
-			if (address % 8 == 0) { printf("              (0x000000ffffffff00) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x000000ffffffff00)), 16)); assert((result64 & U64(0x000000ffffffff00)) == (expected64 & U64(0x000000ffffffff00))); }
-			if (address % 8 == 0) { printf("              (0x00000000ffffffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x00000000ffffffff)), 16)); assert((result64 & U64(0x00000000ffffffff)) == (expected64 & U64(0x00000000ffffffff))); }
-			if (address % 8 == 0) { printf("              (0xffffffffff000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0xffffffffff000000)), 16)); assert((result64 & U64(0xffffffffff000000)) == (expected64 & U64(0xffffffffff000000))); }
-			if (address % 8 == 0) { printf("              (0x00ffffffffff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x00ffffffffff0000)), 16)); assert((result64 & U64(0x00ffffffffff0000)) == (expected64 & U64(0x00ffffffffff0000))); }
-			if (address % 8 == 0) { printf("              (0x0000ffffffffff00) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x0000ffffffffff00)), 16)); assert((result64 & U64(0x0000ffffffffff00)) == (expected64 & U64(0x0000ffffffffff00))); }
-			if (address % 8 == 0) { printf("              (0x000000ffffffffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x000000ffffffffff)), 16)); assert((result64 & U64(0x000000ffffffffff)) == (expected64 & U64(0x000000ffffffffff))); }
-			if (address % 8 == 0) { printf("              (0xffffffffffff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0xffffffffffff0000)), 16)); assert((result64 & U64(0xffffffffffff0000)) == (expected64 & U64(0xffffffffffff0000))); }
-			if (address % 8 == 0) { printf("              (0x00ffffffffffff00) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x00ffffffffffff00)), 16)); assert((result64 & U64(0x00ffffffffffff00)) == (expected64 & U64(0x00ffffffffffff00))); }
-			if (address % 8 == 0) { printf("              (0x0000ffffffffffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x0000ffffffffffff)), 16)); assert((result64 & U64(0x0000ffffffffffff)) == (expected64 & U64(0x0000ffffffffffff))); }
-			if (address % 8 == 0) { printf("              (0xffffffffffffff00) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0xffffffffffffff00)), 16)); assert((result64 & U64(0xffffffffffffff00)) == (expected64 & U64(0xffffffffffffff00))); }
-			if (address % 8 == 0) { printf("              (0x00ffffffffffffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword(address, U64(0x00ffffffffffffff)), 16)); assert((result64 & U64(0x00ffffffffffffff)) == (expected64 & U64(0x00ffffffffffffff))); }
-
-			// validate unaligned qword accesses
-			printf("   read_qword_unaligned = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address), 16)); assert(result64 == expected64);
-			printf("   read_qword_unaligned (0xff00000000000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0xff00000000000000)), 16)); assert((result64 & U64(0xff00000000000000)) == (expected64 & U64(0xff00000000000000)));
-			printf("                        (0x00ff000000000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x00ff000000000000)), 16)); assert((result64 & U64(0x00ff000000000000)) == (expected64 & U64(0x00ff000000000000)));
-			printf("                        (0x0000ff0000000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x0000ff0000000000)), 16)); assert((result64 & U64(0x0000ff0000000000)) == (expected64 & U64(0x0000ff0000000000)));
-			printf("                        (0x000000ff00000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x000000ff00000000)), 16)); assert((result64 & U64(0x000000ff00000000)) == (expected64 & U64(0x000000ff00000000)));
-			printf("                        (0x00000000ff000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x00000000ff000000)), 16)); assert((result64 & U64(0x00000000ff000000)) == (expected64 & U64(0x00000000ff000000)));
-			printf("                        (0x0000000000ff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x0000000000ff0000)), 16)); assert((result64 & U64(0x0000000000ff0000)) == (expected64 & U64(0x0000000000ff0000)));
-			printf("                        (0x000000000000ff00) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x000000000000ff00)), 16)); assert((result64 & U64(0x000000000000ff00)) == (expected64 & U64(0x000000000000ff00)));
-			printf("                        (0x00000000000000ff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x00000000000000ff)), 16)); assert((result64 & U64(0x00000000000000ff)) == (expected64 & U64(0x00000000000000ff)));
-			printf("                        (0xffff000000000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0xffff000000000000)), 16)); assert((result64 & U64(0xffff000000000000)) == (expected64 & U64(0xffff000000000000)));
-			printf("                        (0x0000ffff00000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x0000ffff00000000)), 16)); assert((result64 & U64(0x0000ffff00000000)) == (expected64 & U64(0x0000ffff00000000)));
-			printf("                        (0x00000000ffff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x00000000ffff0000)), 16)); assert((result64 & U64(0x00000000ffff0000)) == (expected64 & U64(0x00000000ffff0000)));
-			printf("                        (0x000000000000ffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x000000000000ffff)), 16)); assert((result64 & U64(0x000000000000ffff)) == (expected64 & U64(0x000000000000ffff)));
-			printf("                        (0xffffff0000000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0xffffff0000000000)), 16)); assert((result64 & U64(0xffffff0000000000)) == (expected64 & U64(0xffffff0000000000)));
-			printf("                        (0x0000ffffff000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x0000ffffff000000)), 16)); assert((result64 & U64(0x0000ffffff000000)) == (expected64 & U64(0x0000ffffff000000)));
-			printf("                        (0x000000ffffff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x000000ffffff0000)), 16)); assert((result64 & U64(0x000000ffffff0000)) == (expected64 & U64(0x000000ffffff0000)));
-			printf("                        (0x0000000000ffffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x0000000000ffffff)), 16)); assert((result64 & U64(0x0000000000ffffff)) == (expected64 & U64(0x0000000000ffffff)));
-			printf("                        (0xffffffff00000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0xffffffff00000000)), 16)); assert((result64 & U64(0xffffffff00000000)) == (expected64 & U64(0xffffffff00000000)));
-			printf("                        (0x00ffffffff000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x00ffffffff000000)), 16)); assert((result64 & U64(0x00ffffffff000000)) == (expected64 & U64(0x00ffffffff000000)));
-			printf("                        (0x0000ffffffff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x0000ffffffff0000)), 16)); assert((result64 & U64(0x0000ffffffff0000)) == (expected64 & U64(0x0000ffffffff0000)));
-			printf("                        (0x000000ffffffff00) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x000000ffffffff00)), 16)); assert((result64 & U64(0x000000ffffffff00)) == (expected64 & U64(0x000000ffffffff00)));
-			printf("                        (0x00000000ffffffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x00000000ffffffff)), 16)); assert((result64 & U64(0x00000000ffffffff)) == (expected64 & U64(0x00000000ffffffff)));
-			printf("                        (0xffffffffff000000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0xffffffffff000000)), 16)); assert((result64 & U64(0xffffffffff000000)) == (expected64 & U64(0xffffffffff000000)));
-			printf("                        (0x00ffffffffff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x00ffffffffff0000)), 16)); assert((result64 & U64(0x00ffffffffff0000)) == (expected64 & U64(0x00ffffffffff0000)));
-			printf("                        (0x0000ffffffffff00) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x0000ffffffffff00)), 16)); assert((result64 & U64(0x0000ffffffffff00)) == (expected64 & U64(0x0000ffffffffff00)));
-			printf("                        (0x000000ffffffffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x000000ffffffffff)), 16)); assert((result64 & U64(0x000000ffffffffff)) == (expected64 & U64(0x000000ffffffffff)));
-			printf("                        (0xffffffffffff0000) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0xffffffffffff0000)), 16)); assert((result64 & U64(0xffffffffffff0000)) == (expected64 & U64(0xffffffffffff0000)));
-			printf("                        (0x00ffffffffffff00) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x00ffffffffffff00)), 16)); assert((result64 & U64(0x00ffffffffffff00)) == (expected64 & U64(0x00ffffffffffff00)));
-			printf("                        (0x0000ffffffffffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x0000ffffffffffff)), 16)); assert((result64 & U64(0x0000ffffffffffff)) == (expected64 & U64(0x0000ffffffffffff)));
-			printf("                        (0xffffffffffffff00) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0xffffffffffffff00)), 16)); assert((result64 & U64(0xffffffffffffff00)) == (expected64 & U64(0xffffffffffffff00)));
-			printf("                        (0x00ffffffffffffff) = "); printf("%s\n", core_i64_hex_format(result64 = read_qword_unaligned(address, U64(0x00ffffffffffffff)), 16)); assert((result64 & U64(0x00ffffffffffffff)) == (expected64 & U64(0x00ffffffffffffff)));
-		}
-#endif
 	}
 
 	// accessors
@@ -1053,8 +910,6 @@ public:
 	// native read
 	_NativeType read_native(offs_t offset, _NativeType mask)
 	{
-		if (TEST_HANDLER) printf("[r%X,%s]", offset, core_i64_hex_format(mask, sizeof(_NativeType) * 2));
-
 		// look up the handler
 		offs_t byteaddress = offset & m_bytemask;
 		UINT32 entry = read_lookup(byteaddress);
@@ -1075,8 +930,6 @@ public:
 	// mask-less native read
 	_NativeType read_native(offs_t offset)
 	{
-		if (TEST_HANDLER) printf("[r%X]", offset);
-
 		// look up the handler
 		offs_t byteaddress = offset & m_bytemask;
 		UINT32 entry = read_lookup(byteaddress);
@@ -1617,15 +1470,6 @@ void memory_manager::region_free(const char *name)
 
 static void generate_memdump(running_machine &machine)
 {
-	if (MEM_DUMP)
-	{
-		FILE *file = fopen("memdump.log", "w");
-		if (file)
-		{
-			machine.memory().dump(file);
-			fclose(file);
-		}
-	}
 }
 
 
@@ -1828,7 +1672,6 @@ void address_space::prepare_map()
 			astring fulltag;
 			if (manager().m_sharelist.find(entry->m_devbase.subtag(fulltag, entry->m_share).cstr()) == NULL)
 			{
-				VPRINTF(("Creating share '%s' of length 0x%X\n", fulltag.cstr(), entry->m_byteend + 1 - entry->m_bytestart));
 				memory_share *share = global_alloc(memory_share(m_map->m_databits, entry->m_byteend + 1 - entry->m_bytestart, endianness()));
 				manager().m_sharelist.append(fulltag, *share);
 			}
@@ -2080,7 +1923,6 @@ void address_space::locate_memory()
 				if (entry->m_bytestart == bank->bytestart() && entry->m_memory != NULL)
 				{
 					bank->set_base(entry->m_memory);
-					VPRINTF(("assigned bank '%s' pointer to memory from range %08X-%08X [%p]\n", bank->tag(), entry->m_addrstart, entry->m_addrend, entry->m_memory));
 					break;
 				}
 
@@ -2146,22 +1988,12 @@ address_map_entry *address_space::block_assign_intersecting(offs_t bytestart, of
 			astring fulltag;
 			memory_share *share = manager().m_sharelist.find(entry->m_devbase.subtag(fulltag, entry->m_share).cstr());
 			if (share != NULL && share->ptr() != NULL)
-			{
 				entry->m_memory = share->ptr();
-				VPRINTF(("memory range %08X-%08X -> shared_ptr '%s' [%p]\n", entry->m_addrstart, entry->m_addrend, entry->m_share, entry->m_memory));
-			}
-			else
-			{
-				VPRINTF(("memory range %08X-%08X -> shared_ptr '%s' but not found\n", entry->m_addrstart, entry->m_addrend, entry->m_share));
-			}
 		}
 
 		// otherwise, look for a match in this block
 		if (entry->m_memory == NULL && entry->m_bytestart >= bytestart && entry->m_byteend <= byteend)
-		{
 			entry->m_memory = base + (entry->m_bytestart - bytestart);
-			VPRINTF(("memory range %08X-%08X -> found in block from %08X-%08X [%p]\n", entry->m_addrstart, entry->m_addrend, bytestart, byteend, entry->m_memory));
-		}
 
 		// if we're the first match on a shared pointer, assign it now
 		if (entry->m_memory != NULL && entry->m_share != NULL)
@@ -2169,10 +2001,7 @@ address_map_entry *address_space::block_assign_intersecting(offs_t bytestart, of
 			astring fulltag;
 			memory_share *share = manager().m_sharelist.find(entry->m_devbase.subtag(fulltag, entry->m_share).cstr());
 			if (share != NULL && share->ptr() == NULL)
-			{
 				share->set_ptr(entry->m_memory);
-				VPRINTF(("setting shared_ptr '%s' = %p\n", entry->m_share, entry->m_memory));
-			}
 		}
 
 		// keep track of the first unassigned entry
@@ -2236,12 +2065,6 @@ void address_space::dump_map(FILE *file, read_or_write readorwrite)
 
 void address_space::unmap_generic(offs_t addrstart, offs_t addrend, offs_t addrmask, offs_t addrmirror, read_or_write readorwrite, bool quiet)
 {
-	VPRINTF(("address_space::unmap(%s-%s mask=%s mirror=%s, %s, %s)\n",
-				core_i64_hex_format(addrstart, m_addrchars), core_i64_hex_format(addrend, m_addrchars),
-				core_i64_hex_format(addrmask, m_addrchars), core_i64_hex_format(addrmirror, m_addrchars),
-				(readorwrite == ROW_READ) ? "read" : (readorwrite == ROW_WRITE) ? "write" : (readorwrite == ROW_READWRITE) ? "read/write" : "??",
-				quiet ? "quiet" : "normal"));
-
 	// read space
 	if (readorwrite == ROW_READ || readorwrite == ROW_READWRITE)
 		read().map_range(addrstart, addrend, addrmask, addrmirror, quiet ? STATIC_NOP : STATIC_UNMAP);
@@ -2273,11 +2096,6 @@ void address_space::install_device_delegate(offs_t addrstart, offs_t addrend, de
 
 void address_space::install_readwrite_port(offs_t addrstart, offs_t addrend, offs_t addrmask, offs_t addrmirror, const char *rtag, const char *wtag)
 {
-	VPRINTF(("address_space::install_readwrite_port(%s-%s mask=%s mirror=%s, read=\"%s\" / write=\"%s\")\n",
-				core_i64_hex_format(addrstart, m_addrchars), core_i64_hex_format(addrend, m_addrchars),
-				core_i64_hex_format(addrmask, m_addrchars), core_i64_hex_format(addrmirror, m_addrchars),
-				(rtag != NULL) ? rtag : "(none)", (wtag != NULL) ? wtag : "(none)"));
-
 	// read handler
 	if (rtag != NULL)
 	{
@@ -2315,11 +2133,6 @@ void address_space::install_readwrite_port(offs_t addrstart, offs_t addrend, off
 
 void address_space::install_bank_generic(offs_t addrstart, offs_t addrend, offs_t addrmask, offs_t addrmirror, const char *rtag, const char *wtag)
 {
-	VPRINTF(("address_space::install_readwrite_bank(%s-%s mask=%s mirror=%s, read=\"%s\" / write=\"%s\")\n",
-				core_i64_hex_format(addrstart, m_addrchars), core_i64_hex_format(addrend, m_addrchars),
-				core_i64_hex_format(addrmask, m_addrchars), core_i64_hex_format(addrmirror, m_addrchars),
-				(rtag != NULL) ? rtag : "(none)", (wtag != NULL) ? wtag : "(none)"));
-
 	// map the read bank
 	if (rtag != NULL)
 	{
@@ -2350,12 +2163,6 @@ void address_space::install_bank_generic(offs_t addrstart, offs_t addrend, offs_
 
 void *address_space::install_ram_generic(offs_t addrstart, offs_t addrend, offs_t addrmask, offs_t addrmirror, read_or_write readorwrite, void *baseptr)
 {
-	VPRINTF(("address_space::install_ram_generic(%s-%s mask=%s mirror=%s, %s, %p)\n",
-				core_i64_hex_format(addrstart, m_addrchars), core_i64_hex_format(addrend, m_addrchars),
-				core_i64_hex_format(addrmask, m_addrchars), core_i64_hex_format(addrmirror, m_addrchars),
-				(readorwrite == ROW_READ) ? "read" : (readorwrite == ROW_WRITE) ? "write" : (readorwrite == ROW_READWRITE) ? "read/write" : "??",
-				baseptr));
-
 	// map for read
 	if (readorwrite == ROW_READ || readorwrite == ROW_READWRITE)
 	{
@@ -2425,11 +2232,6 @@ void *address_space::install_ram_generic(offs_t addrstart, offs_t addrend, offs_
 
 UINT8 *address_space::install_read_handler(offs_t addrstart, offs_t addrend, offs_t addrmask, offs_t addrmirror, read8_delegate handler, UINT64 unitmask)
 {
-	VPRINTF(("address_space::install_read_handler(%s-%s mask=%s mirror=%s, %s, %s)\n",
-				core_i64_hex_format(addrstart, m_addrchars), core_i64_hex_format(addrend, m_addrchars),
-				core_i64_hex_format(addrmask, m_addrchars), core_i64_hex_format(addrmirror, m_addrchars),
-				handler.name(), core_i64_hex_format(unitmask, data_width() / 4)));
-
 	read().handler_map_range(addrstart, addrend, addrmask, addrmirror, unitmask).set_delegate(handler);
 	generate_memdump(machine());
 	return reinterpret_cast<UINT8 *>(find_backing_memory(addrstart, addrend));
@@ -2437,11 +2239,6 @@ UINT8 *address_space::install_read_handler(offs_t addrstart, offs_t addrend, off
 
 UINT8 *address_space::install_write_handler(offs_t addrstart, offs_t addrend, offs_t addrmask, offs_t addrmirror, write8_delegate handler, UINT64 unitmask)
 {
-	VPRINTF(("address_space::install_write_handler(%s-%s mask=%s mirror=%s, %s, %s)\n",
-				core_i64_hex_format(addrstart, m_addrchars), core_i64_hex_format(addrend, m_addrchars),
-				core_i64_hex_format(addrmask, m_addrchars), core_i64_hex_format(addrmirror, m_addrchars),
-				handler.name(), core_i64_hex_format(unitmask, data_width() / 4)));
-
 	write().handler_map_range(addrstart, addrend, addrmask, addrmirror, unitmask).set_delegate(handler);
 	generate_memdump(machine());
 	return reinterpret_cast<UINT8 *>(find_backing_memory(addrstart, addrend));
@@ -2538,11 +2335,6 @@ UINT64 *address_space::install_readwrite_handler(offs_t addrstart, offs_t addren
 
 void address_space::install_setoffset_handler(offs_t addrstart, offs_t addrend, offs_t addrmask, offs_t addrmirror, setoffset_delegate handler, UINT64 unitmask)
 {
-	VPRINTF(("address_space::install_setoffset_handler(%s-%s mask=%s mirror=%s, %s, %s)\n",
-				core_i64_hex_format(addrstart, m_addrchars), core_i64_hex_format(addrend, m_addrchars),
-				core_i64_hex_format(addrmask, m_addrchars), core_i64_hex_format(addrmirror, m_addrchars),
-				handler.name(), core_i64_hex_format(unitmask, data_width() / 4)));
-
 	setoffset().handler_map_range(addrstart, addrend, addrmask, addrmirror, unitmask).set_delegate(handler);
 }
 
@@ -2561,8 +2353,6 @@ void *address_space::find_backing_memory(offs_t addrstart, offs_t addrend)
 	offs_t bytestart = address_to_byte(addrstart);
 	offs_t byteend = address_to_byte_end(addrend);
 
-	VPRINTF(("address_space::find_backing_memory('%s',%s,%08X-%08X) -> ", m_device.tag(), m_name, bytestart, byteend));
-
 	if (m_map == NULL)
 		return NULL;
 
@@ -2572,21 +2362,14 @@ void *address_space::find_backing_memory(offs_t addrstart, offs_t addrend)
 		offs_t maskstart = bytestart & entry->m_bytemask;
 		offs_t maskend = byteend & entry->m_bytemask;
 		if (entry->m_memory != NULL && maskstart >= entry->m_bytestart && maskend <= entry->m_byteend)
-		{
-			VPRINTF(("found in entry %08X-%08X [%p]\n", entry->m_addrstart, entry->m_addrend, (UINT8 *)entry->m_memory + (maskstart - entry->m_bytestart)));
 			return (UINT8 *)entry->m_memory + (maskstart - entry->m_bytestart);
-		}
 	}
 
 	// if not found there, look in the allocated blocks
 	for (memory_block *block = manager().m_blocklist.first(); block != NULL; block = block->next())
 		if (block->contains(*this, bytestart, byteend))
-		{
-			VPRINTF(("found in allocated memory block %08X-%08X [%p]\n", block->bytestart(), block->byteend(), block->data() + (bytestart - block->bytestart())));
 			return block->data() + bytestart - block->bytestart();
-		}
 
-	VPRINTF(("did not find\n"));
 	return NULL;
 }
 
@@ -3113,8 +2896,6 @@ void address_table::populate_range_mirrored(offs_t bytestart, offs_t byteend, of
 		{
 			if (hmirrorcount != 0 && prev_entry == m_table[cur_index])
 			{
-				VPRINTF(("Quick mapping subtable at %08X to match subtable at %08X\n", cur_index << level2_bits(), prev_index << level2_bits()));
-
 				// release the subtable if the old value was a subtable
 				if (m_table[cur_index] >= SUBTABLE_BASE)
 					subtable_release(m_table[cur_index]);
@@ -3332,8 +3113,6 @@ int address_table::subtable_merge()
 	int merged = 0;
 	UINT16 subindex;
 
-	VPRINTF(("Merging subtables....\n"));
-
 	// okay, we failed; update all the checksums and merge tables
 	for (subindex = 0; subindex < SUBTABLE_COUNT; subindex++)
 		if (!m_subtable[subindex].m_checksum_valid && m_subtable[subindex].m_usecount != 0)
@@ -3362,8 +3141,6 @@ int address_table::subtable_merge()
 					!memcmp(subtable, subtable_ptr(sumindex + SUBTABLE_BASE), 2*(1 << level2_bits())))
 				{
 					int l1index;
-
-					VPRINTF(("Merging subtable %d and %d....\n", subindex, sumindex));
 
 					// find all the entries in the L1 tables that pointed to the old one, and point them to the merged table
 					for (l1index = 0; l1index <= (0xffffffffUL >> level2_bits()); l1index++)
@@ -3831,7 +3608,6 @@ memory_block::memory_block(address_space &space, offs_t bytestart, offs_t byteen
 		m_byteend(byteend),
 		m_data(reinterpret_cast<UINT8 *>(memory))
 {
-	VPRINTF(("block_allocate('%s',%s,%08X,%08X,%p)\n", space.device().tag(), space.name(), bytestart, byteend, memory));
 
 	// allocate a block if needed
 	if (m_data == NULL)
@@ -3853,10 +3629,7 @@ memory_block::memory_block(address_space &space, offs_t bytestart, offs_t byteen
 	memory_region *region;
 	for (region = space.machine().memory().first_region(); region != NULL; region = region->next())
 		if (m_data >= region->base() && (m_data + (byteend - bytestart + 1)) < region->end())
-		{
-			VPRINTF(("skipping save of this memory block as it is covered by a memory region\n"));
 			break;
-		}
 
 	// if we didn't find a match, register
 	if (region == NULL)
