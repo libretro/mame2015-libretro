@@ -48,15 +48,6 @@ private:
 	static inline UINT32 dest_g(_PixelType pixel) { return (pixel >> _DstShiftG) & (0xff >> _SrcShiftG); }
 	static inline UINT32 dest_b(_PixelType pixel) { return (pixel >> _DstShiftB) & (0xff >> _SrcShiftB); }
 
-	// generic conversion with special optimization for destinations in the standard format
-	static inline _PixelType source32_to_dest(UINT32 pixel)
-	{
-		if (_SrcShiftR == 0 && _SrcShiftG == 0 && _SrcShiftB == 0 && _DstShiftR == 16 && _DstShiftG == 8 && _DstShiftB == 0)
-			return pixel;
-      return dest_assemble_rgb(source32_r(pixel), source32_g(pixel), source32_b(pixel));
-	}
-
-
 	//-------------------------------------------------
 	//  ycc_to_rgb - convert YCC to RGB; the YCC pixel
 	//  contains Y in the LSB, Cb << 8, and Cr << 16
@@ -470,7 +461,11 @@ private:
 				for (INT32 x = setup.startx; x < endx; x++)
 				{
 					UINT32 pix = get_texel_palette16(prim.texture, curu, curv);
-					*dest++ = source32_to_dest(pix);
+               bool assem = _SrcShiftR == 0 && _SrcShiftG == 0 && _SrcShiftB == 0 && _DstShiftR == 16 && _DstShiftG == 8 && _DstShiftB == 0;
+               if (assem)
+                  *dest++ = pix;
+               else
+                  *dest++ = dest_assemble_rgb(source32_r(pix), source32_g(pix), source32_b(pix));
 					curu += dudx;
 					curv += dvdx;
 				}
@@ -768,7 +763,11 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = ycc_to_rgb(get_texel_yuy16(prim.texture, curu, curv));
-						*dest++ = source32_to_dest(pix);
+                  bool assem = _SrcShiftR == 0 && _SrcShiftG == 0 && _SrcShiftB == 0 && _DstShiftR == 16 && _DstShiftG == 8 && _DstShiftB == 0;
+                  if (assem)
+                  *dest++ = pix;
+                  else
+                  *dest++ = dest_assemble_rgb(source32_r(pix), source32_g(pix), source32_b(pix));
 						curu += dudx;
 						curv += dvdx;
 					}
@@ -781,7 +780,11 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = ycc_to_rgb(get_texel_yuy16(prim.texture, curu, curv));
-						*dest++ = source32_to_dest(pix);
+                  bool assem = _SrcShiftR == 0 && _SrcShiftG == 0 && _SrcShiftB == 0 && _DstShiftR == 16 && _DstShiftG == 8 && _DstShiftB == 0;
+                  if (assem)
+                  *dest++ = pix;
+                  else
+                  *dest++ = dest_assemble_rgb(source32_r(pix), source32_g(pix), source32_b(pix));
 						curu += dudx;
 						curv += dvdx;
 					}
@@ -939,8 +942,12 @@ private:
 					{
                   const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
                   UINT32 pix = texbase[0];
+                  bool assem = _SrcShiftR == 0 && _SrcShiftG == 0 && _SrcShiftB == 0 && _DstShiftR == 16 && _DstShiftG == 8 && _DstShiftB == 0;
 
-						*dest++ = source32_to_dest(pix);
+                  if (assem)
+                  *dest++ = pix;
+                  else
+                  *dest++ = dest_assemble_rgb(source32_r(pix), source32_g(pix), source32_b(pix));
 						curu += dudx;
 						curv += dvdx;
 					}
