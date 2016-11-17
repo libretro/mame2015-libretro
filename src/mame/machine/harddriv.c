@@ -275,9 +275,11 @@ READ16_MEMBER( harddriv_state::hdc68k_wheel_r )
 	/* grab the new wheel value and upconvert to 12 bits */
 	UINT16 new_wheel = ioport("12BADC0")->read_safe(0xffff) << 4;
 
+#if 0
 	/* hack to display the wheel position */
 	if (space.machine().input().code_pressed(KEYCODE_LSHIFT))
 		popmessage("%04X", new_wheel);
+#endif
 
 	/* if we crossed the center line, latch the edge bit */
 	if ((m_hdc68k_last_wheel / 0xf0) != (new_wheel / 0xf0))
@@ -619,6 +621,7 @@ WRITE16_MEMBER( harddriv_state::hd68k_adsp_buffer_w )
 
 TIMER_CALLBACK_MEMBER(harddriv_state::deferred_adsp_bank_switch)
 {
+#if 0
 	if (LOG_COMMANDS && m_m68k_adsp_buffer_bank != param && machine().input().code_pressed(KEYCODE_L))
 	{
 		static FILE *commands;
@@ -662,6 +665,7 @@ TIMER_CALLBACK_MEMBER(harddriv_state::deferred_adsp_bank_switch)
 				fprintf(commands, "  %04X\n", *current++);
 		}
 	}
+#endif
 
 	m_m68k_adsp_buffer_bank = param;
 	logerror("ADSP bank = %d\n", param);

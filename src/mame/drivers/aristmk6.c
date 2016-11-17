@@ -35,6 +35,7 @@ UINT32 aristmk6_state::screen_update_aristmk6(screen_device &screen, bitmap_rgb3
 	int x,y,count;
 	const UINT8 *blit_ram = memregion("maincpu")->base();
 
+#if 0
 	if(machine().input().code_pressed(KEYCODE_Z))
 		m_test_x++;
 
@@ -61,6 +62,7 @@ UINT32 aristmk6_state::screen_update_aristmk6(screen_device &screen, bitmap_rgb3
 
 	if(machine().input().code_pressed_once(KEYCODE_L))
 		m_type^=1;
+#endif
 
 	popmessage("%d %d %04x %d",m_test_x,m_test_y,m_start_offs,m_type);
 
