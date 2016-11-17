@@ -114,10 +114,6 @@
 //  DEBUGGING
 //**************************************************************************
 
-#define LOG_NATURAL_KEYBOARD    0
-
-
-
 //**************************************************************************
 //  CONSTANTS
 //**************************************************************************
@@ -895,14 +891,6 @@ void natural_keyboard::post(unicode_char ch)
 	else
 		m_last_cr = (ch == '\r');
 
-	// logging
-	if (LOG_NATURAL_KEYBOARD)
-	{
-		const keycode_map_entry *code = find_code(ch);
-		astring tempstr;
-		logerror("natural_keyboard::post(): code=%i (%s) field->name='%s'\n", int(ch), unicode_to_string(tempstr, ch), (code != NULL && code->field[0] != NULL) ? code->field[0]->name() : "<null>");
-	}
-
 	// can we post this key in the queue directly?
 	if (can_post_directly(ch))
 		internal_post(ch);
@@ -1100,12 +1088,6 @@ void natural_keyboard::build_codes(ioport_manager &manager)
 							}
 							newcode.ch = code;
 							m_keycode_map.append(newcode);
-
-							if (LOG_NATURAL_KEYBOARD)
-							{
-								astring tempstr;
-								logerror("natural_keyboard: code=%i (%s) port=%p field->name='%s'\n", int(code), unicode_to_string(tempstr, code), port, field->name());
-							}
 						}
 					}
 }

@@ -19,11 +19,6 @@
 //  DEBUGGING
 //**************************************************************************
 
-#define VERBOSE                     (0)
-#define LOG_PARTIAL_UPDATES(x)      do { if (VERBOSE) logerror x; } while (0)
-
-
-
 //**************************************************************************
 //  GLOBAL VARIABLES
 //**************************************************************************
@@ -571,8 +566,6 @@ bool screen_device::update_partial(int scanline)
 	// validate arguments
 	assert(scanline >= 0);
 
-	LOG_PARTIAL_UPDATES(("Partial: update_partial(%s, %d): ", tag(), scanline));
-
 	// these two checks only apply if we're allowed to skip frames
 	if (!(m_video_attributes & VIDEO_ALWAYS_UPDATE))
 	{
@@ -611,9 +604,6 @@ bool screen_device::update_partial(int scanline)
       /* skipped because outside of visible area */
 		return false;
 	}
-
-	// otherwise, render
-	LOG_PARTIAL_UPDATES(("updating %d-%d\n", clip.min_y, clip.max_y));
 
 	UINT32 flags = UPDATE_HAS_NOT_CHANGED;
 	screen_bitmap &curbitmap = m_bitmap[m_curbitmap];

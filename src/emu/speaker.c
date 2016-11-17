@@ -20,12 +20,6 @@
 //  DEBUGGING
 //**************************************************************************
 
-#define VERBOSE         (0)
-
-#define VPRINTF(x)      do { if (VERBOSE) osd_printf_debug x; } while (0)
-
-
-
 //**************************************************************************
 //  GLOBAL VARIABLES
 //**************************************************************************
@@ -49,12 +43,6 @@ speaker_device::speaker_device(const machine_config &mconfig, const char *tag, d
 		m_x(0.0),
 		m_y(0.0),
 		m_z(0.0)
-#ifdef MAME_DEBUG
-	,
-		m_max_sample(0),
-		m_clipped_samples(0),
-		m_total_samples(0)
-#endif
 {
 }
 
@@ -65,11 +53,6 @@ speaker_device::speaker_device(const machine_config &mconfig, const char *tag, d
 
 speaker_device::~speaker_device()
 {
-#ifdef MAME_DEBUG
-	// log the maximum sample values for all speakers
-	if (m_max_sample > 0)
-		osd_printf_debug("Speaker \"%s\" - max = %d (gain *= %f) - %d%% samples clipped\n", tag(), m_max_sample, 32767.0 / (m_max_sample ? m_max_sample : 1), (int)((double)m_clipped_samples * 100.0 / m_total_samples));
-#endif
 }
 
 
@@ -111,20 +94,6 @@ void speaker_device::mix(INT32 *leftmix, INT32 *rightmix, int &samples_this_upda
 		memset(rightmix, 0, samples_this_update * sizeof(*rightmix));
 	}
 	assert(samples_this_update == numsamples);
-
-#ifdef MAME_DEBUG
-	// debug version: keep track of the maximum sample
-	for (int sample = 0; sample < samples_this_update; sample++)
-	{
-		if (stream_buf[sample] > m_max_sample)
-			m_max_sample = stream_buf[sample];
-		else if (-stream_buf[sample] > m_max_sample)
-			m_max_sample = -stream_buf[sample];
-		if (stream_buf[sample] > 32767 || stream_buf[sample] < -32768)
-			m_clipped_samples++;
-		m_total_samples++;
-	}
-#endif
 
 	// mix if sound is enabled
 	if (!suppress)

@@ -74,13 +74,6 @@ protected:
 	double              m_x;
 	double              m_y;
 	double              m_z;
-
-	// internal state
-#ifdef MAME_DEBUG
-	INT32               m_max_sample;           // largest sample value we've seen
-	INT32               m_clipped_samples;      // total number of clipped samples
-	INT32               m_total_samples;        // total number of samples
-#endif
 };
 
 

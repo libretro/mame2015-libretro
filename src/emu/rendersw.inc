@@ -1922,7 +1922,7 @@ public:
 	static void draw_primitives(const render_primitive_list &primlist, void *dstdata, UINT32 width, UINT32 height, UINT32 pitch)
 	{
 		// loop over the list and render each element
-		for (const render_primitive *prim = primlist.first(); prim != NULL; prim = prim->next())
+		for (const render_primitive *prim = primlist.m_primlist.first(); prim != NULL; prim = prim->m_next)
 			switch (prim->type)
 			{
 				case render_primitive::LINE:

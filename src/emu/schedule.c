@@ -16,12 +16,7 @@
 //  DEBUGGING
 //**************************************************************************
 
-#define VERBOSE 0
-
-#define LOG(x)  do { if (VERBOSE) logerror x; } while (0)
 #define PRECISION
-
-
 
 //**************************************************************************
 //  CONSTANTS
@@ -433,9 +428,6 @@ void device_scheduler::timeslice()
 		if (m_timer_list->m_expire < target)
 			target = m_timer_list->m_expire;
 
-		LOG(("------------------\n"));
-		LOG(("cpu_timeslice: target = %s\n", target.as_string(PRECISION)));
-
 		// do we have pending suspension changes?
 		if (m_suspend_changes_pending)
 			apply_suspend_changes();
@@ -458,7 +450,6 @@ void device_scheduler::timeslice()
 				{
 					// compute how many cycles we want to execute
 					int ran = exec->m_cycles_running = divu_64x32((UINT64)delta >> exec->m_divshift, exec->m_divisor);
-					LOG(("  cpu '%s': %" I64FMT"d (%d cycles)\n", exec->device().tag(), delta, exec->m_cycles_running));
 
 					// if we're not suspended, actually execute
 					if (exec->m_suspend == 0)
@@ -491,13 +482,11 @@ void device_scheduler::timeslice()
 					attotime delta(0, exec->m_attoseconds_per_cycle * ran);
 					assert(delta >= attotime::zero);
 					exec->m_localtime += delta;
-					LOG(("         %d ran, %d total, time = %s\n", ran, (INT32)exec->m_totalcycles, exec->m_localtime.as_string(PRECISION)));
 
 					// if the new local CPU time is less than our target, move the target up, but not before the base
 					if (exec->m_localtime < target)
 					{
 						target = max(exec->m_localtime, m_basetime);
-						LOG(("         (new target)\n"));
 					}
 				}
 			}
@@ -870,8 +859,6 @@ emu_timer &device_scheduler::timer_list_remove(emu_timer &timer)
 
 inline void device_scheduler::execute_timers()
 {
-	LOG(("execute_timers: new=%s head->expire=%s\n", m_basetime.as_string(PRECISION), m_timer_list->m_expire.as_string(PRECISION)));
-
 	// now process any timers that are overdue
 	while (m_timer_list->m_expire <= m_basetime)
 	{
@@ -891,12 +878,10 @@ inline void device_scheduler::execute_timers()
 		{
 			if (timer.m_device != NULL)
 			{
-				LOG(("execute_timers: timer device %s timer %d\n", timer.m_device->tag(), timer.m_id));
 				timer.m_device->timer_expired(timer, timer.m_id, timer.m_param, timer.m_ptr);
 			}
 			else if (!timer.m_callback.isnull())
 			{
-				LOG(("execute_timers: timer callback %s\n", timer.m_callback.name()));
 				timer.m_callback(timer.m_ptr, timer.m_param);
 			}
 		}

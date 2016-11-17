@@ -288,9 +288,7 @@ void device_gfx_interface::decode_gfx(const gfx_decode_entry *gfxdecodeinfo)
 void device_gfx_interface::interface_validity_check(validity_checker &valid) const
 {
 	// validate palette tag
-	if (m_palette_tag == NULL)
-		osd_printf_error("No palette specified for device '%s'\n", device().tag());
-	else
+	if (m_palette_tag)
 	{
 		palette_device *palette;
 		if (m_palette_is_sibling)
