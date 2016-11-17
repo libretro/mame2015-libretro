@@ -159,31 +159,6 @@ private:
       return (texbase[(curu >> 16) & 1] >> 8) | ((texbase[0] & 0xff) << 8) | ((texbase[1] & 0xff) << 16);
    }
 
-
-	//-------------------------------------------------
-	//  get_texel_rgb32 - return a texel from a 32bpp
-	//  RGB source
-	//-------------------------------------------------
-
-	static inline UINT32 get_texel_rgb32(const render_texinfo &texture, INT32 curu, INT32 curv)
-   {
-      const UINT32 *texbase = reinterpret_cast<const UINT32 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 16);
-      return texbase[0];
-   }
-
-
-	//-------------------------------------------------
-	//  get_texel_argb32 - return a texel from a 32bpp
-	//  ARGB source
-	//-------------------------------------------------
-
-	static inline UINT32 get_texel_argb32(const render_texinfo &texture, INT32 curu, INT32 curv)
-   {
-      const UINT32 *texbase = reinterpret_cast<const UINT32 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 16);
-      return texbase[0];
-   }
-
-
 	//-------------------------------------------------
 	//  draw_aa_pixel - draw an antialiased pixel
 	//-------------------------------------------------
@@ -962,7 +937,9 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_rgb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
+
 						*dest++ = source32_to_dest(pix);
 						curu += dudx;
 						curv += dvdx;
@@ -975,7 +952,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_rgb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 r = palbase[(pix >> 16) & 0xff] >> _SrcShiftR;
 						UINT32 g = palbase[(pix >> 8) & 0xff] >> _SrcShiftG;
 						UINT32 b = palbase[(pix >> 0) & 0xff] >> _SrcShiftB;
@@ -1013,7 +991,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_rgb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 r = (source32_r(pix) * sr) >> 8;
 						UINT32 g = (source32_g(pix) * sg) >> 8;
 						UINT32 b = (source32_b(pix) * sb) >> 8;
@@ -1030,7 +1009,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_rgb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 r = (palbase[(pix >> 16) & 0xff] * sr) >> (8 + _SrcShiftR);
 						UINT32 g = (palbase[(pix >> 8) & 0xff] * sg) >> (8 + _SrcShiftG);
 						UINT32 b = (palbase[(pix >> 0) & 0xff] * sb) >> (8 + _SrcShiftB);
@@ -1070,7 +1050,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_rgb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 dpix = *dest;
 						UINT32 r = (source32_r(pix) * sr + dest_r(dpix) * invsa) >> 8;
 						UINT32 g = (source32_g(pix) * sg + dest_g(dpix) * invsa) >> 8;
@@ -1088,7 +1069,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_rgb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 dpix = *dest;
 						UINT32 r = ((palbase[(pix >> 16) & 0xff] >> _SrcShiftR) * sr + dest_r(dpix) * invsa) >> 8;
 						UINT32 g = ((palbase[(pix >> 8) & 0xff] >> _SrcShiftG) * sg + dest_g(dpix) * invsa) >> 8;
@@ -1132,7 +1114,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 dpix = *dest;
 						UINT32 r = source32_r(pix) + dest_r(dpix);
 						UINT32 g = source32_g(pix) + dest_g(dpix);
@@ -1152,7 +1135,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 dpix = *dest;
 						UINT32 r = (palbase[(pix >> 16) & 0xff] >> _SrcShiftR) + dest_r(dpix);
 						UINT32 g = (palbase[(pix >> 8) & 0xff] >> _SrcShiftG) + dest_g(dpix);
@@ -1195,7 +1179,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 dpix = *dest;
 						UINT32 r = ((source32_r(pix) * sr * sa) >> 16) + dest_r(dpix);
 						UINT32 g = ((source32_g(pix) * sg * sa) >> 16) + dest_g(dpix);
@@ -1215,7 +1200,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 dpix = *dest;
 						UINT32 r = ((palbase[(pix >> 16) & 0xff] * sr * sa) >> (16 + _SrcShiftR)) + dest_r(dpix);
 						UINT32 g = ((palbase[(pix >> 8) & 0xff] * sr * sa) >> (16 + _SrcShiftR)) + dest_g(dpix);
@@ -1266,7 +1252,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 ta = pix >> 24;
 						if (ta != 0)
 						{
@@ -1290,7 +1277,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 ta = pix >> 24;
 						if (ta != 0)
 						{
@@ -1337,7 +1325,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 ta = (pix >> 24) * sa;
 						if (ta != 0)
 						{
@@ -1362,7 +1351,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 ta = (pix >> 24) * sa;
 						if (ta != 0)
 						{
@@ -1412,7 +1402,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 dpix = *dest;
 						UINT32 r = (source32_r(pix) * dest_r(dpix)) >> (8 - _SrcShiftR);
 						UINT32 g = (source32_g(pix) * dest_g(dpix)) >> (8 - _SrcShiftG);
@@ -1428,7 +1419,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 dpix = *dest;
 						UINT32 r = (palbase[(pix >> 16) & 0xff] * dest_r(dpix)) >> 8;
 						UINT32 g = (palbase[(pix >> 8) & 0xff] * dest_g(dpix)) >> 8;
@@ -1467,7 +1459,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 dpix = *dest;
 						UINT32 r = (source32_r(pix) * sr * dest_r(dpix)) >> (16 - _SrcShiftR);
 						UINT32 g = (source32_g(pix) * sg * dest_g(dpix)) >> (16 - _SrcShiftG);
@@ -1483,7 +1476,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 dpix = *dest;
 						UINT32 r = (palbase[(pix >> 16) & 0xff] * sr * dest_r(dpix)) >> 16;
 						UINT32 g = (palbase[(pix >> 8) & 0xff] * sg * dest_g(dpix)) >> 16;
@@ -1527,7 +1521,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 ta = pix >> 24;
 						if (ta != 0)
 						{
@@ -1552,7 +1547,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 ta = pix >> 24;
 						if (ta != 0)
 						{
@@ -1600,7 +1596,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 ta = (pix >> 24) * sa;
 						if (ta != 0)
 						{
@@ -1625,7 +1622,8 @@ private:
 					// loop over cols
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
-						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
+                  const UINT32 *texbase = reinterpret_cast<const UINT32 *>(prim.texture.base) + (curv >> 16) * prim.texture.rowpixels + (curu >> 16);
+                  UINT32 pix = texbase[0];
 						UINT32 ta = (pix >> 24) * sa;
 						if (ta != 0)
 						{
