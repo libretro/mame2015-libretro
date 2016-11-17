@@ -14,7 +14,6 @@
 #include "ui/ui.h"
 #include "aviio.h"
 #include "crsshair.h"
-#include "rendersw.inc"
 #include "output.h"
 
 #include "snap.lh"
@@ -772,17 +771,6 @@ void video_manager::recompute_speed(const attotime &emutime)
 	}
 }
 
-
-//-------------------------------------------------
-//  create_snapshot_bitmap - creates a
-//  bitmap containing the screenshot for the
-//  given screen
-//-------------------------------------------------
-
-typedef software_renderer<UINT32, 0,0,0, 16,8,0, false, true> snap_renderer_bilinear;
-typedef software_renderer<UINT32, 0,0,0, 16,8,0, false, false> snap_renderer;
-
-//-------------------------------------------------
 //  open_next - open the next non-existing file of
 //  type filetype according to our numbering
 //  scheme

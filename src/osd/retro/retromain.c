@@ -1666,7 +1666,7 @@ void retro_osd_interface::update(bool skip_redraw)
       render_primitive_list &primlist = our_target->get_primitives();
 
       /* lock them, and then render them */
-      primlist.acquire_lock();
+      osd_lock_acquire(primlist.m_lock);
 
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
       gl_draw_primitives(primlist, fb_width, fb_height);
@@ -1680,7 +1680,7 @@ void retro_osd_interface::update(bool skip_redraw)
 
 #endif
 
-      primlist.release_lock();
+      osd_lock_release(primlist.m_lock);
    }
 	else
       retro_frame_draw_enable(false);

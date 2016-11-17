@@ -16,19 +16,6 @@
 //  DEBUGGING
 //**************************************************************************
 
-#define LOG_ALLOCS      (0)
-#define DEBUG_MISMATCHED_ALLOCS (0)
-
-// define this to initialize allocated memory to a fixed non-0 value
-#ifdef MAME_DEBUG
-#define INITIALIZE_ALLOCATED_MEMORY
-#endif
-
-// define this to zap memory to a fixed non-0 value before freeing
-//#define OVERWRITE_FREED_MEMORY
-
-
-
 //**************************************************************************
 //  CONSTANTS
 //**************************************************************************
@@ -76,7 +63,6 @@ public:
 
 private:
 	static void acquire_lock();
-	static void release_lock();
 };
 
 
@@ -158,12 +144,6 @@ void *malloc_file_line(size_t size, const char *file, int line, bool array, bool
 	// zap the memory if requested
 	if (clear)
 		memset(result, 0, size);
-	else
-	{
-#if !__has_feature(memory_sanitizer) && defined(INITIALIZE_ALLOCATED_MEMORY) && !defined(MAME_DEBUG_FAST)
-		memset(result, 0xdd, size);
-#endif
-	}
 
 	// add a new entry
 	memory_entry::allocate(size, result, file, line, array);
@@ -194,24 +174,7 @@ void free_file_line(void *memory, const char *file, int line, bool array)
 	if (!array && entry->m_array)
 	{
 		fprintf(stderr, "Warning: attempt to free array %p with global_free in %s(%d)!\n", memory, file, line);
-		if (DEBUG_MISMATCHED_ALLOCS) {
-			osd_break_into_debugger("Error: attempt to free array with global_free");
-		}
 	}
-	if (array && !entry->m_array)
-	{
-#ifndef __INTEL_COMPILER // todo: fix this properly, it appears some optimization the compiler applies breaks our logic here
-		fprintf(stderr, "Warning: attempt to free single object %p with global_free_array in %s(%d)!\n", memory, file, line);
-		if (DEBUG_MISMATCHED_ALLOCS) {
-			osd_break_into_debugger("Error: attempt to free single object with global_free_array");
-		}
-#endif
-	}
-
-#ifdef OVERWRITE_FREED_MEMORY
-	// clear memory to a bogus value
-	memset(memory, 0xfc, entry->m_size);
-#endif
 
 	// free the entry and the memory
 	memory_entry::release(entry, file, line);
@@ -278,17 +241,6 @@ void memory_entry::acquire_lock()
 	osd_lock_acquire(s_lock);
 }
 
-
-//-------------------------------------------------
-//  release_lock - release the memory entry lock
-//-------------------------------------------------
-
-void memory_entry::release_lock()
-{
-	osd_lock_release(s_lock);
-}
-
-
 //-------------------------------------------------
 //  allocate - allocate a new memory entry
 //-------------------------------------------------
@@ -304,7 +256,7 @@ memory_entry *memory_entry::allocate(size_t size, void *base, const char *file, 
 		memory_entry *entry = reinterpret_cast<memory_entry *>(osd_malloc_array(memory_block_alloc_chunk * sizeof(memory_entry)));
 		if (entry == NULL)
 		{
-			release_lock();
+         osd_lock_release(s_lock);
 			return NULL;
 		}
 
@@ -327,8 +279,6 @@ memory_entry *memory_entry::allocate(size_t size, void *base, const char *file, 
 	entry->m_line = s_tracking ? line : 0;
 	entry->m_id = s_curid++;
 	entry->m_array = array;
-	if (LOG_ALLOCS)
-		fprintf(stderr, "#%06d, alloc %d bytes (%s:%d)\n", (UINT32)entry->m_id, static_cast<UINT32>(entry->m_size), entry->m_file, (int)entry->m_line);
 
 	// add it to the alloc list
 	int hashval = reinterpret_cast<FPTR>(base) % k_hash_prime;
@@ -338,7 +288,7 @@ memory_entry *memory_entry::allocate(size_t size, void *base, const char *file, 
 	entry->m_prev = NULL;
 	s_hash[hashval] = entry;
 
-	release_lock();
+   osd_lock_release(s_lock);
 	return entry;
 }
 
@@ -362,7 +312,7 @@ memory_entry *memory_entry::find(void *ptr)
 		if (entry->m_base == ptr)
 			break;
 
-	release_lock();
+   osd_lock_release(s_lock);
 	return entry;
 }
 
@@ -374,9 +324,6 @@ memory_entry *memory_entry::find(void *ptr)
 void memory_entry::release(memory_entry *entry, const char *file, int line)
 {
 	acquire_lock();
-
-	if (LOG_ALLOCS)
-		fprintf(stderr, "#%06d, release %d bytes (%s:%d)\n", (UINT32)entry->m_id, static_cast<UINT32>(entry->m_size), file, line);
 
 	// remove ourselves from the alloc list
 	int hashval = reinterpret_cast<FPTR>(entry->m_base) % k_hash_prime;
@@ -391,7 +338,7 @@ void memory_entry::release(memory_entry *entry, const char *file, int line)
 	entry->m_next = s_freehead;
 	s_freehead = entry;
 
-	release_lock();
+   osd_lock_release(s_lock);
 }
 
 /**
@@ -421,7 +368,7 @@ void memory_entry::report_unfreed(UINT64 start)
 				fprintf(stderr, "#%06d, nofree %d bytes (%s:%d)\n", (UINT32)entry->m_id, static_cast<UINT32>(entry->m_size), entry->m_file, (int)entry->m_line);
 			}
 
-	release_lock();
+   osd_lock_release(s_lock);
 
 	if (total > 0)
 		fprintf(stderr, "a total of %u bytes were not freed\n", total);

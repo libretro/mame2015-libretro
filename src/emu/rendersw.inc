@@ -15,7 +15,7 @@
 #include "render.h"
 
 
-template<typename _PixelType, int _SrcShiftR, int _SrcShiftG, int _SrcShiftB, int _DstShiftR, int _DstShiftG, int _DstShiftB, bool _NoDestRead = false, bool _BilinearFilter = false>
+template<typename _PixelType, int _SrcShiftR, int _SrcShiftG, int _SrcShiftB, int _DstShiftR, int _DstShiftG, int _DstShiftB>
 class software_renderer
 {
 private:
@@ -29,8 +29,8 @@ private:
 	};
 
 	// internal helpers
-	static inline bool is_opaque(float alpha) { return (alpha >= (_NoDestRead ? 0.5f : 1.0f)); }
-	static inline bool is_transparent(float alpha) { return (alpha < (_NoDestRead ? 0.5f : 0.0001f)); }
+	static inline bool is_opaque(float alpha) { return (alpha >= (1.0f)); }
+	static inline bool is_transparent(float alpha) { return (alpha < (0.0001f)); }
 	static inline rgb_t apply_intensity(int intensity, rgb_t color) { return color.scale8(intensity); }
 	static inline float round_nearest(float f) { return floor(f + 0.5f); }
 
@@ -53,8 +53,7 @@ private:
 	{
 		if (_SrcShiftR == 0 && _SrcShiftG == 0 && _SrcShiftB == 0 && _DstShiftR == 16 && _DstShiftG == 8 && _DstShiftB == 0)
 			return pixel;
-		else
-			return dest_assemble_rgb(source32_r(pixel), source32_g(pixel), source32_b(pixel));
+      return dest_assemble_rgb(source32_r(pixel), source32_g(pixel), source32_b(pixel));
 	}
 
 
@@ -131,31 +130,8 @@ private:
 	static inline UINT32 get_texel_palette16(const render_texinfo &texture, INT32 curu, INT32 curv)
 	{
 		const rgb_t *palbase = texture.palette;
-		if (_BilinearFilter)
-		{
-			INT32 u0 = curu >> 16;
-			INT32 u1 = 1;
-			if (u0 < 0) u0 = u1 = 0;
-			else if (u0 + 1 >= texture.width) u0 = texture.width - 1, u1 = 0;
-			INT32 v0 = curv >> 16;
-			INT32 v1 = texture.rowpixels;
-			if (v0 < 0) v0 = v1 = 0;
-			else if (v0 + 1 >= texture.height) v0 = texture.height - 1, v1 = 0;
-
-			const UINT16 *texbase = reinterpret_cast<const UINT16 *>(texture.base);
-			texbase += v0 * texture.rowpixels + u0;
-
-			UINT32 pix00 = palbase[texbase[0]];
-			UINT32 pix01 = palbase[texbase[u1]];
-			UINT32 pix10 = palbase[texbase[v1]];
-			UINT32 pix11 = palbase[texbase[u1 + v1]];
-			return rgb_bilinear_filter(pix00, pix01, pix10, pix11, curu >> 8, curv >> 8);
-		}
-		else
-		{
-			const UINT16 *texbase = reinterpret_cast<const UINT16 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 16);
-			return palbase[texbase[0]];
-		}
+      const UINT16 *texbase = reinterpret_cast<const UINT16 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 16);
+      return palbase[texbase[0]];
 	}
 
 
@@ -167,31 +143,8 @@ private:
 	static inline UINT32 get_texel_palette16a(const render_texinfo &texture, INT32 curu, INT32 curv)
 	{
 		const rgb_t *palbase = texture.palette;
-		if (_BilinearFilter)
-		{
-			INT32 u0 = curu >> 16;
-			INT32 u1 = 1;
-			if (u0 < 0) u0 = u1 = 0;
-			else if (u0 + 1 >= texture.width) u0 = texture.width - 1, u1 = 0;
-			INT32 v0 = curv >> 16;
-			INT32 v1 = texture.rowpixels;
-			if (v0 < 0) v0 = v1 = 0;
-			else if (v0 + 1 >= texture.height) v0 = texture.height - 1, v1 = 0;
-
-			const UINT16 *texbase = reinterpret_cast<const UINT16 *>(texture.base);
-			texbase += v0 * texture.rowpixels + u0;
-
-			UINT32 pix00 = palbase[texbase[0]];
-			UINT32 pix01 = palbase[texbase[u1]];
-			UINT32 pix10 = palbase[texbase[v1]];
-			UINT32 pix11 = palbase[texbase[u1 + v1]];
-			return rgba_bilinear_filter(pix00, pix01, pix10, pix11, curu >> 8, curv >> 8);
-		}
-		else
-		{
-			const UINT16 *texbase = reinterpret_cast<const UINT16 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 16);
-			return palbase[texbase[0]];
-		}
+      const UINT16 *texbase = reinterpret_cast<const UINT16 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 16);
+      return palbase[texbase[0]];
 	}
 
 
@@ -201,60 +154,10 @@ private:
 	//-------------------------------------------------
 
 	static inline UINT32 get_texel_yuy16(const render_texinfo &texture, INT32 curu, INT32 curv)
-	{
-		if (_BilinearFilter)
-		{
-			INT32 u0 = curu >> 16;
-			INT32 u1 = 1;
-			if (u0 < 0) u0 = u1 = 0;
-			else if (u0 + 1 >= texture.width) u0 = texture.width - 1, u1 = 0;
-			INT32 v0 = curv >> 16;
-			INT32 v1 = texture.rowpixels;
-			if (v0 < 0) v0 = v1 = 0;
-			else if (v0 + 1 >= texture.height) v0 = texture.height - 1, v1 = 0;
-
-			const UINT16 *texbase = reinterpret_cast<const UINT16 *>(texture.base);
-			texbase += v0 * texture.rowpixels + (u0 & ~1);
-
-			UINT32 pix00, pix01, pix10, pix11;
-			if ((curu & 0x10000) == 0)
-			{
-				UINT32 cbcr = ((texbase[0] & 0xff) << 8) | ((texbase[1] & 0xff) << 16);
-				pix00 = (texbase[0] >> 8) | cbcr;
-				pix01 = (texbase[u1] >> 8) | cbcr;
-				cbcr = ((texbase[v1 + 0] & 0xff) << 8) | ((texbase[v1 + 1] & 0xff) << 16);
-				pix10 = (texbase[v1 + 0] >> 8) | cbcr;
-				pix11 = (texbase[v1 + u1] >> 8) | cbcr;
-			}
-			else
-			{
-				UINT32 cbcr = ((texbase[0] & 0xff) << 8) | ((texbase[1] & 0xff) << 16);
-				pix00 = (texbase[1] >> 8) | cbcr;
-				if (u1 != 0)
-				{
-					cbcr = ((texbase[2] & 0xff) << 8) | ((texbase[3] & 0xff) << 16);
-					pix01 = (texbase[2] >> 8) | cbcr;
-				}
-				else
-					pix01 = pix00;
-				cbcr = ((texbase[v1 + 0] & 0xff) << 8) | ((texbase[v1 + 1] & 0xff) << 16);
-				pix10 = (texbase[v1 + 1] >> 8) | cbcr;
-				if (u1 != 0)
-				{
-					cbcr = ((texbase[v1 + 2] & 0xff) << 8) | ((texbase[v1 + 3] & 0xff) << 16);
-					pix11 = (texbase[v1 + 2] >> 8) | cbcr;
-				}
-				else
-					pix11 = pix10;
-			}
-			return rgb_bilinear_filter(pix00, pix01, pix10, pix11, curu >> 8, curv >> 8);
-		}
-		else
-		{
-			const UINT16 *texbase = reinterpret_cast<const UINT16 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 17) * 2;
-			return (texbase[(curu >> 16) & 1] >> 8) | ((texbase[0] & 0xff) << 8) | ((texbase[1] & 0xff) << 16);
-		}
-	}
+   {
+      const UINT16 *texbase = reinterpret_cast<const UINT16 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 17) * 2;
+      return (texbase[(curu >> 16) & 1] >> 8) | ((texbase[0] & 0xff) << 8) | ((texbase[1] & 0xff) << 16);
+   }
 
 
 	//-------------------------------------------------
@@ -263,33 +166,10 @@ private:
 	//-------------------------------------------------
 
 	static inline UINT32 get_texel_rgb32(const render_texinfo &texture, INT32 curu, INT32 curv)
-	{
-		if (_BilinearFilter)
-		{
-			INT32 u0 = curu >> 16;
-			INT32 u1 = 1;
-			if (u0 < 0) u0 = u1 = 0;
-			else if (u0 + 1 >= texture.width) u0 = texture.width - 1, u1 = 0;
-			INT32 v0 = curv >> 16;
-			INT32 v1 = texture.rowpixels;
-			if (v0 < 0) v0 = v1 = 0;
-			else if (v0 + 1 >= texture.height) v0 = texture.height - 1, v1 = 0;
-
-			const UINT32 *texbase = reinterpret_cast<const UINT32 *>(texture.base);
-			texbase += v0 * texture.rowpixels + u0;
-
-			UINT32 pix00 = texbase[0];
-			UINT32 pix01 = texbase[u1];
-			UINT32 pix10 = texbase[v1];
-			UINT32 pix11 = texbase[u1 + v1];
-			return rgb_bilinear_filter(pix00, pix01, pix10, pix11, curu >> 8, curv >> 8);
-		}
-		else
-		{
-			const UINT32 *texbase = reinterpret_cast<const UINT32 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 16);
-			return texbase[0];
-		}
-	}
+   {
+      const UINT32 *texbase = reinterpret_cast<const UINT32 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 16);
+      return texbase[0];
+   }
 
 
 	//-------------------------------------------------
@@ -298,33 +178,10 @@ private:
 	//-------------------------------------------------
 
 	static inline UINT32 get_texel_argb32(const render_texinfo &texture, INT32 curu, INT32 curv)
-	{
-		if (_BilinearFilter)
-		{
-			INT32 u0 = curu >> 16;
-			INT32 u1 = 1;
-			if (u0 < 0) u0 = u1 = 0;
-			else if (u0 + 1 >= texture.width) u0 = texture.width - 1, u1 = 0;
-			INT32 v0 = curv >> 16;
-			INT32 v1 = texture.rowpixels;
-			if (v0 < 0) v0 = v1 = 0;
-			else if (v0 + 1 >= texture.height) v0 = texture.height - 1, v1 = 0;
-
-			const UINT32 *texbase = reinterpret_cast<const UINT32 *>(texture.base);
-			texbase += v0 * texture.rowpixels + u0;
-
-			UINT32 pix00 = texbase[0];
-			UINT32 pix01 = texbase[u1];
-			UINT32 pix10 = texbase[v1];
-			UINT32 pix11 = texbase[u1 + v1];
-			return rgba_bilinear_filter(pix00, pix01, pix10, pix11, curu >> 8, curv >> 8);
-		}
-		else
-		{
-			const UINT32 *texbase = reinterpret_cast<const UINT32 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 16);
-			return texbase[0];
-		}
-	}
+   {
+      const UINT32 *texbase = reinterpret_cast<const UINT32 *>(texture.base) + (curv >> 16) * texture.rowpixels + (curu >> 16);
+      return texbase[0];
+   }
 
 
 	//-------------------------------------------------
@@ -334,7 +191,7 @@ private:
 	static inline void draw_aa_pixel(_PixelType *dstdata, UINT32 pitch, int x, int y, UINT32 col)
 	{
 		_PixelType *dest = dstdata + y * pitch + x;
-		UINT32 dpix = _NoDestRead ? 0 : *dest;
+		UINT32 dpix = *dest;
 		UINT32 dr = source32_r(col) + dest_r(dpix);
 		UINT32 dg = source32_g(col) + dest_g(dpix);
 		UINT32 db = source32_b(col) + dest_b(dpix);
@@ -595,7 +452,7 @@ private:
 				// loop over cols
 				for (INT32 x = startx; x < endx; x++)
 				{
-					UINT32 dpix = _NoDestRead ? 0 : *dest;
+					UINT32 dpix = *dest;
 					UINT32 dr = (r + ((dpix & rmask) * inva)) & (rmask << 8);
 					UINT32 dg = (g + ((dpix & gmask) * inva)) & (gmask << 8);
 					UINT32 db = (b + ((dpix & bmask) * inva)) & (bmask << 8);
@@ -704,7 +561,7 @@ private:
 				for (INT32 x = setup.startx; x < endx; x++)
 				{
 					UINT32 pix = get_texel_palette16(prim.texture, curu, curv);
-					UINT32 dpix = _NoDestRead ? 0 : *dest;
+					UINT32 dpix = *dest;
 					UINT32 r = (source32_r(pix) * sr + dest_r(dpix) * invsa) >> 8;
 					UINT32 g = (source32_g(pix) * sg + dest_g(dpix) * invsa) >> 8;
 					UINT32 b = (source32_b(pix) * sb + dest_b(dpix) * invsa) >> 8;
@@ -748,7 +605,7 @@ private:
 					UINT32 pix = get_texel_palette16(prim.texture, curu, curv);
 					if ((pix & 0xffffff) != 0)
 					{
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = source32_r(pix) + dest_r(dpix);
 						UINT32 g = source32_g(pix) + dest_g(dpix);
 						UINT32 b = source32_b(pix) + dest_b(dpix);
@@ -789,7 +646,7 @@ private:
 					UINT32 pix = get_texel_palette16(prim.texture, curu, curv);
 					if ((pix & 0xffffff) != 0)
 					{
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = ((source32_r(pix) * sr) >> 8) + dest_r(dpix);
 						UINT32 g = ((source32_g(pix) * sg) >> 8) + dest_g(dpix);
 						UINT32 b = ((source32_b(pix) * sb) >> 8) + dest_b(dpix);
@@ -842,7 +699,7 @@ private:
 					UINT32 ta = pix >> 24;
 					if (ta != 0)
 					{
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 invta = 0x100 - ta;
 						UINT32 r = (source32_r(pix) * ta + dest_r(dpix) * invta) >> 8;
 						UINT32 g = (source32_g(pix) * ta + dest_g(dpix) * invta) >> 8;
@@ -885,7 +742,7 @@ private:
 					UINT32 ta = (pix >> 24) * sa;
 					if (ta != 0)
 					{
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 invsta = (0x10000 - ta) << 8;
 						UINT32 r = (source32_r(pix) * sr * ta + dest_r(dpix) * invsta) >> 24;
 						UINT32 g = (source32_g(pix) * sg * ta + dest_g(dpix) * invsta) >> 24;
@@ -1040,7 +897,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = ycc_to_rgb(get_texel_yuy16(prim.texture, curu, curv));
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = (source32_r(pix) * sr + dest_r(dpix) * invsa) >> 8;
 						UINT32 g = (source32_g(pix) * sg + dest_g(dpix) * invsa) >> 8;
 						UINT32 b = (source32_b(pix) * sb + dest_b(dpix) * invsa) >> 8;
@@ -1058,7 +915,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = ycc_to_rgb(get_texel_yuy16(prim.texture, curu, curv));
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = (source32_r(pix) * sr + dest_r(dpix) * invsa) >> 8;
 						UINT32 g = (source32_g(pix) * sg + dest_g(dpix) * invsa) >> 8;
 						UINT32 b = (source32_b(pix) * sb + dest_b(dpix) * invsa) >> 8;
@@ -1214,7 +1071,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = get_texel_rgb32(prim.texture, curu, curv);
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = (source32_r(pix) * sr + dest_r(dpix) * invsa) >> 8;
 						UINT32 g = (source32_g(pix) * sg + dest_g(dpix) * invsa) >> 8;
 						UINT32 b = (source32_b(pix) * sb + dest_b(dpix) * invsa) >> 8;
@@ -1232,7 +1089,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = get_texel_rgb32(prim.texture, curu, curv);
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = ((palbase[(pix >> 16) & 0xff] >> _SrcShiftR) * sr + dest_r(dpix) * invsa) >> 8;
 						UINT32 g = ((palbase[(pix >> 8) & 0xff] >> _SrcShiftG) * sg + dest_g(dpix) * invsa) >> 8;
 						UINT32 b = ((palbase[(pix >> 0) & 0xff] >> _SrcShiftB) * sb + dest_b(dpix) * invsa) >> 8;
@@ -1259,10 +1116,6 @@ private:
 		INT32 dvdx = setup.dvdx;
 		INT32 endx = setup.endx;
 
-		// simply can't do this without reading from the dest
-		if (_NoDestRead)
-			return;
-
 		// fast case: no coloring, no alpha
 		if (prim.color.r >= 1.0f && prim.color.g >= 1.0f && prim.color.b >= 1.0f && is_opaque(prim.color.a))
 		{
@@ -1280,7 +1133,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = source32_r(pix) + dest_r(dpix);
 						UINT32 g = source32_g(pix) + dest_g(dpix);
 						UINT32 b = source32_b(pix) + dest_b(dpix);
@@ -1300,7 +1153,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = (palbase[(pix >> 16) & 0xff] >> _SrcShiftR) + dest_r(dpix);
 						UINT32 g = (palbase[(pix >> 8) & 0xff] >> _SrcShiftG) + dest_g(dpix);
 						UINT32 b = (palbase[(pix >> 0) & 0xff] >> _SrcShiftB) + dest_b(dpix);
@@ -1343,7 +1196,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = ((source32_r(pix) * sr * sa) >> 16) + dest_r(dpix);
 						UINT32 g = ((source32_g(pix) * sg * sa) >> 16) + dest_g(dpix);
 						UINT32 b = ((source32_b(pix) * sb * sa) >> 16) + dest_b(dpix);
@@ -1363,7 +1216,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = ((palbase[(pix >> 16) & 0xff] * sr * sa) >> (16 + _SrcShiftR)) + dest_r(dpix);
 						UINT32 g = ((palbase[(pix >> 8) & 0xff] * sr * sa) >> (16 + _SrcShiftR)) + dest_g(dpix);
 						UINT32 b = ((palbase[(pix >> 0) & 0xff] * sr * sa) >> (16 + _SrcShiftR)) + dest_b(dpix);
@@ -1417,7 +1270,7 @@ private:
 						UINT32 ta = pix >> 24;
 						if (ta != 0)
 						{
-							UINT32 dpix = _NoDestRead ? 0 : *dest;
+							UINT32 dpix = *dest;
 							UINT32 invta = 0x100 - ta;
 							UINT32 r = (source32_r(pix) * ta + dest_r(dpix) * invta) >> 8;
 							UINT32 g = (source32_g(pix) * ta + dest_g(dpix) * invta) >> 8;
@@ -1441,7 +1294,7 @@ private:
 						UINT32 ta = pix >> 24;
 						if (ta != 0)
 						{
-							UINT32 dpix = _NoDestRead ? 0 : *dest;
+							UINT32 dpix = *dest;
 							UINT32 invta = 0x100 - ta;
 							UINT32 r = ((palbase[(pix >> 16) & 0xff] >> _SrcShiftR) * ta + dest_r(dpix) * invta) >> 8;
 							UINT32 g = ((palbase[(pix >> 8) & 0xff] >> _SrcShiftG) * ta + dest_g(dpix) * invta) >> 8;
@@ -1488,7 +1341,7 @@ private:
 						UINT32 ta = (pix >> 24) * sa;
 						if (ta != 0)
 						{
-							UINT32 dpix = _NoDestRead ? 0 : *dest;
+							UINT32 dpix = *dest;
 							UINT32 invsta = (0x10000 - ta) << 8;
 							UINT32 r = (source32_r(pix) * sr * ta + dest_r(dpix) * invsta) >> 24;
 							UINT32 g = (source32_g(pix) * sg * ta + dest_g(dpix) * invsta) >> 24;
@@ -1513,7 +1366,7 @@ private:
 						UINT32 ta = (pix >> 24) * sa;
 						if (ta != 0)
 						{
-							UINT32 dpix = _NoDestRead ? 0 : *dest;
+							UINT32 dpix = *dest;
 							UINT32 invsta = (0x10000 - ta) << 8;
 							UINT32 r = ((palbase[(pix >> 16) & 0xff] >> _SrcShiftR) * sr * ta + dest_r(dpix) * invsta) >> 24;
 							UINT32 g = ((palbase[(pix >> 8) & 0xff] >> _SrcShiftG) * sg * ta + dest_g(dpix) * invsta) >> 24;
@@ -1543,10 +1396,6 @@ private:
 		INT32 dvdx = setup.dvdx;
 		INT32 endx = setup.endx;
 
-		// simply can't do this without reading from the dest
-		if (_NoDestRead)
-			return;
-
 		// fast case: no coloring, no alpha
 		if (prim.color.r >= 1.0f && prim.color.g >= 1.0f && prim.color.b >= 1.0f && is_opaque(prim.color.a))
 		{
@@ -1564,7 +1413,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = (source32_r(pix) * dest_r(dpix)) >> (8 - _SrcShiftR);
 						UINT32 g = (source32_g(pix) * dest_g(dpix)) >> (8 - _SrcShiftG);
 						UINT32 b = (source32_b(pix) * dest_b(dpix)) >> (8 - _SrcShiftB);
@@ -1580,7 +1429,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = (palbase[(pix >> 16) & 0xff] * dest_r(dpix)) >> 8;
 						UINT32 g = (palbase[(pix >> 8) & 0xff] * dest_g(dpix)) >> 8;
 						UINT32 b = (palbase[(pix >> 0) & 0xff] * dest_b(dpix)) >> 8;
@@ -1619,7 +1468,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = (source32_r(pix) * sr * dest_r(dpix)) >> (16 - _SrcShiftR);
 						UINT32 g = (source32_g(pix) * sg * dest_g(dpix)) >> (16 - _SrcShiftG);
 						UINT32 b = (source32_b(pix) * sb * dest_b(dpix)) >> (16 - _SrcShiftB);
@@ -1635,7 +1484,7 @@ private:
 					for (INT32 x = setup.startx; x < endx; x++)
 					{
 						UINT32 pix = get_texel_argb32(prim.texture, curu, curv);
-						UINT32 dpix = _NoDestRead ? 0 : *dest;
+						UINT32 dpix = *dest;
 						UINT32 r = (palbase[(pix >> 16) & 0xff] * sr * dest_r(dpix)) >> 16;
 						UINT32 g = (palbase[(pix >> 8) & 0xff] * sg * dest_g(dpix)) >> 16;
 						UINT32 b = (palbase[(pix >> 0) & 0xff] * sb * dest_b(dpix)) >> 16;
@@ -1662,10 +1511,6 @@ private:
 		INT32 dvdx = setup.dvdx;
 		INT32 endx = setup.endx;
 
-		// simply can't do this without reading from the dest
-		if (_NoDestRead)
-			return;
-
 		// fast case: no coloring, no alpha
 		if (prim.color.r >= 1.0f && prim.color.g >= 1.0f && prim.color.b >= 1.0f && is_opaque(prim.color.a))
 		{
@@ -1686,7 +1531,7 @@ private:
 						UINT32 ta = pix >> 24;
 						if (ta != 0)
 						{
-							UINT32 dpix = _NoDestRead ? 0 : *dest;
+							UINT32 dpix = *dest;
 							UINT32 r = ((source32_r(pix) * ta) >> 8) + dest_r(dpix);
 							UINT32 g = ((source32_g(pix) * ta) >> 8) + dest_g(dpix);
 							UINT32 b = ((source32_b(pix) * ta) >> 8) + dest_b(dpix);
@@ -1711,7 +1556,7 @@ private:
 						UINT32 ta = pix >> 24;
 						if (ta != 0)
 						{
-							UINT32 dpix = _NoDestRead ? 0 : *dest;
+							UINT32 dpix = *dest;
 							UINT32 r = ((palbase[(pix >> 16) & 0xff] * ta) >> (8 + _SrcShiftR)) + dest_r(dpix);
 							UINT32 g = ((palbase[(pix >> 8) & 0xff] * ta) >> (8 + _SrcShiftG)) + dest_g(dpix);
 							UINT32 b = ((palbase[(pix >> 0) & 0xff] * ta) >> (8 + _SrcShiftB)) + dest_b(dpix);
@@ -1759,7 +1604,7 @@ private:
 						UINT32 ta = (pix >> 24) * sa;
 						if (ta != 0)
 						{
-							UINT32 dpix = _NoDestRead ? 0 : *dest;
+							UINT32 dpix = *dest;
 							UINT32 r = ((source32_r(pix) * sr * ta) >> 24) + dest_r(dpix);
 							UINT32 g = ((source32_g(pix) * sg * ta) >> 24) + dest_g(dpix);
 							UINT32 b = ((source32_b(pix) * sb * ta) >> 24) + dest_b(dpix);
@@ -1784,7 +1629,7 @@ private:
 						UINT32 ta = (pix >> 24) * sa;
 						if (ta != 0)
 						{
-							UINT32 dpix = _NoDestRead ? 0 : *dest;
+							UINT32 dpix = *dest;
 							UINT32 r = ((palbase[(pix >> 16) & 0xff] * sr * ta) >> (24 + _SrcShiftR)) + dest_r(dpix);
 							UINT32 g = ((palbase[(pix >> 8) & 0xff] * sr * ta) >> (24 + _SrcShiftR)) + dest_g(dpix);
 							UINT32 b = ((palbase[(pix >> 0) & 0xff] * sr * ta) >> (24 + _SrcShiftR)) + dest_b(dpix);
@@ -1852,13 +1697,6 @@ private:
 		// advance U/V to the middle of the first texel
 		setup.startu += (setup.dudx + setup.dudy) / 2;
 		setup.startv += (setup.dvdx + setup.dvdy) / 2;
-
-		// if we're bilinear filtering, we need to offset u/v by half a texel
-		if (_BilinearFilter)
-		{
-			setup.startu -= 0x8000;
-			setup.startv -= 0x8000;
-		}
 
 		// render based on the texture coordinates
 		switch (prim.flags & (PRIMFLAG_TEXFORMAT_MASK | PRIMFLAG_BLENDMODE_MASK))
