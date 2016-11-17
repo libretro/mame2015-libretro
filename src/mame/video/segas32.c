@@ -156,10 +156,7 @@
 
 #define SHOW_CLIPS              0
 #define QWERTY_LAYER_ENABLE     0
-#define PRINTF_MIXER_DATA       0
 #define SHOW_ALPHA              0
-#define LOG_SPRITES             0
-
 
 
 /*************************************
@@ -2401,62 +2398,6 @@ UINT32 segas32_state::screen_update_system32(screen_device &screen, bitmap_rgb32
 	mix_all_layers(0, 0, bitmap, cliprect, enablemask);
 	g_profiler.stop();
 
-	if (LOG_SPRITES && machine().input().code_pressed(KEYCODE_L))
-	{
-		const rectangle &visarea = screen.visible_area();
-		FILE *f = fopen("sprite.txt", "w");
-		int x, y;
-
-		for (y = visarea.min_y; y <= visarea.max_y; y++)
-		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_SPRITES, y);
-			for (x = visarea.min_x; x <= visarea.max_x; x++)
-				fprintf(f, "%04X ", *src++);
-			fprintf(f, "\n");
-		}
-		fclose(f);
-
-		f = fopen("nbg0.txt", "w");
-		for (y = visarea.min_y; y <= visarea.max_y; y++)
-		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_NBG0, y);
-			for (x = visarea.min_x; x <= visarea.max_x; x++)
-				fprintf(f, "%04X ", *src++);
-			fprintf(f, "\n");
-		}
-		fclose(f);
-
-		f = fopen("nbg1.txt", "w");
-		for (y = visarea.min_y; y <= visarea.max_y; y++)
-		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_NBG1, y);
-			for (x = visarea.min_x; x <= visarea.max_x; x++)
-				fprintf(f, "%04X ", *src++);
-			fprintf(f, "\n");
-		}
-		fclose(f);
-
-		f = fopen("nbg2.txt", "w");
-		for (y = visarea.min_y; y <= visarea.max_y; y++)
-		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_NBG2, y);
-			for (x = visarea.min_x; x <= visarea.max_x; x++)
-				fprintf(f, "%04X ", *src++);
-			fprintf(f, "\n");
-		}
-		fclose(f);
-
-		f = fopen("nbg3.txt", "w");
-		for (y = visarea.min_y; y <= visarea.max_y; y++)
-		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_NBG3, y);
-			for (x = visarea.min_x; x <= visarea.max_x; x++)
-				fprintf(f, "%04X ", *src++);
-			fprintf(f, "\n");
-		}
-		fclose(f);
-	}
-
 #if SHOW_ALPHA
 {
 	static const char *const layername[] = { "TEXT ", "NBG0 ", "NBG1 ", "NBG2 ", "NBG3 ", "BITMAP " };
@@ -2537,7 +2478,6 @@ for (showclip = 0; showclip < 4; showclip++)
 }
 #endif
 
-	if (PRINTF_MIXER_DATA) print_mixer_data(0);
 	return 0;
 }
 
@@ -2578,27 +2518,6 @@ UINT32 segas32_state::multi32_update(screen_device &screen, bitmap_rgb32 &bitmap
 	g_profiler.start(PROFILER_USER3);
 	mix_all_layers(index, 0, bitmap, cliprect, enablemask);
 	g_profiler.stop();
-
-if (PRINTF_MIXER_DATA)
-{
-	if (!screen.machine().input().code_pressed(KEYCODE_M)) print_mixer_data(0);
-	else print_mixer_data(1);
-}
-	if (LOG_SPRITES && screen.machine().input().code_pressed(KEYCODE_L))
-	{
-		const rectangle &visarea = screen.visible_area();
-		FILE *f = fopen("sprite.txt", "w");
-		int x, y;
-
-		for (y = visarea.min_y; y <= visarea.max_y; y++)
-		{
-			UINT16 *src = get_layer_scanline(MIXER_LAYER_SPRITES, y);
-			for (x = visarea.min_x; x <= visarea.max_x; x++)
-				fprintf(f, "%04X ", *src++);
-			fprintf(f, "\n");
-		}
-		fclose(f);
-	}
 
 	return 0;
 }

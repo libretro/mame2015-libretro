@@ -302,12 +302,12 @@ void ui_menu_crosshair::handle()
 
 			/* left decrements */
 			case IPT_UI_LEFT:
-				newval -= machine().input().code_pressed(KEYCODE_LSHIFT) ? 10 : 1;
+				newval -= machine().input().code_value(KEYCODE_LSHIFT) ? 10 : 1;
 				break;
 
 			/* right increments */
 			case IPT_UI_RIGHT:
-				newval += machine().input().code_pressed(KEYCODE_LSHIFT) ? 10 : 1;
+				newval += machine().input().code_value(KEYCODE_LSHIFT) ? 10 : 1;
 				break;
 		}
 

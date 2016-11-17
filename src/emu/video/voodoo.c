@@ -157,7 +157,6 @@ bits(7:4) and bit(24)), X, and Y:
  *
  *************************************/
 
-#define DEBUG_DEPTH         (0)
 #define DEBUG_LOD           (0)
 
 #define LOG_VBLANK_SWAP     (0)
@@ -389,7 +388,7 @@ int voodoo_update(device_t *device, bitmap_rgb32 &bitmap, const rectangle &clipr
 	}
 
 	/* debugging! */
-	if (device->machine().input().code_pressed(KEYCODE_L))
+	if (device->machine().input().code_value(KEYCODE_L) != 0)
 		drawbuf = v->fbi.backbuf;
 
 	/* copy from the current front buffer */
@@ -403,7 +402,7 @@ int voodoo_update(device_t *device, bitmap_rgb32 &bitmap, const rectangle &clipr
 		}
 
 	/* update stats display */
-	statskey = (device->machine().input().code_pressed(KEYCODE_BACKSLASH) != 0);
+	statskey = (device->machine().input().code_value(KEYCODE_BACKSLASH) != 0);
 	if (statskey && statskey != v->stats.lastkey)
 		v->stats.display = !v->stats.display;
 	v->stats.lastkey = statskey;
@@ -413,17 +412,7 @@ int voodoo_update(device_t *device, bitmap_rgb32 &bitmap, const rectangle &clipr
 		popmessage(v->stats.buffer, 0, 0);
 
 	/* update render override */
-	v->stats.render_override = device->machine().input().code_pressed(KEYCODE_ENTER);
-	if (DEBUG_DEPTH && v->stats.render_override)
-	{
-		for (y = cliprect.min_y; y <= cliprect.max_y; y++)
-		{
-			UINT16 *src = (UINT16 *)(v->fbi.ram + v->fbi.auxoffs) + (y - v->fbi.yoffs) * v->fbi.rowpixels - v->fbi.xoffs;
-			UINT32 *dst = &bitmap.pix32(y);
-			for (x = cliprect.min_x; x <= cliprect.max_x; x++)
-				dst[x] = ((src[x] << 8) & 0xff0000) | ((src[x] >> 0) & 0xff00) | ((src[x] >> 8) & 0xff);
-		}
-	}
+	v->stats.render_override = device->machine().input().code_value(KEYCODE_ENTER) != 0;
 	return changed;
 }
 

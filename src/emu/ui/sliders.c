@@ -57,11 +57,11 @@ void ui_menu_sliders::handle()
 
 				/* decrease value */
 				case IPT_UI_LEFT:
-					if (machine().input().code_pressed(KEYCODE_LALT) || machine().input().code_pressed(KEYCODE_RALT))
+					if (machine().input().code_value(KEYCODE_LALT) || machine().input().code_value(KEYCODE_RALT))
 						increment = -1;
-					else if (machine().input().code_pressed(KEYCODE_LSHIFT) || machine().input().code_pressed(KEYCODE_RSHIFT))
+					else if (machine().input().code_value(KEYCODE_LSHIFT) || machine().input().code_value(KEYCODE_RSHIFT))
 						increment = (slider->incval > 10) ? -(slider->incval / 10) : -1;
-					else if (machine().input().code_pressed(KEYCODE_LCONTROL) || machine().input().code_pressed(KEYCODE_RCONTROL))
+					else if (machine().input().code_value(KEYCODE_LCONTROL) || machine().input().code_value(KEYCODE_RCONTROL))
 						increment = -slider->incval * 10;
 					else
 						increment = -slider->incval;
@@ -69,11 +69,11 @@ void ui_menu_sliders::handle()
 
 				/* increase value */
 				case IPT_UI_RIGHT:
-					if (machine().input().code_pressed(KEYCODE_LALT) || machine().input().code_pressed(KEYCODE_RALT))
+					if (machine().input().code_value(KEYCODE_LALT) || machine().input().code_value(KEYCODE_RALT))
 						increment = 1;
-					else if (machine().input().code_pressed(KEYCODE_LSHIFT) || machine().input().code_pressed(KEYCODE_RSHIFT))
+					else if (machine().input().code_value(KEYCODE_LSHIFT) || machine().input().code_value(KEYCODE_RSHIFT))
 						increment = (slider->incval > 10) ? (slider->incval / 10) : 1;
-					else if (machine().input().code_pressed(KEYCODE_LCONTROL) || machine().input().code_pressed(KEYCODE_RCONTROL))
+					else if (machine().input().code_value(KEYCODE_LCONTROL) || machine().input().code_value(KEYCODE_RCONTROL))
 						increment = slider->incval * 10;
 					else
 						increment = slider->incval;

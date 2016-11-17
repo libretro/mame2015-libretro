@@ -11,7 +11,6 @@
 
 
 #define LOG_GFX_OPS 0
-#define LOGGFX(x) do { if (LOG_GFX_OPS && machine().input().code_pressed(KEYCODE_L)) logerror x; } while (0)
 
 
 /* Graphics Instructions */
@@ -25,7 +24,6 @@ void tms340x0_device::line(UINT16 op)
 
 		m_st |= STBIT_P;
 		TEMP() = (op & 0x80) ? 1 : 0;  /* boundary value depends on the algorithm */
-		LOGGFX(("%08X(%3d):LINE (%d,%d)-(%d,%d)\n", m_pc, m_screen->vpos(), DADDR_X(), DADDR_Y(), DADDR_X() + DYDX_X(), DADDR_Y() + DYDX_Y()));
 	}
 
 	if (COUNT() > 0)
@@ -827,7 +825,6 @@ void tms340x0_device::pixblt_b_l(UINT16 op)
 	int trans = (IOREG(REG_CONTROL) & 0x20) >> 5;
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int ix = trans | (rop << 1) | (psize << 6);
-	if (!P_FLAG()) LOGGFX(("%08X(%3d):PIXBLT B,L (%dx%d) depth=%d\n", m_pc, m_screen->vpos(), DYDX_X(), DYDX_Y(), IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
 	m_pixel_op = s_pixel_op_table[rop];
 	m_pixel_op_timing = s_pixel_op_timing_table[rop];
 	(this->*s_pixblt_b_op_table[ix])(1);
@@ -839,7 +836,6 @@ void tms340x0_device::pixblt_b_xy(UINT16 op)
 	int trans = (IOREG(REG_CONTROL) & 0x20) >> 5;
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int ix = trans | (rop << 1) | (psize << 6);
-	if (!P_FLAG()) LOGGFX(("%08X(%3d):PIXBLT B,XY (%d,%d) (%dx%d) depth=%d\n", m_pc, m_screen->vpos(), DADDR_X(), DADDR_Y(), DYDX_X(), DYDX_Y(), IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
 	m_pixel_op = s_pixel_op_table[rop];
 	m_pixel_op_timing = s_pixel_op_timing_table[rop];
 	(this->*s_pixblt_b_op_table[ix])(0);
@@ -852,7 +848,6 @@ void tms340x0_device::pixblt_l_l(UINT16 op)
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int pbh = (IOREG(REG_CONTROL) >> 8) & 1;
 	int ix = trans | (rop << 1) | (psize << 6);
-	if (!P_FLAG()) LOGGFX(("%08X(%3d):PIXBLT L,L (%dx%d) depth=%d\n", m_pc, m_screen->vpos(), DYDX_X(), DYDX_Y(), IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
 	m_pixel_op = s_pixel_op_table[rop];
 	m_pixel_op_timing = s_pixel_op_timing_table[rop];
 	if (!pbh)
@@ -868,7 +863,6 @@ void tms340x0_device::pixblt_l_xy(UINT16 op)
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int pbh = (IOREG(REG_CONTROL) >> 8) & 1;
 	int ix = trans | (rop << 1) | (psize << 6);
-	if (!P_FLAG()) LOGGFX(("%08X(%3d):PIXBLT L,XY (%d,%d) (%dx%d) depth=%d\n", m_pc, m_screen->vpos(), DADDR_X(), DADDR_Y(), DYDX_X(), DYDX_Y(), IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
 	m_pixel_op = s_pixel_op_table[rop];
 	m_pixel_op_timing = s_pixel_op_timing_table[rop];
 	if (!pbh)
@@ -884,7 +878,6 @@ void tms340x0_device::pixblt_xy_l(UINT16 op)
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int pbh = (IOREG(REG_CONTROL) >> 8) & 1;
 	int ix = trans | (rop << 1) | (psize << 6);
-	if (!P_FLAG()) LOGGFX(("%08X(%3d):PIXBLT XY,L (%dx%d) depth=%d\n", m_pc, m_screen->vpos(), DYDX_X(), DYDX_Y(), IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
 	m_pixel_op = s_pixel_op_table[rop];
 	m_pixel_op_timing = s_pixel_op_timing_table[rop];
 	if (!pbh)
@@ -900,7 +893,6 @@ void tms340x0_device::pixblt_xy_xy(UINT16 op)
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int pbh = (IOREG(REG_CONTROL) >> 8) & 1;
 	int ix = trans | (rop << 1) | (psize << 6);
-	if (!P_FLAG()) LOGGFX(("%08X(%3d):PIXBLT XY,XY (%dx%d) depth=%d\n", m_pc, m_screen->vpos(), DYDX_X(), DYDX_Y(), IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
 	m_pixel_op = s_pixel_op_table[rop];
 	m_pixel_op_timing = s_pixel_op_timing_table[rop];
 	if (!pbh)
@@ -915,7 +907,6 @@ void tms340x0_device::fill_l(UINT16 op)
 	int trans = (IOREG(REG_CONTROL) & 0x20) >> 5;
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int ix = trans | (rop << 1) | (psize << 6);
-	if (!P_FLAG()) LOGGFX(("%08X(%3d):FILL L (%dx%d) depth=%d\n", m_pc, m_screen->vpos(), DYDX_X(), DYDX_Y(), IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
 	m_pixel_op = s_pixel_op_table[rop];
 	m_pixel_op_timing = s_pixel_op_timing_table[rop];
 	(this->*s_fill_op_table[ix])(1);
@@ -927,7 +918,6 @@ void tms340x0_device::fill_xy(UINT16 op)
 	int trans = (IOREG(REG_CONTROL) & 0x20) >> 5;
 	int rop = (IOREG(REG_CONTROL) >> 10) & 0x1f;
 	int ix = trans | (rop << 1) | (psize << 6);
-	if (!P_FLAG()) LOGGFX(("%08X(%3d):FILL XY (%d,%d) (%dx%d) depth=%d\n", m_pc, m_screen->vpos(), DADDR_X(), DADDR_Y(), DYDX_X(), DYDX_Y(), IOREG(REG_PSIZE) ? IOREG(REG_PSIZE) : 32));
 	m_pixel_op = s_pixel_op_table[rop];
 	m_pixel_op_timing = s_pixel_op_timing_table[rop];
 	(this->*s_fill_op_table[ix])(0);
@@ -985,7 +975,6 @@ void FUNCTION_NAME(tms340x0_device::pixblt)(int src_is_linear, int dst_is_linear
 		else
 			daddr = DADDR();
 		daddr &= ~(BITS_PER_PIXEL - 1);
-		LOGGFX(("  saddr=%08X daddr=%08X sptch=%08X dptch=%08X\n", saddr, daddr, SPTCH(), DPTCH()));
 
 		/* bail if we're clipped */
 		if (dx <= 0 || dy <= 0)
@@ -1223,7 +1212,6 @@ void FUNCTION_NAME(tms340x0_device::pixblt)(int src_is_linear, int dst_is_linear
 					/* fetch another word if necessary */
 					if (srcmask == 0)
 					{
-		LOGGFX(("  right fetch @ %08x\n", swordaddr));
 						srcword = (this->*word_read)(*m_program, swordaddr++ << 1);
 						srcmask = PIXEL_MASK;
 					}
@@ -1265,7 +1253,6 @@ void FUNCTION_NAME(tms340x0_device::pixblt)(int src_is_linear, int dst_is_linear
 
 		m_gfxcycles += readwrites * 2 + dx * dy * (PIXEL_OP_TIMING - 2);
 
-		LOGGFX(("  (%d cycles)\n", m_gfxcycles));
 	}
 
 	/* eat cycles */
@@ -1336,7 +1323,6 @@ if ((saddr & (BITS_PER_PIXEL - 1)) != 0) osd_printf_debug("PIXBLT_R%d with odd s
 			daddr = DADDR();
 if ((daddr & (BITS_PER_PIXEL - 1)) != 0) osd_printf_debug("PIXBLT_R%d with odd daddr\n", BITS_PER_PIXEL);
 		daddr &= ~(BITS_PER_PIXEL - 1);
-		LOGGFX(("  saddr=%08X daddr=%08X sptch=%08X dptch=%08X\n", saddr, daddr, SPTCH(), DPTCH()));
 
 		/* bail if we're clipped */
 		if (dx <= 0 || dy <= 0)
@@ -1545,7 +1531,6 @@ if ((daddr & (BITS_PER_PIXEL - 1)) != 0) osd_printf_debug("PIXBLT_R%d with odd d
 				daddr -= DPTCH();
 			}
 		}
-		LOGGFX(("  (%d cycles)\n", m_gfxcycles));
 	}
 
 	/* eat cycles */
@@ -1613,7 +1598,6 @@ void FUNCTION_NAME(tms340x0_device::pixblt_b)(int dst_is_linear)
 		else
 			daddr = DADDR();
 		daddr &= ~(BITS_PER_PIXEL - 1);
-		LOGGFX(("  saddr=%08X daddr=%08X sptch=%08X dptch=%08X\n", saddr, daddr, SPTCH(), DPTCH()));
 
 		/* bail if we're clipped */
 		if (dx <= 0 || dy <= 0)
@@ -1764,7 +1748,6 @@ void FUNCTION_NAME(tms340x0_device::pixblt_b)(int dst_is_linear)
 			saddr += SPTCH();
 			daddr += DPTCH();
 		}
-		LOGGFX(("  (%d cycles)\n", m_gfxcycles));
 	}
 
 	/* eat cycles */
@@ -1824,7 +1807,6 @@ void FUNCTION_NAME(tms340x0_device::fill)(int dst_is_linear)
 		else
 			daddr = DADDR();
 		daddr &= ~(BITS_PER_PIXEL - 1);
-		LOGGFX(("  daddr=%08X\n", daddr));
 
 		/* bail if we're clipped */
 		if (dx <= 0 || dy <= 0)
@@ -1945,8 +1927,6 @@ void FUNCTION_NAME(tms340x0_device::fill)(int dst_is_linear)
 			/* update for next row */
 			daddr += DPTCH();
 		}
-
-		LOGGFX(("  (%d cycles)\n", m_gfxcycles));
 	}
 
 	/* eat cycles */

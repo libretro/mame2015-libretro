@@ -738,9 +738,9 @@ void magicard_state::machine_reset()
 /*Probably there's a mask somewhere if it REALLY uses irqs at all...irq vectors dynamically changes after some time.*/
 INTERRUPT_GEN_MEMBER(magicard_state::magicard_irq)
 {
-	if(machine().input().code_pressed(KEYCODE_Z)) //vblank?
+	if(machine().input().code_value(KEYCODE_Z) != 0) //vblank?
 		device.execute().set_input_line_and_vector(1, HOLD_LINE,0xe4/4);
-	if(machine().input().code_pressed(KEYCODE_X)) //uart irq
+	if(machine().input().code_value(KEYCODE_X) != 0) //uart irq
 		device.execute().set_input_line_and_vector(1, HOLD_LINE,0xf0/4);
 }
 

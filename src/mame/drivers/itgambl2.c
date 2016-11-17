@@ -94,6 +94,7 @@ UINT32 itgambl2_state::screen_update_itgambl2(screen_device &screen, bitmap_rgb3
 	int x,y,count;
 	const UINT8 *blit_ram = memregion("gfx1")->base();
 
+#if 0
 	if(machine().input().code_pressed(KEYCODE_Z))
 		m_test_x++;
 
@@ -117,6 +118,7 @@ UINT32 itgambl2_state::screen_update_itgambl2(screen_device &screen, bitmap_rgb3
 
 	if(machine().input().code_pressed(KEYCODE_R))
 		m_start_offs--;
+#endif
 
 	popmessage("%d %d %04x",m_test_x,m_test_y,m_start_offs);
 
