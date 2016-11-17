@@ -102,11 +102,7 @@ void osd_process_kill(void)
 
 void *osd_malloc(size_t size)
 {
-#ifndef MALLOC_DEBUG
     return malloc(size);
-#else
-#error "MALLOC_DEBUG not yet supported"
-#endif
 }
 
 
@@ -116,11 +112,7 @@ void *osd_malloc(size_t size)
 
 void *osd_malloc_array(size_t size)
 {
-#ifndef MALLOC_DEBUG
     return malloc(size);
-#else
-#error "MALLOC_DEBUG not yet supported"
-#endif
 }
 
 
@@ -130,11 +122,7 @@ void *osd_malloc_array(size_t size)
 
 void osd_free(void *ptr)
 {
-#ifndef MALLOC_DEBUG
     free(ptr);
-#else
-#error "MALLOC_DEBUG not yet supported"
-#endif
 }
 
 //============================================================

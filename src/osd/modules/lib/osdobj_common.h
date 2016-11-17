@@ -16,7 +16,6 @@
 #include "osdepend.h"
 #include "modules/osdmodule.h"
 #include "modules/font/font_module.h"
-#include "modules/sound/sound_module.h"
 #include "modules/debugger/debug_module.h"
 #include "modules/netdev/netdev_module.h"
 #include "modules/midi/midi_module.h"
@@ -248,7 +247,6 @@ private:
 	}
 
 protected:
-	sound_module* m_sound;
 	debug_module* m_debugger;
 	midi_module* m_midi;
 private:

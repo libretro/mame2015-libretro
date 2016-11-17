@@ -34,10 +34,6 @@
 #include "osxutils.h"
 #endif
 
-#if defined(OSD_SDL)
-typedef void *PVOID;
-#endif
-
 #if defined(OSD_RETRO)
 typedef void *PVOID;
 #endif

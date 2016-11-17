@@ -51,8 +51,6 @@ OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_osd.o
 #-------------------------------------------------
 
 OSDOBJS = \
-	$(MINIOBJ)/../modules/sound/retro_sound.o \
-	$(MINIOBJ)/../modules/sound/none.o \
 	$(MINIOBJ)/libretro.o \
 	$(MINIOBJ)/retromain.o \
 	$(MINIOBJ)/../modules/debugger/none.o \

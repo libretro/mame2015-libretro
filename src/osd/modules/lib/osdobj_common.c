@@ -13,6 +13,11 @@
 #include "osdepend.h"
 #include "modules/lib/osdobj_common.h"
 
+#include "libretro.h"
+
+extern int retro_pause;
+extern retro_audio_sample_batch_t audio_batch_cb;
+
 extern bool g_print_verbose;
 
 const options_entry osd_options::s_option_entries[] =
@@ -135,7 +140,6 @@ osd_options::osd_options()
 osd_common_t::osd_common_t(osd_options &options)
 	: osd_output(), m_machine(NULL),
 		m_options(options),
-		m_sound(NULL),
 		m_debugger(NULL)
 {
 	osd_output::push(this);
@@ -163,15 +167,6 @@ void osd_common_t::register_options()
 	REGISTER_MODULE(m_mod_man, FONT_SDL);
 #endif
 	REGISTER_MODULE(m_mod_man, FONT_NONE);
-
-#ifdef OSD_RETRO
-	REGISTER_MODULE(m_mod_man, SOUND_RETRO);
-#else
-	REGISTER_MODULE(m_mod_man, SOUND_DSOUND);
-	REGISTER_MODULE(m_mod_man, SOUND_JS);
-	REGISTER_MODULE(m_mod_man, SOUND_SDL);
-	REGISTER_MODULE(m_mod_man, SOUND_NONE);
-#endif
 
 #ifndef OSD_RETRO
 #ifdef SDLMAME_MACOSX
@@ -203,12 +198,6 @@ void osd_common_t::register_options()
 	for (int i = 0; i < num; i++)
 		dnames.append(names[i]);
 	update_option(OSD_FONT_PROVIDER, dnames);
-
-	m_mod_man.get_module_names(OSD_SOUND_PROVIDER, 20, &num, names);
-	dnames.reset();
-	for (int i = 0; i < num; i++)
-		dnames.append(names[i]);
-	update_option(OSD_SOUND_PROVIDER, dnames);
 
 #if 0
 	// Register midi options and update options
@@ -394,7 +383,8 @@ void osd_common_t::update_audio_stream(const INT16 *buffer, int samples_this_fra
 	// It provides an array of stereo samples in L-R order which should be
 	// output at the configured sample_rate.
 	//
-	m_sound->update_audio_stream(m_machine->video().throttled(), buffer,samples_this_frame);
+   if (retro_pause != -1)
+      audio_batch_cb(buffer, samples_this_frame);
 }
 
 
@@ -411,8 +401,6 @@ void osd_common_t::set_mastervolume(int attenuation)
 	//    while (attenuation++ < 0)
 	//       volume /= 1.122018454;      //  = (10 ^ (1/20)) = 1dB
 	//
-	if (m_sound != NULL)
-		m_sound->set_mastervolume(attenuation);
 }
 
 
@@ -537,10 +525,6 @@ void osd_common_t::init_subsystems()
 	output_init();
 
 	m_font_module = select_module_options<font_module *>(options(), OSD_FONT_PROVIDER);
-
-	m_sound = select_module_options<sound_module *>(options(), OSD_SOUND_PROVIDER);
-	m_sound->m_sample_rate = options().sample_rate();
-	m_sound->m_audio_latency = options().audio_latency();
 
 	m_debugger = select_module_options<debug_module *>(options(), OSD_DEBUG_PROVIDER);
 
