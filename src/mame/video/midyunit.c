@@ -441,6 +441,7 @@ WRITE16_MEMBER(midyunit_state::midyunit_dma_w)
 	if (!(command & 0x8000))
 		return;
 
+#if 0
 if (LOG_DMA)
 {
 	if (machine().input().code_pressed(KEYCODE_L))
@@ -456,6 +457,7 @@ if (LOG_DMA)
 				m_dma_register[DMA_PALETTE], m_dma_register[DMA_COLOR]);
 	}
 }
+#endif
 
 	g_profiler.start(PROFILER_USER1);
 

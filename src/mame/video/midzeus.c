@@ -58,7 +58,6 @@ struct poly_extra_data
  *************************************/
 
 static legacy_poly_manager *poly;
-static UINT8 log_fifo;
 
 static UINT32 zeus_fifo[20];
 static UINT8 zeus_fifo_words;
@@ -324,7 +323,9 @@ UINT32 midzeus_state::screen_update_midzeus(screen_device &screen, bitmap_ind16 
 	poly_wait(poly, "VIDEO_UPDATE");
 
 	/* normal update case */
+#if 0
 	if (!machine().input().code_pressed(KEYCODE_W))
+#endif
 	{
 		const void *base = waveram1_ptr_from_expanded_addr(m_zeusbase[0xcc]);
 		int xoffs = screen.visible_area().min_x;
@@ -337,14 +338,15 @@ UINT32 midzeus_state::screen_update_midzeus(screen_device &screen, bitmap_ind16 
 	}
 
 	/* waveram drawing case */
-	else
 	{
 		const void *base;
 
+#if 0
 		if (machine().input().code_pressed(KEYCODE_DOWN)) yoffs += machine().input().code_pressed(KEYCODE_LSHIFT) ? 0x40 : 1;
 		if (machine().input().code_pressed(KEYCODE_UP)) yoffs -= machine().input().code_pressed(KEYCODE_LSHIFT) ? 0x40 : 1;
 		if (machine().input().code_pressed(KEYCODE_LEFT) && texel_width > 4) { texel_width >>= 1; while (machine().input().code_pressed(KEYCODE_LEFT)) ; }
 		if (machine().input().code_pressed(KEYCODE_RIGHT) && texel_width < 512) { texel_width <<= 1; while (machine().input().code_pressed(KEYCODE_RIGHT)) ; }
+#endif
 
 		if (yoffs < 0) yoffs = 0;
 		base = waveram0_ptr_from_block_addr(yoffs << 12);
@@ -742,7 +744,6 @@ void midzeus_state::zeus_register_update(offs_t offset)
 
 		case 0xcc:
 			m_screen->update_partial(m_screen->vpos());
-			log_fifo = machine().input().code_pressed(KEYCODE_L);
 			break;
 
 		case 0xe0:
@@ -772,23 +773,17 @@ int midzeus_state::zeus_fifo_process(const UINT32 *data, int numwords)
 		case 0x01:
 			if (numwords < 2 && data[0] != 0)
 				return FALSE;
-			if (log_fifo)
-				log_fifo_command(data, numwords, "");
-			zeus_pointer_w(data[0] & 0xffffff, data[1], log_fifo);
+			zeus_pointer_w(data[0] & 0xffffff, data[1], false);
 			break;
 
 		/* 0x13: render model based on previously set information */
 		case 0x13:  /* invasn */
-			if (log_fifo)
-				log_fifo_command(data, numwords, "");
-			zeus_draw_model((m_zeusbase[0x06] << 16), log_fifo);
+			zeus_draw_model((m_zeusbase[0x06] << 16), false);
 			break;
 
 		/* 0x17: write 16-bit value to low registers */
 		case 0x17:
-			if (log_fifo)
-				log_fifo_command(data, numwords, " -- reg16");
-			zeus_register16_w((data[0] >> 16) & 0x7f, data[0], log_fifo);
+			zeus_register16_w((data[0] >> 16) & 0x7f, data[0], false);
 			break;
 
 		/* 0x18: write 32-bit value to low registers */
@@ -796,16 +791,12 @@ int midzeus_state::zeus_fifo_process(const UINT32 *data, int numwords)
 		case 0x18:
 			if (numwords < 2)
 				return FALSE;
-			if (log_fifo)
-				log_fifo_command(data, numwords, " -- reg32");
-			zeus_register32_w((data[0] >> 16) & 0x7f, data[1], log_fifo);
+			zeus_register32_w((data[0] >> 16) & 0x7f, data[1], false);
 			break;
 
 		/* 0x1A/0x1B: sync pipeline(?) */
 		case 0x1a:
 		case 0x1b:
-			if (log_fifo)
-				log_fifo_command(data, numwords, " -- sync\n");
 			break;
 
 		/* 0x1C/0x1E: write matrix and translation vector */
@@ -818,17 +809,6 @@ int midzeus_state::zeus_fifo_process(const UINT32 *data, int numwords)
 				/* requires 8 words total */
 				if (numwords < 8)
 					return FALSE;
-				if (log_fifo)
-				{
-					log_fifo_command(data, numwords, "");
-					logerror("\n\t\tmatrix ( %04X %04X %04X ) ( %04X %04X %04X ) ( %04X %04X %04X )\n\t\tvector %8.2f %8.2f %8.5f\n",
-						data[2] & 0xffff,   data[2] >> 16,      data[0] & 0xffff,
-						data[3] & 0xffff,   data[3] >> 16,      data[1] >> 16,
-						data[4] & 0xffff,   data[4] >> 16,      data[1] & 0xffff,
-						(float)(INT32)data[5] * (1.0f / 65536.0f),
-						(float)(INT32)data[6] * (1.0f / 65536.0f),
-						(float)(INT32)data[7] * (1.0f / (65536.0f * 512.0f)));
-				}
 
 				/* extract the matrix from the raw data */
 				zeus_matrix[0][0] = data[2];    zeus_matrix[0][1] = data[2] >> 16;  zeus_matrix[0][2] = data[0];
@@ -850,20 +830,6 @@ int midzeus_state::zeus_fifo_process(const UINT32 *data, int numwords)
 				/* requires 13 words total */
 				if (numwords < 13)
 					return FALSE;
-				if (log_fifo)
-				{
-					log_fifo_command(data, numwords, "");
-					logerror("\n\t\tmatrix ( %04X %04X %04X ) ( %04X %04X %04X ) ( %04X %04X %04X )\n\t\tmatrix ( %04X %04X %04X ) ( %04X %04X %04X ) ( %04X %04X %04X )\n\t\tvector %8.2f %8.2f %8.5f\n",
-						data[4] & 0xffff,   data[4] >> 16,      data[5] >> 16,
-						data[8] & 0xffff,   data[8] >> 16,      data[6] >> 16,
-						data[9] & 0xffff,   data[9] >> 16,      data[7] >> 16,
-						data[1] & 0xffff,   data[2] & 0xffff,   data[3] & 0xffff,
-						data[1] >> 16,      data[2] >> 16,      data[3] >> 16,
-						data[5] & 0xffff,   data[6] & 0xffff,   data[7] & 0xffff,
-						(float)(INT32)data[10] * (1.0f / 65536.0f),
-						(float)(INT32)data[11] * (1.0f / 65536.0f),
-						(float)(INT32)data[12] * (1.0f / (65536.0f * 512.0f)));
-				}
 
 				/* extract the first matrix from the raw data */
 				matrix1[0][0] = data[4];        matrix1[0][1] = data[4] >> 16;  matrix1[0][2] = data[5] >> 16;
@@ -899,16 +865,6 @@ int midzeus_state::zeus_fifo_process(const UINT32 *data, int numwords)
 		case 0x2e:
 			if (numwords < 2)
 				return FALSE;
-			if (log_fifo)
-			{
-				log_fifo_command(data, numwords, "");
-				logerror(" -- additional xyz = %d,%d,%d\n", (INT16)data[0], (INT16)(data[1] >> 16), (INT16)data[1]);
-
-				/* guessing this might be a light source? */
-				zeus_light[0] = (INT16)data[0];
-				zeus_light[1] = (INT16)(data[1] >> 16);
-				zeus_light[2] = (INT16)data[1];
-			}
 			break;
 		/* 0x25: display control? */
 		/* 0x28: same for mk4b */
@@ -929,9 +885,6 @@ int midzeus_state::zeus_fifo_process(const UINT32 *data, int numwords)
 			if (numwords < 4 || ((data[0] & 0x808000) && numwords < 10))
 				return FALSE;
 
-			if (log_fifo)
-				log_fifo_command(data, numwords, " -- alt. quad and hack screen clear\n");
-
 			if ((numwords < 10) && (data[0] & 0xffff7f) == 0)
 			{
 				/* not right -- just a hack */
@@ -943,7 +896,7 @@ int midzeus_state::zeus_fifo_process(const UINT32 *data, int numwords)
 			else
 			{
 				UINT32 texdata = (m_zeusbase[0x06] << 16) | (m_zeusbase[0x00] >> 16);
-				zeus_draw_quad(FALSE, data, texdata, log_fifo);
+				zeus_draw_quad(FALSE, data, texdata, false);
 			}
 			break;
 
@@ -951,24 +904,18 @@ int midzeus_state::zeus_fifo_process(const UINT32 *data, int numwords)
 		/* 0x70: same for mk4 */
 		case 0x2d:
 		case 0x70:
-			if (log_fifo)
-				log_fifo_command(data, numwords, "\n");
 			break;
 
 		/* 0x67: render model with inline texture info */
 		case 0x67:
 			if (numwords < 3)
 				return FALSE;
-			if (log_fifo)
-				log_fifo_command(data, numwords, "");
 			zeus_objdata = data[1];
-			zeus_draw_model(data[2], log_fifo);
+			zeus_draw_model(data[2], false);
 			break;
 
 		default:
 			printf("Unknown command %08X\n", data[0]);
-			if (log_fifo)
-				log_fifo_command(data, numwords, "\n");
 			break;
 	}
 	return TRUE;

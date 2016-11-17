@@ -634,6 +634,7 @@ UINT32 firebeat_state::update_screen(screen_device &screen, bitmap_ind16 &bitmap
 	if (m_tick >= 5)
 	{
 		m_tick = 0;
+#if 0
 		if (machine().input().code_pressed(KEYCODE_0))
 		{
 			m_layer++;
@@ -642,6 +643,7 @@ UINT32 firebeat_state::update_screen(screen_device &screen, bitmap_ind16 &bitmap
 				m_layer = 0;
 			}
 		}
+#endif
 
 		/*
 		if (machine().input().code_pressed_once(KEYCODE_9))

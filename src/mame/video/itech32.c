@@ -323,6 +323,7 @@ WRITE16_MEMBER(itech32_state::bloodstm_paletteram_w)
 
 void itech32_state::logblit(const char *tag)
 {
+#if 0
 	if (!machine().input().code_pressed(KEYCODE_L))
 		return;
 	if (m_is_drivedge && VIDEO_TRANSFER_FLAGS == 0x5490)
@@ -368,6 +369,7 @@ void itech32_state::logblit(const char *tag)
 	}
 	if (m_is_drivedge) logerror(" v0=%08x v1=%08x v2=%08x v3=%08x", m_drivedge_zbuf_control[0], m_drivedge_zbuf_control[1], m_drivedge_zbuf_control[2], m_drivedge_zbuf_control[3]);
 	logerror("\n");
+#endif
 }
 
 

@@ -721,6 +721,7 @@ WRITE16_MEMBER(midtunit_state::midtunit_dma_w)
 	/* determine the offset */
 	gfxoffset = dma_register[DMA_OFFSETLO] | (dma_register[DMA_OFFSETHI] << 16);
 
+#if 0
 if (LOG_DMA)
 {
 	if (machine().input().code_pressed(KEYCODE_L))
@@ -739,6 +740,8 @@ if (LOG_DMA)
 		logerror("----\n");
 	}
 }
+#endif
+
 	/* special case: drawing mode C doesn't need to know about any pixel data */
 	if ((command & 0x0f) == 0x0c)
 		gfxoffset = 0;

@@ -376,8 +376,10 @@ void midvunit_renderer::process_dma_queue()
 
 WRITE32_MEMBER(midvunit_state::midvunit_dma_queue_w)
 {
+#if 0
 	if (LOG_DMA && machine().input().code_pressed(KEYCODE_L))
 		logerror("%06X:queue(%X) = %08X\n", space.device().safe_pc(), m_dma_data_index, data);
+#endif
 	if (m_dma_data_index < 16)
 		m_dma_data[m_dma_data_index++] = data;
 }
@@ -394,8 +396,10 @@ READ32_MEMBER(midvunit_state::midvunit_dma_trigger_r)
 {
 	if (offset)
 	{
+#if 0
 		if (LOG_DMA && machine().input().code_pressed(KEYCODE_L))
 			logerror("%06X:trigger\n", space.device().safe_pc());
+#endif
 		m_poly->process_dma_queue();
 		m_dma_data_index = 0;
 	}
@@ -416,8 +420,10 @@ WRITE32_MEMBER(midvunit_state::midvunit_page_control_w)
 	if ((m_page_control ^ data) & 1)
 	{
 		m_video_changed = TRUE;
+#if 0
 		if (LOG_DMA && machine().input().code_pressed(KEYCODE_L))
 			logerror("##########################################################\n");
+#endif
 		m_screen->update_partial(m_screen->vpos() - 1);
 	}
 	m_page_control = data;

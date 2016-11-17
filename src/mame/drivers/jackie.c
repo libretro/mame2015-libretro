@@ -403,7 +403,7 @@ ADDRESS_MAP_END
 CUSTOM_INPUT_MEMBER(jackie_state::hopper_r)
 {
 	if (m_hopper) return !(m_screen->frame_number()%10);
-	return machine().input().code_pressed(KEYCODE_H);
+	return machine().input().code_value(KEYCODE_H) != 0;
 }
 
 static INPUT_PORTS_START( jackie )

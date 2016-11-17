@@ -501,8 +501,6 @@ void gottlieb_state::audio_process_clock(int logit)
 	{
 		if (m_laserdisc_audio_bits == 0x67)
 		{
-			if (logit)
-				logerror(" -- got 0x67");
 			m_laserdisc_status &= ~0x08;
 			m_laserdisc_audio_address = 0;
 		}
@@ -516,8 +514,6 @@ void gottlieb_state::audio_process_clock(int logit)
 		/* if we collect 8 bits, add to the buffer */
 		if (m_laserdisc_audio_bit_count == 8)
 		{
-			if (logit)
-				logerror(" -- got new byte %02X", m_laserdisc_audio_bits);
 			m_laserdisc_audio_bit_count = 0;
 			m_laserdisc_audio_buffer[m_laserdisc_audio_address++] = m_laserdisc_audio_bits;
 
@@ -578,13 +574,9 @@ void gottlieb_state::audio_handle_zero_crossing(const attotime &zerotime, int lo
 
 void gottlieb_state::laserdisc_audio_process(laserdisc_device &device, int samplerate, int samples, const INT16 *ch0, const INT16 *ch1)
 {
-	int logit = LOG_AUDIO_DECODE && machine().input().code_pressed(KEYCODE_L);
 	attotime time_per_sample = attotime::from_hz(samplerate);
 	attotime curtime = m_laserdisc_last_time;
 	int cursamp;
-
-	if (logit)
-		logerror("--------------\n");
 
 	/* if no data, reset it all */
 	if (ch1 == NULL)
@@ -599,8 +591,6 @@ void gottlieb_state::laserdisc_audio_process(laserdisc_device &device, int sampl
 		INT16 sample = ch1[cursamp];
 
 		/* start by logging the current sample and time */
-		if (logit)
-			logerror("%s: %d", (curtime + time_per_sample + time_per_sample).as_string(6), sample);
 
 		/* if we are past the "break in transmission" time, reset everything */
 		if ((curtime - m_laserdisc_last_clock) > attotime::from_usec(400))
@@ -620,10 +610,8 @@ void gottlieb_state::laserdisc_audio_process(laserdisc_device &device, int sampl
 			zerotime = curtime + time_per_sample * fractime / 1000;
 
 			/* determine if this is a clock; if it is, process */
-			audio_handle_zero_crossing(zerotime, logit);
+			audio_handle_zero_crossing(zerotime, 0);
 		}
-		if (logit)
-			logerror(" \n");
 
 		/* update our sample tracking and advance time */
 		m_laserdisc_last_samples[0] = m_laserdisc_last_samples[1];

@@ -136,7 +136,7 @@ UINT32 galpani2_state::screen_update_galpani2(screen_device &screen, bitmap_rgb3
 {
 	int layers_ctrl = -1;
 
-#if 1 // MAME_DEBUG
+#if 0 // MAME_DEBUG
 if (machine().input().code_pressed(KEYCODE_Z))
 {
 	int msk = 0;

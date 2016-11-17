@@ -858,8 +858,10 @@ void deco16ic_device::print_debug_info(bitmap_ind16 &bitmap)
 {
 	char buf[64*5];
 
+#if 0
 	if (machine().input().code_pressed(KEYCODE_O))
 		return;
+#endif
 
 	if (m_pf12_control)
 	{

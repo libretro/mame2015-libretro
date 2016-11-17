@@ -1008,7 +1008,9 @@ void psikyosh_state::draw_sprites(bitmap_rgb32 &bitmap, const rectangle &cliprec
 			else
 				alpha = pal6bit(0x3f - alpha); /* 0x3f-0x00 maps to 0x00-0xff */
 
+#if 0
 			if(!spr_debug || machine().input().code_pressed(spr_keys[spr_pri]))
+#endif
 			{
 				/* start drawing */
 				if (zoom_table[BYTE_XOR_BE(zoomy)] && zoom_table[BYTE_XOR_BE(zoomx)]) /* Avoid division-by-zero when table contains 0 (Uninitialised/Bug) */
@@ -1156,7 +1158,9 @@ popmessage   ("%08x %08x %08x %08x\n%08x %08x %08x %08x",
 	psikyosh_prelineblend(bitmap, cliprect); // fills screen
 	for (i = 0; i <= 7; i++)
 	{
+#if 0
 		if(!pri_debug || machine().input().code_pressed(pri_keys[i]))
+#endif
 		{
 			if(sprites) {
 				draw_sprites(bitmap, cliprect, i); // When same priority bg's have higher pri

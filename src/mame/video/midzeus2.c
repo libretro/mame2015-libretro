@@ -58,7 +58,6 @@ struct poly_extra_data
  *************************************/
 
 static legacy_poly_manager *poly;
-static UINT8 log_fifo;
 
 static UINT32 zeus_fifo[20];
 static UINT8 zeus_fifo_words;
@@ -352,6 +351,7 @@ UINT32 midzeus2_state::screen_update_midzeus2(screen_device &screen, bitmap_rgb3
 
 	poly_wait(poly, "VIDEO_UPDATE");
 
+#if 0
 if (machine().input().code_pressed(KEYCODE_UP)) { zbase += 1.0f; popmessage("Zbase = %f", zbase); }
 if (machine().input().code_pressed(KEYCODE_DOWN)) { zbase -= 1.0f; popmessage("Zbase = %f", zbase); }
 
@@ -367,16 +367,18 @@ if (machine().input().code_pressed(KEYCODE_DOWN)) { zbase -= 1.0f; popmessage("Z
 				dest[x] = WAVERAM_READPIX(base, y, x - xoffs);
 		}
 	}
+#endif
 
 	/* waveram drawing case */
-	else
 	{
 		const UINT64 *base;
 
+#if 0
 		if (machine().input().code_pressed(KEYCODE_DOWN)) yoffs += machine().input().code_pressed(KEYCODE_LSHIFT) ? 0x40 : 1;
 		if (machine().input().code_pressed(KEYCODE_UP)) yoffs -= machine().input().code_pressed(KEYCODE_LSHIFT) ? 0x40 : 1;
 		if (machine().input().code_pressed(KEYCODE_LEFT) && texel_width > 4) { texel_width >>= 1; while (machine().input().code_pressed(KEYCODE_LEFT)) ; }
 		if (machine().input().code_pressed(KEYCODE_RIGHT) && texel_width < 512) { texel_width <<= 1; while (machine().input().code_pressed(KEYCODE_RIGHT)) ; }
+#endif
 
 		if (yoffs < 0) yoffs = 0;
 		base = (const UINT64 *)waveram0_ptr_from_expanded_addr(yoffs << 16);
@@ -569,7 +571,6 @@ void midzeus2_state::zeus2_register_update(offs_t offset, UINT32 oldval, int log
 				UINT32 temp = m_zeusbase[0x38];
 				m_zeusbase[0x38] = oldval;
 				m_screen->update_partial(m_screen->vpos());
-				log_fifo = machine().input().code_pressed(KEYCODE_L);
 				m_zeusbase[0x38] = temp;
 			}
 			break;
@@ -771,10 +772,8 @@ int midzeus2_state::zeus2_fifo_process(const UINT32 *data, int numwords)
 		case 0x05:
 			if (numwords < 2)
 				return FALSE;
-			if (log_fifo)
-				log_fifo_command(data, numwords, " -- reg32");
 			if (((data[0] >> 16) & 0x7f) != 0x08)
-				zeus2_register32_w((data[0] >> 16) & 0x7f, data[1], log_fifo);
+				zeus2_register32_w((data[0] >> 16) & 0x7f, data[1], false);
 			break;
 
 		/* 0x08: set matrix and point (thegrid) */
@@ -804,17 +803,6 @@ int midzeus2_state::zeus2_fifo_process(const UINT32 *data, int numwords)
 			zeus_point[1] = tms3203x_device::fp_to_float(data[dataoffs + 11]);
 			zeus_point[2] = tms3203x_device::fp_to_float(data[dataoffs + 12]);
 
-			if (log_fifo)
-			{
-				log_fifo_command(data, numwords, "");
-				logerror("\n\t\tmatrix ( %8.2f %8.2f %8.2f ) ( %8.2f %8.2f %8.2f ) ( %8.2f %8.2f %8.2f )\n\t\tvector %8.2f %8.2f %8.5f\n",
-					zeus_matrix[0][0], zeus_matrix[0][1], zeus_matrix[0][2],
-					zeus_matrix[1][0], zeus_matrix[1][1], zeus_matrix[1][2],
-					zeus_matrix[2][0], zeus_matrix[2][1], zeus_matrix[2][2],
-					zeus_point[0],
-					zeus_point[1],
-					zeus_point[2]);
-			}
 			break;
 
 		/* 0x15: set point only (thegrid) */
@@ -829,33 +817,12 @@ int midzeus2_state::zeus2_fifo_process(const UINT32 *data, int numwords)
 			zeus_point[1] = tms3203x_device::fp_to_float(data[2]);
 			zeus_point[2] = tms3203x_device::fp_to_float(data[3]);
 
-			if (log_fifo)
-			{
-				log_fifo_command(data, numwords, "");
-				logerror("\n\t\tvector %8.2f %8.2f %8.5f\n",
-					zeus_point[0],
-					zeus_point[1],
-					zeus_point[2]);
-			}
 			break;
 
 		/* 0x1c: */
 		case 0x1c:
 			if (numwords < 4)
 				return FALSE;
-			if (log_fifo)
-			{
-				log_fifo_command(data, numwords, " -- unknown control + hack clear screen\n");
-				logerror("\t\tvector %8.2f %8.2f %8.5f\n",
-					tms3203x_device::fp_to_float(data[1]),
-					tms3203x_device::fp_to_float(data[2]),
-					tms3203x_device::fp_to_float(data[3]));
-
-				/* extract the translation point from the raw data */
-				zeus_point2[0] = tms3203x_device::fp_to_float(data[1]);
-				zeus_point2[1] = tms3203x_device::fp_to_float(data[2]);
-				zeus_point2[2] = tms3203x_device::fp_to_float(data[3]);
-			}
 			{
 				/* not right -- just a hack */
 				int x, y;
@@ -871,17 +838,13 @@ int midzeus2_state::zeus2_fifo_process(const UINT32 *data, int numwords)
 		case 0x24:
 			if (numwords < 2)
 				return FALSE;
-			if (log_fifo)
-				log_fifo_command(data, numwords, "");
-			zeus2_draw_model(data[1], data[0] & 0xffff, log_fifo);
+			zeus2_draw_model(data[1], data[0] & 0xffff, false);
 			break;
 
 		/* 0x31: sync pipeline? (thegrid) */
 		/* 0x32: sync pipeline? (crusnexo) */
 		case 0x31:
 		case 0x32:
-			if (log_fifo)
-				log_fifo_command(data, numwords, "\n");
 			zeus_quad_size = 10;
 			break;
 
@@ -889,23 +852,13 @@ int midzeus2_state::zeus2_fifo_process(const UINT32 *data, int numwords)
 		case 0x38:
 			if (numwords < 12)
 				return FALSE;
-			if (log_fifo)
-				log_fifo_command(data, numwords, "");
 			break;
 
 		/* 0x40: ???? */
 		case 0x40:
-			if (log_fifo)
-				log_fifo_command(data, numwords, "\n");
 			break;
 
 		default:
-			if (data[0] != 0x2c0)
-			{
-				printf("Unknown command %08X\n", data[0]);
-				if (log_fifo)
-					log_fifo_command(data, numwords, "\n");
-			}
 			break;
 	}
 	return TRUE;
@@ -1042,11 +995,13 @@ void midzeus2_state::zeus2_draw_quad(const UINT32 *databuffer, UINT32 texoffs, i
 	if (logit)
 		logerror("quad\n");
 
+#if 0
 if (machine().input().code_pressed(KEYCODE_Q) && (texoffs & 0xffff) == 0x119) return;
 if (machine().input().code_pressed(KEYCODE_E) && (texoffs & 0xffff) == 0x01d) return;
 if (machine().input().code_pressed(KEYCODE_R) && (texoffs & 0xffff) == 0x11d) return;
 if (machine().input().code_pressed(KEYCODE_T) && (texoffs & 0xffff) == 0x05d) return;
 if (machine().input().code_pressed(KEYCODE_Y) && (texoffs & 0xffff) == 0x0dd) return;
+#endif
 //if (machine().input().code_pressed(KEYCODE_U) && (texoffs & 0xffff) == 0x119) return;
 //if (machine().input().code_pressed(KEYCODE_I) && (texoffs & 0xffff) == 0x119) return;
 //if (machine().input().code_pressed(KEYCODE_O) && (texoffs & 0xffff) == 0x119) return;

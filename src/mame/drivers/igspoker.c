@@ -353,7 +353,7 @@ WRITE8_MEMBER(igspoker_state::custom_io_w)
 CUSTOM_INPUT_MEMBER(igspoker_state::hopper_r)
 {
 	if (m_hopper) return !(m_screen->frame_number()%10);
-	return machine().input().code_pressed(KEYCODE_H);
+	return machine().input().code_value(KEYCODE_H) != 0;
 }
 
 READ8_MEMBER(igspoker_state::exp_rom_r)

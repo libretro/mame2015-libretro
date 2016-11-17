@@ -1438,6 +1438,7 @@ UINT32 konamigx_state::screen_update_konamigx(screen_device &screen, bitmap_rgb3
 	{
 		const pen_t *paldata = m_palette->pens();
 
+#if 0
 		if ( machine().input().code_pressed(KEYCODE_W) )
 		{
 			int y,x;
@@ -1464,6 +1465,7 @@ UINT32 konamigx_state::screen_update_konamigx(screen_device &screen, bitmap_rgb3
 			}
 
 		}
+#endif
 
 	}
 
