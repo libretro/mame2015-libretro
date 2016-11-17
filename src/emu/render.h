@@ -244,6 +244,9 @@ class render_screen_list
 	};
 
 public:
+	// internal state
+	simple_list<item> m_list;
+
 	// getters
 	int count() const { return m_list.count(); }
 
@@ -259,10 +262,6 @@ public:
 			if (&curitem->m_screen == &screen) count++;
 		return count;
 	}
-
-private:
-	// internal state
-	simple_list<item> m_list;
 };
 
 
@@ -324,9 +323,6 @@ public:
 		QUAD                                // a rectilinear quad
 	};
 
-	// getters
-	render_primitive *next() const { return m_next; }
-
 	// reset to prepare for re-use
 	void reset();
 
@@ -339,9 +335,6 @@ public:
 	render_texinfo      texture;            // texture info (for quad primitives)
 	render_quad_texuv   texcoords;          // texture coordinates (for quad primitives)
 	render_container *  container;          // the render container we belong to
-
-private:
-	// internal state
 	render_primitive *  m_next;             // pointer to next element
 };
 
@@ -358,33 +351,12 @@ class render_primitive_list
 	~render_primitive_list();
 
 public:
-	// getters
-	render_primitive *first() const { return m_primlist.first(); }
-
-	// lock management
-	void acquire_lock() { osd_lock_acquire(m_lock); }
-	void release_lock() { osd_lock_release(m_lock); }
-
-	// reference management
-	void add_reference(void *refptr);
-	bool has_reference(void *refptr) const;
-
-private:
-	// helpers for our friends to manipulate the list
-	render_primitive *alloc(render_primitive::primitive_type type);
-	void release_all();
-	void append(render_primitive &prim) { append_or_return(prim, false); }
-	void append_or_return(render_primitive &prim, bool clipped);
-
 	// a reference is an abstract reference to an internal object of some sort
-	class reference
+	struct reference
 	{
-	public:
-		reference *next() const { return m_next; }
 		reference *         m_next;             // link to the next reference
 		void *              m_refptr;           // reference pointer
 	};
-
 	// internal state
 	simple_list<render_primitive> m_primlist;               // list of primitives
 	simple_list<reference> m_reflist;                       // list of references
@@ -393,6 +365,20 @@ private:
 	fixed_allocator<reference> m_reference_allocator;       // allocator for references
 
 	osd_lock *          m_lock;                             // lock to protect list accesses
+
+	// reference management
+	void add_reference(void *refptr);
+	bool has_reference(void *refptr) const;
+
+
+private:
+	// helpers for our friends to manipulate the list
+	render_primitive *alloc(render_primitive::primitive_type type);
+	void release_all();
+	void append(render_primitive &prim) { append_or_return(prim, false); }
+	void append_or_return(render_primitive &prim, bool clipped);
+
+
 };
 
 
@@ -494,7 +480,6 @@ public:
 	};
 
 	// getters
-	render_container *next() const { return m_next; }
 	screen_device *screen() const { return m_screen; }
 	render_manager &manager() const { return m_manager; }
 	render_texture *overlay() const { return m_overlaytexture; }
@@ -525,6 +510,7 @@ public:
 	UINT8 apply_brightness_contrast_gamma(UINT8 value);
 	float apply_brightness_contrast_gamma_fp(float value);
 	const rgb_t *bcg_lookup_table(int texformat, palette_t *palette = NULL);
+	render_container *      m_next;                 // the next container in the list
 
 private:
 	// an item describes a high level primitive that is added to a container
@@ -535,7 +521,6 @@ private:
 
 	public:
 		// getters
-		item *next() const { return m_next; }
 		UINT8 type() const { return m_type; }
 		const render_bounds &bounds() const { return m_bounds; }
 		const render_color &color() const { return m_color; }
@@ -544,9 +529,10 @@ private:
 		float width() const { return m_width; }
 		render_texture *texture() const { return m_texture; }
 
+		item *              m_next;             // pointer to the next element in the list
+
 	private:
 		// internal state
-		item *              m_next;             // pointer to the next element in the list
 		UINT8               m_type;             // type of element
 		render_bounds       m_bounds;           // bounds of the element
 		render_color        m_color;            // RGBA factors
@@ -566,7 +552,6 @@ private:
 	void update_palette();
 
 	// internal state
-	render_container *      m_next;                 // the next container in the list
 	render_manager &        m_manager;              // reference back to the owning manager
 	simple_list<item>       m_itemlist;             // head of the item list
 	fixed_allocator<item>   m_item_allocator;       // free container items
@@ -597,7 +582,6 @@ class render_target
 
 public:
 	// getters
-	render_target *next() const { return m_next; }
 	render_manager &manager() const { return m_manager; }
 	UINT32 width() const { return m_width; }
 	UINT32 height() const { return m_height; }
@@ -661,6 +645,8 @@ public:
 	void debug_free(render_container &container);
 	void debug_top(render_container &container);
 
+	render_target *         m_next;                     // link to next target
+
 private:
 	// internal helpers
 	void update_layer_config();
@@ -689,7 +675,6 @@ private:
 	static const int MAX_CLEAR_EXTENTS = 1000;
 
 	// internal state
-	render_target *         m_next;                     // link to next target
 	render_manager &        m_manager;                  // reference to our owning manager
 	layout_view *           m_curview;                  // current view
 	simple_list<layout_file> m_filelist;                // list of layout files

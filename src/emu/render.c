@@ -268,7 +268,7 @@ inline void render_primitive_list::add_reference(void *refptr)
 inline bool render_primitive_list::has_reference(void *refptr) const
 {
 	// skip if we already have one
-	for (reference *ref = m_reflist.first(); ref != NULL; ref = ref->next())
+	for (reference *ref = m_reflist.first(); ref != NULL; ref = ref->m_next)
 		if (ref->m_refptr == refptr)
 			return true;
 	return false;
@@ -296,10 +296,10 @@ inline render_primitive *render_primitive_list::alloc(render_primitive::primitiv
 void render_primitive_list::release_all()
 {
 	// release all the live items while under the lock
-	acquire_lock();
+   osd_lock_acquire(m_lock);
 	m_primitive_allocator.reclaim_all(m_primlist);
 	m_reference_allocator.reclaim_all(m_reflist);
-	release_lock();
+   osd_lock_release(m_lock);
 }
 
 
@@ -1267,7 +1267,7 @@ render_primitive_list &render_target::get_primitives()
 	// switch to the next primitive list
 	render_primitive_list &list = m_primlist[m_listindex];
 	m_listindex = (m_listindex + 1) % ARRAY_LENGTH(m_primlist);
-	list.acquire_lock();
+   osd_lock_acquire(list.m_lock);
 
 	// free any previous primitives
 	list.release_all();
@@ -1346,7 +1346,7 @@ render_primitive_list &render_target::get_primitives()
 	}
 
 	// process the debug containers
-	for (render_container *debug = m_debug_containers.first(); debug != NULL; debug = debug->next())
+	for (render_container *debug = m_debug_containers.first(); debug != NULL; debug = debug->m_next)
 	{
 		object_transform ui_xform;
 		ui_xform.xoffs = 0;
@@ -1381,7 +1381,7 @@ render_primitive_list &render_target::get_primitives()
 
 	// optimize the list before handing it off
 	add_clear_and_optimize_primitive_list(list);
-	list.release_lock();
+   osd_lock_release(list.m_lock);
 	return list;
 }
 
@@ -1426,10 +1426,10 @@ void render_target::invalidate_all(void *refptr)
 		render_primitive_list &list = m_primlist[listnum];
 
 		// if we have a reference to this object, release our list
-		list.acquire_lock();
+      osd_lock_acquire(list.m_lock);
 		if (list.has_reference(refptr))
 			list.release_all();
-		list.release_lock();
+      osd_lock_release(list.m_lock);
 	}
 }
 
@@ -1660,7 +1660,7 @@ void render_target::add_container_primitives(render_primitive_list &list, const 
 	}
 
 	// iterate over elements
-	for (render_container::item *curitem = container.first_item(); curitem != NULL; curitem = curitem->next())
+	for (render_container::item *curitem = container.first_item(); curitem != NULL; curitem = curitem->m_next)
 	{
 		// compute the oriented bounds
 		render_bounds bounds = curitem->bounds();
@@ -2315,7 +2315,7 @@ void render_target::add_clear_and_optimize_primitive_list(render_primitive_list 
 	init_clear_extents();
 
 	// scan the list until we hit an intersection quad or a line
-	for (render_primitive *prim = list.first(); prim != NULL; prim = prim->next())
+	for (render_primitive *prim = list.m_primlist.first(); prim != NULL; prim = prim->m_next)
 	{
 		// switch off the type
 		switch (prim->type)
@@ -2413,7 +2413,7 @@ render_manager::~render_manager()
 bool render_manager::is_live(screen_device &screen) const
 {
 	// iterate over all live targets and or together their screen masks
-	for (render_target *target = m_targetlist.first(); target != NULL; target = target->next())
+	for (render_target *target = m_targetlist.first(); target != NULL; target = target->m_next)
 		if (!target->hidden() && target->view_screens(target->view()).contains(screen))
 			return true;
 	return false;
@@ -2429,7 +2429,7 @@ float render_manager::max_update_rate() const
 {
 	// iterate over all live targets and or together their screen masks
 	float minimum = 0;
-	for (render_target *target = m_targetlist.first(); target != NULL; target = target->next())
+	for (render_target *target = m_targetlist.first(); target != NULL; target = target->m_next)
 		if (target->max_update_rate() != 0)
 		{
 			if (minimum == 0)
@@ -2470,7 +2470,7 @@ void render_manager::target_free(render_target *target)
 render_target *render_manager::target_by_index(int index) const
 {
 	// count up the targets until we hit the requested index
-	for (render_target *target = m_targetlist.first(); target != NULL; target = target->next())
+	for (render_target *target = m_targetlist.first(); target != NULL; target = target->m_next)
 		if (!target->hidden())
 			if (index-- == 0)
 				return target;
@@ -2583,7 +2583,7 @@ void render_manager::invalidate_all(void *refptr)
 		return;
 
 	// loop over targets
-	for (render_target *target = m_targetlist.first(); target != NULL; target = target->next())
+	for (render_target *target = m_targetlist.first(); target != NULL; target = target->m_next)
 		target->invalidate_all(refptr);
 }
 
@@ -2706,7 +2706,7 @@ void render_manager::config_save(int config_type, xml_data_node *parentnode)
 
 	// iterate over screen containers
 	int scrnum = 0;
-	for (render_container *container = m_screen_container_list.first(); container != NULL; container = container->next(), scrnum++)
+	for (render_container *container = m_screen_container_list.first(); container != NULL; container = container->m_next, scrnum++)
 	{
 		// create a node
 		xml_data_node *screennode = xml_add_child(parentnode, "screen", NULL);
