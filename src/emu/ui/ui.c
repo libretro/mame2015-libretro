@@ -1343,7 +1343,7 @@ void ui_manager::process_natural_keyboard()
 		code = machine().input().code_from_itemid(itemid);
 
 		// ...and determine if it is pressed
-		pressed = machine().input().code_pressed(code);
+		pressed = machine().input().code_value(code) != 0;
 
 		// figure out whey we are in the key_down map
 		key_down_ptr = &m_non_char_keys_down[i / 8];
@@ -1603,8 +1603,10 @@ UINT32 ui_manager::handler_ingame(running_machine &machine, render_container *co
 	// toggle pause
 	if (ui_input_pressed(machine, IPT_UI_PAUSE))
 	{
+      bool pressed_lshift = machine.input().code_value(KEYCODE_LSHIFT) != 0;
+      bool pressed_rshift = machine.input().code_value(KEYCODE_RSHIFT) != 0;
 		// with a shift key, it is single step
-		if (is_paused && (machine.input().code_pressed(KEYCODE_LSHIFT) || machine.input().code_pressed(KEYCODE_RSHIFT)))
+		if (is_paused && (pressed_lshift || pressed_rshift))
 		{
 			machine.ui().set_single_step(true);
 			machine.resume();
