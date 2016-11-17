@@ -496,28 +496,6 @@ protected:
 public:
 	virtual ~input_device_item();
 
-	// getters
-	input_device &device() const { return m_device; }
-	input_manager &manager() const;
-	running_machine &machine() const;
-	const char *name() const { return m_name; }
-	void *internal() const { return m_internal; }
-	input_item_id itemid() const { return m_itemid; }
-	input_item_class itemclass() const { return m_itemclass; }
-	const char *token() const { return m_token; }
-	INT32 current() const { return m_current; }
-	INT32 memory() const { return m_memory; }
-
-	// helpers
-	INT32 update_value();
-	void set_memory(INT32 value) { m_memory = value; }
-
-	// readers
-	virtual INT32 read_as_switch(input_item_modifier modifier) = 0;
-	virtual INT32 read_as_relative(input_item_modifier modifier) = 0;
-	virtual INT32 read_as_absolute(input_item_modifier modifier) = 0;
-
-protected:
 	// internal state
 	input_device &          m_device;               // reference to our owning device
 	astring                 m_name;                 // string name of item
@@ -530,6 +508,25 @@ protected:
 	// live state
 	INT32                   m_current;              // current raw value
 	INT32                   m_memory;               // "memory" value, to remember where we started during polling
+
+	// getters
+	input_device &device() const { return m_device; }
+	input_manager &manager() const;
+	running_machine &machine() const;
+	const char *name() const { return m_name; }
+	void *internal() const { return m_internal; }
+	input_item_id itemid() const { return m_itemid; }
+	input_item_class itemclass() const { return m_itemclass; }
+	const char *token() const { return m_token; }
+	INT32 memory() const { return m_memory; }
+
+	// helpers
+	INT32 update_value();
+
+	// readers
+	virtual INT32 read_as_switch(input_item_modifier modifier) = 0;
+	virtual INT32 read_as_relative(input_item_modifier modifier) = 0;
+	virtual INT32 read_as_absolute(input_item_modifier modifier) = 0;
 };
 
 
@@ -642,7 +639,6 @@ public:
 
 	// input code readers
 	INT32 code_value(input_code code);
-	bool code_pressed(input_code code) { return code_value(code) != 0; }
 	bool code_pressed_once(input_code code);
 
 	// input code polling

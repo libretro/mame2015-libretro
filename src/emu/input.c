@@ -53,6 +53,9 @@ public:
 	// construction/destruction
 	input_device_switch_item(input_device &device, const char *name, void *internal, input_item_id itemid, item_get_state_func getstate);
 
+	INT32                   m_steadykey;            // the live steadykey state
+	INT32                   m_oldkey;               // old live state
+
 	// readers
 	virtual INT32 read_as_switch(input_item_modifier modifier);
 	virtual INT32 read_as_relative(input_item_modifier modifier);
@@ -60,12 +63,6 @@ public:
 
 	// steadykey helper
 	bool steadykey_changed();
-	void steadykey_update_to_current() { m_steadykey = m_current; }
-
-private:
-	// internal state
-	INT32                   m_steadykey;            // the live steadykey state
-	INT32                   m_oldkey;               // old live state
 };
 
 
@@ -933,7 +930,9 @@ void input_device::apply_steadykey() const
 		{
 			input_device_item *item = m_item[itemid];
 			if (item != NULL && item->itemclass() == ITEM_CLASS_SWITCH)
-				downcast<input_device_switch_item *>(item)->steadykey_update_to_current();
+         {
+				downcast<input_device_switch_item *>(item)->m_steadykey = downcast<input_device_switch_item *>(item)->m_current;
+         }
 		}
 }
 
@@ -1136,7 +1135,7 @@ INT32 input_manager::code_value(input_code code)
 bool input_manager::code_pressed_once(input_code code)
 {
 	// look for the code in the memory
-	bool curvalue = code_pressed(code);
+	bool curvalue = code_value(code) != 0;
 	int empty = -1;
 	for (int memnum = 0; memnum < ARRAY_LENGTH(m_switch_memory); memnum++)
 	{
@@ -1193,7 +1192,7 @@ void input_manager::reset_polling()
 				// for any non-switch items, set memory equal to the current value
 				input_device_item *item = device->item(itemid);
 				if (item != NULL && item->itemclass() != ITEM_CLASS_SWITCH)
-					item->set_memory(code_value(input_code(*device, itemid)));
+					item->m_memory = (code_value(input_code(*device, itemid)));
 			}
 		}
 }
@@ -1227,8 +1226,7 @@ input_code input_manager::poll_switches()
 					{
 						if (code_pressed_once(code))
 							return code;
-						else
-							continue;
+                  continue;
 					}
 
 					// skip if there is not enough axis movement
@@ -1339,14 +1337,14 @@ bool input_manager::code_check_axis(input_device_item &item, input_code code)
 	// for absolute axes, look for 25% of maximum
 	if (item.itemclass() == ITEM_CLASS_ABSOLUTE && diff > (INPUT_ABSOLUTE_MAX - INPUT_ABSOLUTE_MIN) / 4)
 	{
-		item.set_memory(INVALID_AXIS_VALUE);
+		item.m_memory = (INVALID_AXIS_VALUE);
 		return true;
 	}
 
 	// for relative axes, look for ~20 pixels movement
 	if (item.itemclass() == ITEM_CLASS_RELATIVE && diff > 20 * INPUT_RELATIVE_PER_PIXEL)
 	{
-		item.set_memory(INVALID_AXIS_VALUE);
+		item.m_memory = (INVALID_AXIS_VALUE);
 		return true;
 	}
 	return false;
@@ -1692,11 +1690,17 @@ bool input_manager::seq_pressed(const input_seq &seq)
 		{
 			// if this is the first in the sequence, result is set equal
 			if (first)
-				result = code_pressed(code) ^ invert;
+         {
+            bool code_press = code_value(code) != 0;
+				result = code_press ^ invert;
+         }
 
 			// further values are ANDed
 			else if (result)
-				result &= code_pressed(code) ^ invert;
+         {
+            bool code_press = code_value(code) != 0;
+				result &= code_press ^ invert;
+         }
 
 			// no longer first, and clear the invert flag
 			first = invert = false;
@@ -1751,7 +1755,10 @@ INT32 input_manager::seq_axis_value(const input_seq &seq, input_item_class &item
 			{
 				// AND against previous digital codes
 				if (enable)
-					enable &= code_pressed(code) ^ invert;
+            {
+               bool code_press = code_value(code) != 0;
+					enable &= code_press ^ invert;
+            }
 			}
 
 			// non-switch codes are analog values
@@ -2313,7 +2320,7 @@ INT32 input_device_absolute_item::read_as_switch(input_item_modifier modifier)
 				xaxis_item->update_value();
 
 			// now map the X and Y axes to a 9x9 grid using the raw values
-			return (m_device.joymap().update(xaxis_item->current(), yaxis_item->current()) >> (modifier - ITEM_MODIFIER_LEFT)) & 1;
+			return (m_device.joymap().update(xaxis_item->m_current, yaxis_item->m_current) >> (modifier - ITEM_MODIFIER_LEFT)) & 1;
 		}
 	}
 
