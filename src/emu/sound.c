@@ -1055,13 +1055,13 @@ void sound_manager::update(void *ptr, int param)
 	}
 
 	// iterate over all the streams and update them
-	for (sound_stream *stream = m_stream_list.first(); stream != NULL; stream = stream->next())
+	for (sound_stream *stream = m_stream_list.first(); stream != NULL; stream = stream->m_next)
 		stream->update_with_accounting(second_tick);
 
 	// remember the update time
 	m_last_update = curtime;
 
 	// update sample rates if they have changed
-	for (sound_stream *stream = m_stream_list.first(); stream != NULL; stream = stream->next())
+	for (sound_stream *stream = m_stream_list.first(); stream != NULL; stream = stream->m_next)
 		stream->apply_sample_rate_changes();
 }

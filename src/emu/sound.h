@@ -98,8 +98,41 @@ class sound_stream
 	sound_stream(device_t &device, int inputs, int outputs, int sample_rate, stream_update_delegate callback);
 
 public:
+	// linking information
+	device_t &          m_device;                     // owning device
+	sound_stream *      m_next;                       // next stream in the chain
+
+	// general information
+	UINT32              m_sample_rate;                // sample rate of this stream
+	UINT32              m_new_sample_rate;            // newly-set sample rate for the stream
+	bool                m_synchronous;                // synchronous stream that runs at the rate of its input
+
+	// timing information
+	attoseconds_t       m_attoseconds_per_sample;     // number of attoseconds per sample
+	INT32               m_max_samples_per_update;     // maximum samples per update
+	emu_timer *         m_sync_timer;                 // update timer for synchronous streams
+
+	// input information
+	dynamic_array<stream_input> m_input;              // list of streams we directly depend upon
+	dynamic_array<stream_sample_t *> m_input_array;   // array of inputs for passing to the callback
+
+	// resample buffer information
+	UINT32              m_resample_bufalloc;          // allocated size of each resample buffer
+
+	// output information
+	dynamic_array<stream_output> m_output;            // list of streams which directly depend upon us
+	dynamic_array<stream_sample_t *> m_output_array;  // array of outputs for passing to the callback
+
+	// output buffer information
+	UINT32              m_output_bufalloc;            // allocated size of each output buffer
+	INT32               m_output_sampindex;           // current position within each output buffer
+	INT32               m_output_update_sampindex;    // position at time of last global update
+	INT32               m_output_base_sampindex;      // sample at base of buffer, relative to the current emulated second
+
+	// callback information
+	stream_update_delegate  m_callback;                   // callback function
+
 	// getters
-	sound_stream *next() const { return m_next; }
 	device_t &device() const { return m_device; }
 	int sample_rate() const { return (m_new_sample_rate != 0) ? m_new_sample_rate : m_sample_rate; }
 	attotime sample_time() const;
@@ -138,39 +171,6 @@ private:
 	stream_sample_t *generate_resampled_data(stream_input &input, UINT32 numsamples);
 	void sync_update(void *, INT32);
 
-	// linking information
-	device_t &          m_device;                     // owning device
-	sound_stream *      m_next;                       // next stream in the chain
-
-	// general information
-	UINT32              m_sample_rate;                // sample rate of this stream
-	UINT32              m_new_sample_rate;            // newly-set sample rate for the stream
-	bool                m_synchronous;                // synchronous stream that runs at the rate of its input
-
-	// timing information
-	attoseconds_t       m_attoseconds_per_sample;     // number of attoseconds per sample
-	INT32               m_max_samples_per_update;     // maximum samples per update
-	emu_timer *         m_sync_timer;                 // update timer for synchronous streams
-
-	// input information
-	dynamic_array<stream_input> m_input;              // list of streams we directly depend upon
-	dynamic_array<stream_sample_t *> m_input_array;   // array of inputs for passing to the callback
-
-	// resample buffer information
-	UINT32              m_resample_bufalloc;          // allocated size of each resample buffer
-
-	// output information
-	dynamic_array<stream_output> m_output;            // list of streams which directly depend upon us
-	dynamic_array<stream_sample_t *> m_output_array;  // array of outputs for passing to the callback
-
-	// output buffer information
-	UINT32              m_output_bufalloc;            // allocated size of each output buffer
-	INT32               m_output_sampindex;           // current position within each output buffer
-	INT32               m_output_update_sampindex;    // position at time of last global update
-	INT32               m_output_base_sampindex;      // sample at base of buffer, relative to the current emulated second
-
-	// callback information
-	stream_update_delegate  m_callback;                   // callback function
 };
 
 
@@ -191,6 +191,26 @@ class sound_manager
 
 public:
 	static const int STREAMS_UPDATE_FREQUENCY = 50;
+
+	// internal state
+	running_machine &   m_machine;              // reference to our machine
+	emu_timer *         m_update_timer;         // timer to drive periodic updates
+
+	UINT32              m_finalmix_leftover;
+	dynamic_array<INT16> m_finalmix;
+	dynamic_array<INT32> m_leftmix;
+	dynamic_array<INT32> m_rightmix;
+
+	UINT8               m_muted;
+	int                 m_attenuation;
+	int                 m_nosound_mode;
+
+	wav_file *          m_wavfile;
+
+	// streams data
+	simple_list<sound_stream> m_stream_list;    // list of streams
+	attoseconds_t       m_update_attoseconds;   // attoseconds between global updates
+	attotime            m_last_update;          // last update time
 
 	// construction/destruction
 	sound_manager(running_machine &machine);
@@ -227,25 +247,6 @@ private:
 
 	void update(void *ptr = NULL, INT32 param = 0);
 
-	// internal state
-	running_machine &   m_machine;              // reference to our machine
-	emu_timer *         m_update_timer;         // timer to drive periodic updates
-
-	UINT32              m_finalmix_leftover;
-	dynamic_array<INT16> m_finalmix;
-	dynamic_array<INT32> m_leftmix;
-	dynamic_array<INT32> m_rightmix;
-
-	UINT8               m_muted;
-	int                 m_attenuation;
-	int                 m_nosound_mode;
-
-	wav_file *          m_wavfile;
-
-	// streams data
-	simple_list<sound_stream> m_stream_list;    // list of streams
-	attoseconds_t       m_update_attoseconds;   // attoseconds between global updates
-	attotime            m_last_update;          // last update time
 };
 
 
