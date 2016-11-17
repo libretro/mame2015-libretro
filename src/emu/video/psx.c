@@ -101,6 +101,9 @@ static const UINT16 m_p_n_prevpointlist3[] = { 2, 0, 1 };
 #define TEXTURE_V( a ) ( a.b.h )
 #define TEXTURE_U( a ) ( a.b.l )
 
+#if 1
+#define verboselog(...) ((void)0)
+#else
 INLINE void ATTR_PRINTF(3,4) verboselog( running_machine& machine, int n_level, const char *s_fmt, ... )
 {
 	if( VERBOSE_LEVEL >= n_level )
@@ -113,6 +116,7 @@ INLINE void ATTR_PRINTF(3,4) verboselog( running_machine& machine, int n_level, 
 		logerror( "%s: %s", machine.describe_context(), buf );
 	}
 }
+#endif
 
 #if DEBUG_VIEWER
 
@@ -788,6 +792,7 @@ void psxgpu_device::decode_tpage( UINT32 tpage )
 		n_ix = ( tpage & 0x1000 ) >> 12;
 		n_iy = ( tpage & 0x2000 ) >> 13;
 		n_ti = 0;
+#if 0
 		if( ( tpage & ~0x39ff ) != 0 )
 		{
 			verboselog( machine(), 1, "not handled: draw mode %08x\n", tpage & ~0x39ff );
@@ -796,6 +801,7 @@ void psxgpu_device::decode_tpage( UINT32 tpage )
 		{
 			verboselog( machine(), 0, "not handled: tp == 3\n" );
 		}
+#endif
 	}
 	else
 	{
@@ -808,6 +814,7 @@ void psxgpu_device::decode_tpage( UINT32 tpage )
 		n_ti = ( tpage & 0x2000 ) >> 13;
 		n_ix = 0;
 		n_iy = 0;
+#if 0
 		if( ( tpage & ~0x27ef ) != 0 )
 		{
 			verboselog( machine(), 1, "not handled: draw mode %08x\n", tpage & ~0x27ef );
@@ -820,6 +827,7 @@ void psxgpu_device::decode_tpage( UINT32 tpage )
 		{
 			verboselog( machine(), 0, "not handled: interleaved 15 bit texture\n" );
 		}
+#endif
 	}
 }
 
