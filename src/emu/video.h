@@ -96,11 +96,8 @@ private:
 	// speed and throttling helpers
 	int original_speed_setting() const;
 	bool finish_screen_updates();
-	void update_throttle(attotime emutime);
-	osd_ticks_t throttle_until_ticks(osd_ticks_t target_ticks);
 	void update_frameskip();
 	void update_refresh_speed();
-	void recompute_speed(const attotime &emutime);
 
 	// snapshot/movie helpers
 	void create_snapshot_bitmap(screen_device *screen);
