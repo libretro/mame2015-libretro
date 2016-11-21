@@ -256,6 +256,6 @@ $(LIBBUS): $(BUSOBJS)
 # additional dependencies
 #-------------------------------------------------
 
-$(EMUOBJ)/rendfont.o:   $(EMUOBJ)/uismall.fh
+$(EMUOBJ)/rendfont.o:   $(EMUSRC)/uismall.fh
 
 $(EMUOBJ)/video.o:  $(EMUSRC)/rendersw.inc

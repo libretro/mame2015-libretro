@@ -860,11 +860,6 @@ $(OBJ)/%.pp: $(SRC)/%.c | $(OSPREBUILD)
 $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -S $< -o $@
 
-$(OBJ)/%.fh: $(SRC)/%.png $(SRC)/build/png2bdc.py $(SRC)/build/file2str.py
-	@echo Converting $<...
-	$(PYTHON) $(SRC)/build/png2bdc.py $< $(OBJ)/temp.bdc
-	$(PYTHON) $(SRC)/build/file2str.py $(OBJ)/temp.bdc $@ font_$(basename $(notdir $<)) UINT8
-
 $(DRIVLISTOBJ): $(DRIVLISTSRC)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 

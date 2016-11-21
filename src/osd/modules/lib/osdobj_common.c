@@ -168,14 +168,6 @@ void osd_common_t::register_options()
 #endif
 	REGISTER_MODULE(m_mod_man, FONT_NONE);
 
-#ifndef OSD_RETRO
-#ifdef SDLMAME_MACOSX
-	REGISTER_MODULE(m_mod_man, DEBUG_OSX);
-#endif
-	REGISTER_MODULE(m_mod_man, DEBUG_WINDOWS);
-	REGISTER_MODULE(m_mod_man, DEBUG_QT);
-	REGISTER_MODULE(m_mod_man, DEBUG_INTERNAL);
-#endif
 	REGISTER_MODULE(m_mod_man, DEBUG_NONE);
 
 #ifndef OSD_RETRO

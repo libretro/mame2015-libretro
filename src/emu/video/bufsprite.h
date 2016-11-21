@@ -59,37 +59,21 @@ public:
 
 	// getters
 	_Type *live() const { return m_spriteram; }
-	#ifndef OSD_RETRO
-	_Type *buffer() { return m_buffered; }
-	#else
 		_Type *buffer()
-		{
-			extern bool nobuffer_enable;
-			if(nobuffer_enable)
-				return m_spriteram;
-			else
-				return m_buffered;
-		}
-	#endif
+      {
+         extern bool nobuffer_enable;
+         return (nobuffer_enable) ? m_spriteram : m_buffered;
+      }
 	UINT32 bytes() const { return m_spriteram.bytes(); }
 
 	// operations
 	_Type *copy(UINT32 srcoffset = 0, UINT32 srclength = 0x7fffffff)
-	{
-		assert(m_spriteram != NULL);
-		if (m_spriteram != NULL)
-			memcpy(m_buffered, m_spriteram + srcoffset, MIN(srclength, m_spriteram.bytes() / sizeof(_Type) - srcoffset) * sizeof(_Type));
-	#ifndef OSD_RETRO
-		return m_buffered;
-	#else
-		extern bool nobuffer_enable;
-		if(nobuffer_enable)
-			return m_spriteram;
-		else
-			return m_buffered;
-	#endif
-
-	}
+   {
+      extern bool nobuffer_enable;
+      if (m_spriteram != NULL)
+         memcpy(m_buffered, m_spriteram + srcoffset, MIN(srclength, m_spriteram.bytes() / sizeof(_Type) - srcoffset) * sizeof(_Type));
+      return (nobuffer_enable) ? m_spriteram : m_buffered;
+   }
 
 	// read/write handlers
 	void write(address_space &space, offs_t offset, _Type data, _Type mem_mask = ~_Type(0)) { copy(); }

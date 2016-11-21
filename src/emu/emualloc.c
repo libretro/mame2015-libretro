@@ -16,10 +16,6 @@
 //  DEBUGGING
 //**************************************************************************
 
-#define LOG_ALLOCS      (0)
-
-
-
 //**************************************************************************
 //  GLOBALS
 //**************************************************************************
@@ -77,8 +73,6 @@ void resource_pool::add(resource_pool_item &item, size_t size, const char *type)
 	// fetch the ID of this item's pointer; some implementations put hidden data
 	// before, so if we don't find it, check 4 bytes ahead
 	item.m_id = ++s_id;
-	if (LOG_ALLOCS)
-		fprintf(stderr, "#%06d, add %s, %d bytes\n", (UINT32)item.m_id, type, UINT32(size));
 
 	// find the entry to insert after
 	resource_pool_item *insert_after;
@@ -147,8 +141,6 @@ void resource_pool::remove(void *ptr)
 				m_ordered_tail = deleteme->m_ordered_prev;
 
 			// delete the object and break
-			if (LOG_ALLOCS)
-				fprintf(stderr, "#%06d, delete %d bytes\n", (UINT32)deleteme->m_id, static_cast<UINT32>(deleteme->m_size));
 			global_free(deleteme);
 			break;
 		}
