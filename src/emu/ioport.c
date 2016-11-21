@@ -2885,7 +2885,6 @@ void ioport_manager::frame_update()
 	// record/playback information about the current frame
 	attotime curtime = machine().time();
 	playback_frame(curtime);
-	record_frame(curtime);
 
 	// track the duration of the previous frame
 	m_last_delta_nsec = (curtime - m_last_frame_time).as_attoseconds() / ATTOSECONDS_PER_NANOSECOND;
@@ -3572,27 +3571,6 @@ void ioport_manager::record_end(const char *message)
 			popmessage("Recording Ended\nReason: %s", message);
 	}
 }
-
-
-//-------------------------------------------------
-//  record_frame - start of frame callback for
-//  recording
-//-------------------------------------------------
-
-void ioport_manager::record_frame(const attotime &curtime)
-{
-	// if recording, record information about the current frame
-	if (m_record_file.is_open())
-	{
-		// first the absolute time
-		record_write(curtime.seconds);
-		record_write(curtime.attoseconds);
-
-		// then the current speed
-		record_write(UINT32(machine().video().speed_percent() * double(1 << 20)));
-	}
-}
-
 
 //-------------------------------------------------
 //  record_port - per-port callback for record

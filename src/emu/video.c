@@ -89,12 +89,7 @@ video_manager::video_manager(running_machine &machine)
 		m_frameskip_counter(0),
 		m_frameskip_adjust(0),
 		m_skipping_this_frame(false),
-		m_average_oversleep(0),
-		m_snap_target(NULL),
-		m_snap_native(true),
-		m_snap_width(0),
-		m_snap_height(0),
-		m_dummy_recording(false)
+		m_average_oversleep(0)
 {
 	// request a callback upon exiting
 	machine.add_notifier(MACHINE_NOTIFY_EXIT, machine_notify_delegate(FUNC(video_manager::exit), this));
@@ -102,39 +97,6 @@ video_manager::video_manager(running_machine &machine)
 
 	// extract initial execution state from global configuration settings
 	update_refresh_speed();
-
-	// create a render target for snapshots
-	const char *viewname = machine.options().snap_view();
-	m_snap_native = (machine.first_screen() != NULL && (viewname[0] == 0 || strcmp(viewname, "native") == 0));
-
-	// the native target is hard-coded to our internal layout and has all options disabled
-	if (m_snap_native)
-	{
-		m_snap_target = machine.render().target_alloc(layout_snap, RENDER_CREATE_SINGLE_FILE | RENDER_CREATE_HIDDEN);
-		m_snap_target->set_backdrops_enabled(false);
-		m_snap_target->set_overlays_enabled(false);
-		m_snap_target->set_bezels_enabled(false);
-		m_snap_target->set_cpanels_enabled(false);
-		m_snap_target->set_marquees_enabled(false);
-		m_snap_target->set_screen_overlay_enabled(false);
-		m_snap_target->set_zoom_to_screen(false);
-	}
-
-	// other targets select the specified view and turn off effects
-	else
-	{
-		m_snap_target = machine.render().target_alloc(NULL, RENDER_CREATE_HIDDEN);
-		m_snap_target->set_view(m_snap_target->configured_view(viewname, 0, 1));
-		m_snap_target->set_screen_overlay_enabled(false);
-	}
-
-	// extract snap resolution if present
-	if (sscanf(machine.options().snap_size(), "%dx%d", &m_snap_width, &m_snap_height) != 2)
-		m_snap_width = m_snap_height = 0;
-
-#ifdef MAME_DEBUG
-	m_dummy_recording = machine.options().dummy_write();
-#endif
 
 	// if no screens, create a periodic timer to drive updates
 	if (machine.first_screen() == NULL)
@@ -265,10 +227,6 @@ astring &video_manager::speed_text(astring &string)
 
 void video_manager::exit()
 {
-	// free the snapshot target
-	machine().render().target_free(m_snap_target);
-	m_snap_bitmap.reset();
-
 	// print a final result if we have at least 2 seconds' worth of data
 	if (m_overall_emutime.seconds >= 1)
 	{

@@ -93,9 +93,7 @@ private:
 	void update_refresh_speed();
 
 	// snapshot/movie helpers
-	void create_snapshot_bitmap(screen_device *screen);
 	file_error open_next(emu_file &file, const char *extension);
-	void record_frame();
 
 	// internal state
 	running_machine &   m_machine;                  // reference to our machine
@@ -136,16 +134,6 @@ private:
 	INT8                m_frameskip_adjust;
 	bool                m_skipping_this_frame;      // flag: TRUE if we are skipping the current frame
 	osd_ticks_t         m_average_oversleep;        // average number of ticks the OSD oversleeps
-
-	// snapshot stuff
-	render_target *     m_snap_target;              // screen shapshot target
-	bitmap_rgb32        m_snap_bitmap;              // screen snapshot bitmap
-	bool                m_snap_native;              // are we using native per-screen layouts?
-	INT32               m_snap_width;               // width of snapshots (0 == auto)
-	INT32               m_snap_height;              // height of snapshots (0 == auto)
-
-	// movie recording - dummy
-	bool				m_dummy_recording;			// indicates if snapshot should be created of every frame
 
 	static const UINT8      s_skiptable[FRAMESKIP_LEVELS][FRAMESKIP_LEVELS];
 

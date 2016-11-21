@@ -1439,7 +1439,6 @@ private:
 	template<typename _Type> void record_write(_Type value);
 	void record_init();
 	void record_end(const char *message = NULL);
-	void record_frame(const attotime &curtime);
 	void record_port(ioport_port &port);
 
 	// internal state
