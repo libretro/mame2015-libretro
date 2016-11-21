@@ -1345,23 +1345,6 @@ render_primitive_list &render_target::get_primitives()
 		}
 	}
 
-	// process the debug containers
-	for (render_container *debug = m_debug_containers.first(); debug != NULL; debug = debug->m_next)
-	{
-		object_transform ui_xform;
-		ui_xform.xoffs = 0;
-		ui_xform.yoffs = 0;
-		ui_xform.xscale = (float)m_width;
-		ui_xform.yscale = (float)m_height;
-		ui_xform.color.r = ui_xform.color.g = ui_xform.color.b = ui_xform.color.a = 1.0f;
-		ui_xform.color.a = 0.9f;
-		ui_xform.orientation = m_orientation;
-		ui_xform.no_center = true;
-
-		// add UI elements
-		add_container_primitives(list, ui_xform, *debug, BLENDMODE_ALPHA);
-	}
-
 	// process the UI if we are the UI target
 	if (is_ui_target())
 	{
@@ -1431,38 +1414,6 @@ void render_target::invalidate_all(void *refptr)
 			list.release_all();
       osd_lock_release(list.m_lock);
 	}
-}
-
-
-//-------------------------------------------------
-//  debug_alloc - allocate a container for a debug
-//  view
-//-------------------------------------------------
-
-render_container *render_target::debug_alloc()
-{
-	return &m_debug_containers.append(*m_manager.container_alloc());
-}
-
-
-//-------------------------------------------------
-//  debug_free - free a container for a debug view
-//-------------------------------------------------
-
-void render_target::debug_free(render_container &container)
-{
-	m_debug_containers.remove(container);
-}
-
-
-//-------------------------------------------------
-//  debug_top - move a debug view container to
-//  the top of the list
-//-------------------------------------------------
-
-void render_target::debug_top(render_container &container)
-{
-	m_debug_containers.prepend(m_debug_containers.detach(container));
 }
 
 

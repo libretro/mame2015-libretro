@@ -640,11 +640,6 @@ public:
 	// reference tracking
 	void invalidate_all(void *refptr);
 
-	// debug containers
-	render_container *debug_alloc();
-	void debug_free(render_container &container);
-	void debug_top(render_container &container);
-
 	render_target *         m_next;                     // link to next target
 
 private:
@@ -693,7 +688,6 @@ private:
 	render_layer_config     m_base_layerconfig;         // the layer configuration at the time of first frame
 	int                     m_maxtexwidth;              // maximum width of a texture
 	int                     m_maxtexheight;             // maximum height of a texture
-	simple_list<render_container> m_debug_containers;   // list of debug containers
 	INT32                   m_clear_extent_count;       // number of clear extents
 	INT32                   m_clear_extents[MAX_CLEAR_EXTENTS]; // array of clear extents
 
