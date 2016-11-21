@@ -46,13 +46,6 @@ class video_manager
 	friend class screen_device;
 
 public:
-	// movie format options
-	enum movie_format
-	{
-		MF_MNG,
-		MF_AVI
-	};
-
 	// construction/destruction
 	video_manager(running_machine &machine);
 
