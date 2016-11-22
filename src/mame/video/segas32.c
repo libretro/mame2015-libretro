@@ -875,9 +875,6 @@ void segas32_state::update_tilemap_zoom(screen_device &screen, struct segas32_st
 
 	/* configure the layer */
 	opaque = 0;
-//opaque = (m_system32_videoram[0x1ff8e/2] >> (8 + bgnum)) & 1;
-//if (screen.machine().input().code_pressed(KEYCODE_Z) && bgnum == 0) opaque = 1;
-//if (screen.machine().input().code_pressed(KEYCODE_X) && bgnum == 1) opaque = 1;
 
 	/* determine if we're flipped */
 	flip = ((m_system32_videoram[0x1ff00/2] >> 9) ^ (m_system32_videoram[0x1ff00/2] >> bgnum)) & 1;
@@ -1028,9 +1025,6 @@ void segas32_state::update_tilemap_rowscroll(screen_device &screen, struct segas
 
 	/* configure the layer */
 	opaque = 0;
-//opaque = (m_system32_videoram[0x1ff8e/2] >> (8 + bgnum)) & 1;
-//if (screen.machine().input().code_pressed(KEYCODE_C) && bgnum == 2) opaque = 1;
-//if (screen.machine().input().code_pressed(KEYCODE_V) && bgnum == 3) opaque = 1;
 
 	/* determine if we're flipped */
 	flip = ((m_system32_videoram[0x1ff00/2] >> 9) ^ (m_system32_videoram[0x1ff00/2] >> bgnum)) & 1;
@@ -2383,16 +2377,6 @@ UINT32 segas32_state::screen_update_system32(screen_device &screen, bitmap_rgb32
 	enablemask = update_tilemaps(screen, cliprect);
 	g_profiler.stop();
 
-	/* debugging */
-#if QWERTY_LAYER_ENABLE
-	if (machine().input().code_pressed(KEYCODE_Q)) enablemask = 0x01;
-	if (machine().input().code_pressed(KEYCODE_W)) enablemask = 0x02;
-	if (machine().input().code_pressed(KEYCODE_E)) enablemask = 0x04;
-	if (machine().input().code_pressed(KEYCODE_R)) enablemask = 0x08;
-	if (machine().input().code_pressed(KEYCODE_T)) enablemask = 0x10;
-	if (machine().input().code_pressed(KEYCODE_Y)) enablemask = 0x20;
-#endif
-
 	/* do the mixing */
 	g_profiler.start(PROFILER_USER3);
 	mix_all_layers(0, 0, bitmap, cliprect, enablemask);
@@ -2420,15 +2404,6 @@ UINT32 segas32_state::screen_update_system32(screen_device &screen, bitmap_rgb32
 {
 	int showclip = -1;
 
-//  if (screen.machine().input().code_pressed(KEYCODE_V))
-//      showclip = 0;
-//  if (screen.machine().input().code_pressed(KEYCODE_B))
-//      showclip = 1;
-//  if (screen.machine().input().code_pressed(KEYCODE_N))
-//      showclip = 2;
-//  if (screen.machine().input().code_pressed(KEYCODE_M))
-//      showclip = 3;
-//  if (showclip != -1)
 for (showclip = 0; showclip < 4; showclip++)
 	{
 		int flip = (m_system32_videoram[0x1ff00/2] >> 9) & 1;
@@ -2503,16 +2478,6 @@ UINT32 segas32_state::multi32_update(screen_device &screen, bitmap_rgb32 &bitmap
 	g_profiler.start(PROFILER_USER1);
 	enablemask = update_tilemaps(screen, cliprect);
 	g_profiler.stop();
-
-	/* debugging */
-#if QWERTY_LAYER_ENABLE
-	if (screen.machine().input().code_pressed(KEYCODE_Q)) enablemask = 0x01;
-	if (screen.machine().input().code_pressed(KEYCODE_W)) enablemask = 0x02;
-	if (screen.machine().input().code_pressed(KEYCODE_E)) enablemask = 0x04;
-	if (screen.machine().input().code_pressed(KEYCODE_R)) enablemask = 0x08;
-	if (screen.machine().input().code_pressed(KEYCODE_T)) enablemask = 0x10;
-	if (screen.machine().input().code_pressed(KEYCODE_Y)) enablemask = 0x20;
-#endif
 
 	/* do the mixing */
 	g_profiler.start(PROFILER_USER3);

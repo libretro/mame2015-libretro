@@ -344,25 +344,9 @@ void psikyosh_state::draw_background( bitmap_rgb32 &bitmap, const rectangle &cli
 {
 	int i;
 
-#ifdef DEBUG_KEYS
-	const int lay_keys[8] = {KEYCODE_Q, KEYCODE_W, KEYCODE_E, KEYCODE_R};
-	bool lay_debug = false;
-	for (i = 0; i <= 3; i++)
-	{
-		if(machine().input().code_pressed(lay_keys[i])) {
-			lay_debug = true;
-		}
-	}
-#endif
-
 	/* 1st-4th layers */
 	for (i = 0; i <= 3; i++)
 	{
-#ifdef DEBUG_KEYS
-		if(lay_debug && !machine().input().code_pressed(lay_keys[i]))
-			continue;
-#endif
-
 		if (!BG_LAYER_ENABLE(i))
 			continue;
 
@@ -943,14 +927,6 @@ void psikyosh_state::draw_sprites(bitmap_rgb32 &bitmap, const rectangle &cliprec
 	**- End Sprite Format -*/
 	const input_code spr_keys[8] = {KEYCODE_Y, KEYCODE_U, KEYCODE_I, KEYCODE_O};
 	bool spr_debug = false;
-#ifdef DEBUG_KEYS
-	for (int i = 0; i <= 3; i++)
-	{
-		if(machine().input().code_pressed(spr_keys[i])) {
-			spr_debug = true;
-		}
-	}
-#endif
 
 
 	gfx_element *gfx;
@@ -1008,9 +984,6 @@ void psikyosh_state::draw_sprites(bitmap_rgb32 &bitmap, const rectangle &cliprec
 			else
 				alpha = pal6bit(0x3f - alpha); /* 0x3f-0x00 maps to 0x00-0xff */
 
-#if 0
-			if(!spr_debug || machine().input().code_pressed(spr_keys[spr_pri]))
-#endif
 			{
 				/* start drawing */
 				if (zoom_table[BYTE_XOR_BE(zoomy)] && zoom_table[BYTE_XOR_BE(zoomx)]) /* Avoid division-by-zero when table contains 0 (Uninitialised/Bug) */
@@ -1130,20 +1103,6 @@ UINT32 psikyosh_state::screen_update_psikyosh(screen_device &screen, bitmap_rgb3
 	int sprites = true;
 	int backgrounds = true;
 	const input_code pri_keys[8] = {KEYCODE_Z, KEYCODE_X, KEYCODE_C, KEYCODE_V, KEYCODE_B, KEYCODE_N, KEYCODE_M, KEYCODE_K};
-#ifdef DEBUG_KEYS
-	for (i = 0; i <= 7; i++)
-	{
-		if(machine().input().code_pressed(pri_keys[i])) {
-			pri_debug = true;
-		}
-	}
-	if(machine().input().code_pressed(KEYCODE_G)) {
-		sprites = false;
-	}
-	if(machine().input().code_pressed(KEYCODE_H)) {
-		backgrounds = false;
-	}
-#endif
 
 #ifdef DEBUG_MESSAGE
 popmessage   ("%08x %08x %08x %08x\n%08x %08x %08x %08x",
@@ -1158,9 +1117,6 @@ popmessage   ("%08x %08x %08x %08x\n%08x %08x %08x %08x",
 	psikyosh_prelineblend(bitmap, cliprect); // fills screen
 	for (i = 0; i <= 7; i++)
 	{
-#if 0
-		if(!pri_debug || machine().input().code_pressed(pri_keys[i]))
-#endif
 		{
 			if(sprites) {
 				draw_sprites(bitmap, cliprect, i); // When same priority bg's have higher pri

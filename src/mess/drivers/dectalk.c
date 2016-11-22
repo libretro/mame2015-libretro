@@ -862,7 +862,7 @@ TIMER_CALLBACK_MEMBER(dectalk_state::outfifo_read_cb)
 	// hack for break key, requires hacked up duart core so disabled for now
 	// also it doesn't work well, the setup menu is badly corrupt
 	/*device_t *duart = machine().device("duartn68681");
-	if (machine.input().code_pressed(KEYCODE_F1))
+	if (machine.input().code_value(KEYCODE_F1) != 0)
 	    duart68681_rx_break(duart, 1, 1);
 	else
 	    duart68681_rx_break(duart, 1, 0);*/

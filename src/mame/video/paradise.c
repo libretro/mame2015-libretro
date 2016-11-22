@@ -228,19 +228,6 @@ UINT32 paradise_state::screen_update_paradise(screen_device &screen, bitmap_ind1
 {
 	int layers_ctrl = -1;
 
-#ifdef MAME_DEBUG
-if (machine().input().code_pressed(KEYCODE_Z))
-{
-	int mask = 0;
-	if (machine().input().code_pressed(KEYCODE_Q))  mask |= 1;
-	if (machine().input().code_pressed(KEYCODE_W))  mask |= 2;
-	if (machine().input().code_pressed(KEYCODE_E))  mask |= 4;
-	if (machine().input().code_pressed(KEYCODE_R))  mask |= 8;
-	if (machine().input().code_pressed(KEYCODE_A))  mask |= 16;
-	if (mask != 0) layers_ctrl &= mask;
-}
-#endif
-
 	bitmap.fill(m_palette->black_pen(), cliprect);
 
 	if (!(m_priority & 4))  /* Screen blanking */

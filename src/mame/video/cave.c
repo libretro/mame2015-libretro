@@ -1535,62 +1535,6 @@ UINT32 cave_state::screen_update_cave(screen_device &screen, bitmap_rgb32 &bitma
 		}
 	}
 
-#ifdef MAME_DEBUG
-{
-	if ( machine().input().code_pressed(KEYCODE_Z) || machine().input().code_pressed(KEYCODE_X) || machine().input().code_pressed(KEYCODE_C) ||
-			machine().input().code_pressed(KEYCODE_V) || machine().input().code_pressed(KEYCODE_B) )
-	{
-		int msk = 0, val = 0;
-
-		if (machine().input().code_pressed(KEYCODE_X))  val = 1;    // priority 0 only
-		if (machine().input().code_pressed(KEYCODE_C))  val = 2;    // ""       1
-		if (machine().input().code_pressed(KEYCODE_V))  val = 4;    // ""       2
-		if (machine().input().code_pressed(KEYCODE_B))  val = 8;    // ""       3
-		if (machine().input().code_pressed(KEYCODE_Z))  val = 1|2|4|8;  // All of the above priorities
-
-		if (machine().input().code_pressed(KEYCODE_Q))  msk |= val <<  0;   // for layer 0
-		if (machine().input().code_pressed(KEYCODE_W))  msk |= val <<  4;   // for layer 1
-		if (machine().input().code_pressed(KEYCODE_E))  msk |= val <<  8;   // for layer 2
-		if (machine().input().code_pressed(KEYCODE_R))  msk |= val << 12;   // for layer 3
-		if (machine().input().code_pressed(KEYCODE_A))  msk |= val << 16;   // for sprites
-		if (msk != 0) layers_ctrl &= msk;
-
-#if 1
-		/* Show the video registers (cave_videoregs) */
-		popmessage("%04X %04X %04X %04X %04X %04X %04X %04X",
-			m_videoregs[0][0], m_videoregs[0][1], m_videoregs[0][2], m_videoregs[0][3],
-			m_videoregs[0][4], m_videoregs[0][5], m_videoregs[0][6], m_videoregs[0][7] );
-#endif
-		/* Show the scroll / flags registers of the selected layer */
-		if ((m_tilemap[0]) && (msk & 0x000f))   popmessage("x:%04X y:%04X f:%04X", m_vctrl[0][0],m_vctrl[0][1],m_vctrl[0][2]);
-		if ((m_tilemap[1]) && (msk & 0x00f0))   popmessage("x:%04X y:%04X f:%04X", m_vctrl[1][0],m_vctrl[1][1],m_vctrl[1][2]);
-		if ((m_tilemap[2]) && (msk & 0x0f00))   popmessage("x:%04X y:%04X f:%04X", m_vctrl[2][0],m_vctrl[2][1],m_vctrl[2][2]);
-		if ((m_tilemap[3]) && (msk & 0xf000))   popmessage("x:%04X y:%04X f:%04X", m_vctrl[3][0],m_vctrl[3][1],m_vctrl[3][2]);
-	}
-
-	/* Show the row / "column" scroll enable flags, when they change state */
-	m_rasflag = 0;
-	for (GFX = 0; GFX < 4; GFX++)
-	{
-		if (m_tilemap[GFX])
-		{
-			m_rasflag |= (m_vctrl[GFX][0] & 0x4000) ? 0x0001 << (4*GFX) : 0;
-			m_rasflag |= (m_vctrl[GFX][1] & 0x4000) ? 0x0002 << (4*GFX) : 0;
-		}
-	}
-
-	if (m_rasflag != m_old_rasflag)
-	{
-		popmessage("Line Effect: 0:%c%c 1:%c%c 2:%c%c 3:%c%c",
-			(m_rasflag & 0x0001) ? 'x' : ' ', (m_rasflag & 0x0002) ? 'y' : ' ',
-			(m_rasflag & 0x0010) ? 'x' : ' ', (m_rasflag & 0x0020) ? 'y' : ' ',
-			(m_rasflag & 0x0100) ? 'x' : ' ', (m_rasflag & 0x0200) ? 'y' : ' ',
-			(m_rasflag & 0x1000) ? 'x' : ' ', (m_rasflag & 0x2000) ? 'y' : ' ' );
-		m_old_rasflag = m_rasflag;
-	}
-}
-#endif
-
 	cave_sprite_check(0, screen, cliprect);
 
 	bitmap.fill(m_palette->pen_color(m_background_pen), cliprect);

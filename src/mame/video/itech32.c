@@ -323,53 +323,6 @@ WRITE16_MEMBER(itech32_state::bloodstm_paletteram_w)
 
 void itech32_state::logblit(const char *tag)
 {
-#if 0
-	if (!machine().input().code_pressed(KEYCODE_L))
-		return;
-	if (m_is_drivedge && VIDEO_TRANSFER_FLAGS == 0x5490)
-	{
-		/* polygon drawing */
-		logerror("%s: e=%d%d f=%04x s=(%03x-%03x,%03x) w=%03x h=%03x b=%02x%04x c=%02x%02x ss=%04x,%04x ds=%04x,%04x ls=%04x%04x rs=%04x%04x u80=%04x", tag,
-			m_enable_latch[0], m_enable_latch[1],
-			VIDEO_TRANSFER_FLAGS,
-			VIDEO_TRANSFER_X, VIDEO_RIGHTCLIP, VIDEO_TRANSFER_Y, VIDEO_TRANSFER_WIDTH, VIDEO_TRANSFER_HEIGHT,
-			VIDEO_TRANSFER_ADDRHI, VIDEO_TRANSFER_ADDRLO,
-			m_color_latch[0] >> 8, m_color_latch[1] >> 8,
-			VIDEO_SRC_XSTEP, VIDEO_SRC_YSTEP,
-			VIDEO_DST_XSTEP, VIDEO_DST_YSTEP,
-			VIDEO_LEFTSTEPHI, VIDEO_LEFTSTEPLO, VIDEO_RIGHTSTEPHI, VIDEO_RIGHTSTEPLO,
-			VIDEO_STARTSTEP);
-	}
-
-	else if (m_video[0x16/2] == 0x100 && m_video[0x18/2] == 0x100 &&
-		m_video[0x1a/2] == 0x000 && m_video[0x1c/2] == 0x100 &&
-		m_video[0x1e/2] == 0x000 && m_video[0x20/2] == 0x000)
-	{
-		logerror("%s: e=%d%d f=%04x c=%02x%02x %02x%04x -> (%03x,%03x) %3dx%3dc=(%03x,%03x)-(%03x,%03x)", tag,
-				m_enable_latch[0], m_enable_latch[1],
-				VIDEO_TRANSFER_FLAGS,
-				m_color_latch[0] >> 8, m_color_latch[1] >> 8,
-				VIDEO_TRANSFER_ADDRHI, VIDEO_TRANSFER_ADDRLO,
-				VIDEO_TRANSFER_X, VIDEO_TRANSFER_Y,
-				VIDEO_TRANSFER_WIDTH, ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT),
-				VIDEO_LEFTCLIP, VIDEO_TOPCLIP, VIDEO_RIGHTCLIP, VIDEO_BOTTOMCLIP);
-	}
-	else
-	{
-		logerror("%s: e=%d%d f=%04x c=%02x%02x %02x%04x -> (%03x,%03x) %3dx%3d c=(%03x,%03x)-(%03x,%03x) s=%04x %04x %04x %04x %04x %04x", tag,
-				m_enable_latch[0], m_enable_latch[1],
-				VIDEO_TRANSFER_FLAGS,
-				m_color_latch[0] >> 8, m_color_latch[1] >> 8,
-				VIDEO_TRANSFER_ADDRHI, VIDEO_TRANSFER_ADDRLO,
-				VIDEO_TRANSFER_X, VIDEO_TRANSFER_Y,
-				VIDEO_TRANSFER_WIDTH, ADJUSTED_HEIGHT(VIDEO_TRANSFER_HEIGHT),
-				VIDEO_LEFTCLIP, VIDEO_TOPCLIP, VIDEO_RIGHTCLIP, VIDEO_BOTTOMCLIP,
-				m_video[0x16/2], m_video[0x18/2], m_video[0x1a/2],
-				m_video[0x1c/2], m_video[0x1e/2], m_video[0x20/2]);
-	}
-	if (m_is_drivedge) logerror(" v0=%08x v1=%08x v2=%08x v3=%08x", m_drivedge_zbuf_control[0], m_drivedge_zbuf_control[1], m_drivedge_zbuf_control[2], m_drivedge_zbuf_control[3]);
-	logerror("\n");
-#endif
 }
 
 

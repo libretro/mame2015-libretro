@@ -991,9 +991,6 @@ void x68k_state::x68k_draw_sprites(bitmap_ind16 &bitmap, int priority, rectangle
 	for(ptr=508;ptr>=0;ptr-=4)  // stepping through sprites
 	{
 		pri = m_spritereg[ptr+3] & 0x03;
-#ifdef MAME_DEBUG
-		if(!(machine().input().code_pressed(KEYCODE_I)))
-#endif
 		if(pri == priority)
 		{  // if at the right priority level, draw the sprite
 			rectangle rect;
@@ -1229,20 +1226,6 @@ UINT32 x68k_state::screen_update_x68000(screen_device &screen, bitmap_rgb32 &bit
 				x68k_draw_text(bitmap,xscr,yscr,rect);
 		}
 	}
-
-#ifdef MAME_DEBUG
-	if(machine().input().code_pressed(KEYCODE_9))
-	{
-		m_sprite_shift--;
-		popmessage("Sprite shift = %i",m_sprite_shift);
-	}
-	if(machine().input().code_pressed(KEYCODE_0))
-	{
-		m_sprite_shift++;
-		popmessage("Sprite shift = %i",m_sprite_shift);
-	}
-
-#endif
 
 #ifdef MAME_DEBUG
 //  popmessage("Layer priorities [%04x] - Txt: %i  Spr: %i  Gfx: %i  Layer Pri0-3: %i %i %i %i",m_video.reg[1],m_video.text_pri,m_video.sprite_pri,

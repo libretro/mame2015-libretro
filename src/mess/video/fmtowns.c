@@ -1675,12 +1675,12 @@ UINT32 towns_state::screen_update(screen_device &screen, bitmap_rgb32 &bitmap, c
 
 	if(!(m_video.towns_video_reg[1] & 0x01))
 	{
-		if(!machine().input().code_pressed(KEYCODE_Q))
+		if(!machine().input().code_value(KEYCODE_Q) != 0)
 		{
 			if((m_video.towns_layer_ctrl & 0x03) != 0)
 				towns_crtc_draw_layer(bitmap,&m_video.towns_crtc_layerscr[1],1);
 		}
-		if(!machine().input().code_pressed(KEYCODE_W))
+		if(!machine().input().code_value(KEYCODE_W) != 0)
 		{
 			if((m_video.towns_layer_ctrl & 0x0c) != 0)
 				towns_crtc_draw_layer(bitmap,&m_video.towns_crtc_layerscr[0],0);
@@ -1688,27 +1688,17 @@ UINT32 towns_state::screen_update(screen_device &screen, bitmap_rgb32 &bitmap, c
 	}
 	else
 	{
-		if(!machine().input().code_pressed(KEYCODE_Q))
+		if(!machine().input().code_value(KEYCODE_Q) != 0)
 		{
 			if((m_video.towns_layer_ctrl & 0x0c) != 0)
 				towns_crtc_draw_layer(bitmap,&m_video.towns_crtc_layerscr[0],0);
 		}
-		if(!machine().input().code_pressed(KEYCODE_W))
+		if(!machine().input().code_value(KEYCODE_W) != 0)
 		{
 			if((m_video.towns_layer_ctrl & 0x03) != 0)
 				towns_crtc_draw_layer(bitmap,&m_video.towns_crtc_layerscr[1],1);
 		}
 	}
-
-#if 0
-#ifdef SPR_DEBUG
-	if(machine().input().code_pressed(KEYCODE_O))
-		pshift+=0x80;
-	if(machine().input().code_pressed(KEYCODE_I))
-		pshift-=0x80;
-	popmessage("Pixel shift = %08x",pshift);
-#endif
-#endif
 
 #ifdef CRTC_REG_DISP
 	popmessage("CRTC: %i %i %i %i %i %i %i %i %i\n%i %i %i %i | %i %i %i %i\n%04x %i %i %i | %04x %i %i %i\nZOOM: %04x\nVideo: %02x %02x\nText=%i Spr=%02x\nReg28=%04x",

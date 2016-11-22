@@ -117,12 +117,14 @@ UINT32 stratos_state::screen_update(screen_device &screen, bitmap_rgb32 &bitmap,
 {
 	static bool nmi=false;
 
-	if(machine().input().code_pressed(KEYCODE_W)) {
-		if(!nmi) {
-			maincpu->set_input_line(M65C02_NMI_LINE, PULSE_LINE);
-			nmi = true;
-		}
-	} else
+	if(machine().input().code_value(KEYCODE_W) != 0)
+   {
+      if(!nmi)
+      {
+         maincpu->set_input_line(M65C02_NMI_LINE, PULSE_LINE);
+         nmi = true;
+      }
+   } else
 		nmi = false;
 
 

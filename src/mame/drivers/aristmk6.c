@@ -35,35 +35,6 @@ UINT32 aristmk6_state::screen_update_aristmk6(screen_device &screen, bitmap_rgb3
 	int x,y,count;
 	const UINT8 *blit_ram = memregion("maincpu")->base();
 
-#if 0
-	if(machine().input().code_pressed(KEYCODE_Z))
-		m_test_x++;
-
-	if(machine().input().code_pressed(KEYCODE_X))
-		m_test_x--;
-
-	if(machine().input().code_pressed(KEYCODE_A))
-		m_test_y++;
-
-	if(machine().input().code_pressed(KEYCODE_S))
-		m_test_y--;
-
-	if(machine().input().code_pressed(KEYCODE_Q))
-		m_start_offs+=0x2000;
-
-	if(machine().input().code_pressed(KEYCODE_W))
-		m_start_offs-=0x2000;
-
-	if(machine().input().code_pressed(KEYCODE_E))
-		m_start_offs++;
-
-	if(machine().input().code_pressed(KEYCODE_R))
-		m_start_offs--;
-
-	if(machine().input().code_pressed_once(KEYCODE_L))
-		m_type^=1;
-#endif
-
 	popmessage("%d %d %04x %d",m_test_x,m_test_y,m_start_offs,m_type);
 
 	bitmap.fill(m_palette->black_pen(), cliprect);

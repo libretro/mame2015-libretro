@@ -323,9 +323,6 @@ UINT32 midzeus_state::screen_update_midzeus(screen_device &screen, bitmap_ind16 
 	poly_wait(poly, "VIDEO_UPDATE");
 
 	/* normal update case */
-#if 0
-	if (!machine().input().code_pressed(KEYCODE_W))
-#endif
 	{
 		const void *base = waveram1_ptr_from_expanded_addr(m_zeusbase[0xcc]);
 		int xoffs = screen.visible_area().min_x;
@@ -340,13 +337,6 @@ UINT32 midzeus_state::screen_update_midzeus(screen_device &screen, bitmap_ind16 
 	/* waveram drawing case */
 	{
 		const void *base;
-
-#if 0
-		if (machine().input().code_pressed(KEYCODE_DOWN)) yoffs += machine().input().code_pressed(KEYCODE_LSHIFT) ? 0x40 : 1;
-		if (machine().input().code_pressed(KEYCODE_UP)) yoffs -= machine().input().code_pressed(KEYCODE_LSHIFT) ? 0x40 : 1;
-		if (machine().input().code_pressed(KEYCODE_LEFT) && texel_width > 4) { texel_width >>= 1; while (machine().input().code_pressed(KEYCODE_LEFT)) ; }
-		if (machine().input().code_pressed(KEYCODE_RIGHT) && texel_width < 512) { texel_width <<= 1; while (machine().input().code_pressed(KEYCODE_RIGHT)) ; }
-#endif
 
 		if (yoffs < 0) yoffs = 0;
 		base = waveram0_ptr_from_block_addr(yoffs << 12);
@@ -376,26 +366,22 @@ UINT32 midzeus_state::screen_update_midzeus(screen_device &screen, bitmap_ind16 
 
 READ32_MEMBER(midzeus_state::zeus_r)
 {
-	int logit = (offset < 0xb0 || offset > 0xb7);
 	UINT32 result = m_zeusbase[offset & ~1];
 
 	switch (offset & ~1)
 	{
 		case 0xf0:
 			result = m_screen->hpos();
-			logit = 0;
 			break;
 
 		case 0xf2:
 			result = m_screen->vpos();
-			logit = 0;
 			break;
 
 		case 0xf4:
 			result = 6;
 			if (m_screen->vblank())
 				result |= 0x800;
-			logit = 0;
 			break;
 
 		case 0xf6:      // status -- they wait for this & 9 == 0
@@ -403,7 +389,6 @@ READ32_MEMBER(midzeus_state::zeus_r)
 			result = 0x9600;
 			if (m_zeusbase[0xb6] == 0x80040000)
 				result |= 1;
-			logit = 0;
 			break;
 	}
 
@@ -412,15 +397,6 @@ READ32_MEMBER(midzeus_state::zeus_r)
 	{
 		if (offset & 1)
 			result >>= 16;
-		if (logit)
-		{
-			if (offset & 1)
-				logerror("%06X:zeus32_r(%02X) = %08X -- unexpected in 32-bit mode\n", space.device().safe_pc(), offset, result);
-			else if (offset != 0xe0)
-				logerror("%06X:zeus32_r(%02X) = %08X\n", space.device().safe_pc(), offset, result);
-			else
-				logerror("%06X:zeus32_r(%02X) = %08X\n", space.device().safe_pc(), offset, result);
-		}
 	}
 
 	/* 16-bit mode */
@@ -430,8 +406,6 @@ READ32_MEMBER(midzeus_state::zeus_r)
 			result >>= 16;
 		else
 			result &= 0xffff;
-		if (logit)
-			logerror("%06X:zeus16_r(%02X) = %04X\n", space.device().safe_pc(), offset, result);
 	}
 	return result;
 }
@@ -447,9 +421,6 @@ READ32_MEMBER(midzeus_state::zeus_r)
 WRITE32_MEMBER(midzeus_state::zeus_w)
 {
 	int logit = zeus_enable_logging || ((offset < 0xb0 || offset > 0xb7) && (offset < 0xe0 || offset > 0xe1));
-
-	if (logit)
-		logerror("%06X:zeus_w", space.device().safe_pc());
 
 	/* 32-bit mode */
 	if (m_zeusbase[0x80] & 0x00020000)
@@ -475,15 +446,11 @@ void midzeus_state::zeus_pointer_w(UINT32 which, UINT32 data, int logit)
 	{
 		case 0x008000:
 		case 0x018000:
-			if (logit)
-				logerror(" -- setptr(objdata)\n");
 			zeus_objdata = data;
 			break;
 
 		// case 0x00c040: -- set in model data in invasn
 		case 0x00c040:
-			if (logit)
-				logerror(" -- setptr(palbase)\n");
 			zeus_palbase = data;
 			break;
 
@@ -514,13 +481,8 @@ void midzeus_state::zeus_pointer_w(UINT32 which, UINT32 data, int logit)
 
 
 		default:
-			if (logit)
-				logerror(" -- setptr(%06X)\n", which & 0xffffff);
 			break;
 	}
-
-	if (logit)
-		log_waveram(data);
 }
 
 
@@ -545,10 +507,6 @@ void midzeus_state::zeus_register16_w(offs_t offset, UINT16 data, int logit)
 	else
 		m_zeusbase[offset & ~1] = (m_zeusbase[offset & ~1] & 0xffff0000) | (data & 0xffff);
 
-	/* log appropriately */
-	if (logit)
-		logerror("(%02X) = %04X [%08X]\n", offset, data & 0xffff, m_zeusbase[offset & ~1]);
-
 	/* handle the update */
 	if ((offset & 1) == 0)
 		zeus_register_update(offset);
@@ -563,17 +521,6 @@ void midzeus_state::zeus_register32_w(offs_t offset, UINT32 data, int logit)
 
 	/* always write to low word? */
 	m_zeusbase[offset & ~1] = data;
-
-	/* log appropriately */
-	if (logit)
-	{
-		if (offset & 1)
-			logerror("(%02X) = %08X -- unexpected in 32-bit mode\n", offset, data);
-		else if (offset != 0xe0)
-			logerror("(%02X) = %08X\n", offset, data);
-		else
-			logerror("(%02X) = %08X\n", offset, data);
-	}
 
 	/* handle the update */
 	if ((offset & 1) == 0)
@@ -935,9 +882,6 @@ void midzeus_state::zeus_draw_model(UINT32 texdata, int logit)
 	int databufcount = 0;
 	int model_done = FALSE;
 
-	if (logit)
-		logerror(" -- model @ %08X\n", zeus_objdata);
-
 	while (zeus_objdata != 0 && !model_done)
 	{
 		const void *base = waveram0_ptr_from_block_addr(zeus_objdata);
@@ -962,22 +906,10 @@ void midzeus_state::zeus_draw_model(UINT32 texdata, int logit)
 			countneeded = (cmd == 0x25 || cmd == 0x30 || cmd == 0x28) ? 14 : 2;
 			if (databufcount == countneeded)
 			{
-				/* handle logging of the command */
-				if (logit)
-				{
-					int offs;
-					logerror("\t");
-					for (offs = 0; offs < databufcount; offs++)
-						logerror("%08X ", databuffer[offs]);
-					logerror("-- ");
-				}
-
 				/* handle the command */
 				switch (cmd)
 				{
 					case 0x08:
-						if (logit)
-							logerror("end of model\n");
 						model_done = TRUE;
 						break;
 
@@ -986,16 +918,12 @@ void midzeus_state::zeus_draw_model(UINT32 texdata, int logit)
 						break;
 
 					case 0x17:  /* mk4 */
-						if (logit)
-							logerror("reg16");
 						zeus_register16_w((databuffer[0] >> 16) & 0x7f, databuffer[0], logit);
 						if (((databuffer[0] >> 16) & 0x7f) == 0x06)
 							texdata = (texdata & 0xffff) | (m_zeusbase[0x06] << 16);
 						break;
 
 					case 0x19:  /* invasn */
-						if (logit)
-							logerror("reg32");
 						zeus_register32_w((databuffer[0] >> 16) & 0x7f, databuffer[1], logit);
 						if (((databuffer[0] >> 16) & 0x7f) == 0x06)
 							texdata = (texdata & 0xffff) | (m_zeusbase[0x06] << 16);
@@ -1008,8 +936,6 @@ void midzeus_state::zeus_draw_model(UINT32 texdata, int logit)
 						break;
 
 					default:
-						if (logit)
-							logerror("unknown\n");
 						break;
 				}
 
@@ -1067,15 +993,6 @@ void midzeus_state::zeus_draw_quad(int long_fmt, const UINT32 *databuffer, UINT3
 	/* rotate the normal into camera view; we only need the Z coordinate */
 	rotnormal[2] = normal[0] * zeus_matrix[2][0] + normal[1] * zeus_matrix[2][1] + normal[2] * zeus_matrix[2][2];
 
-	/* if we're pointing away from the camera, toss */
-	if (rotnormal[2] > 0)
-	{
-		if (logit)
-			logerror("quad (culled %08X)\n", rotnormal[2]);
-//      if (machine().input().code_pressed(KEYCODE_COMMA))
-//          return;
-	}
-
 	texbase = ((texdata >> 10) & 0x3f0000) | (texdata & 0xffff);
 	val2 = (texdata >> 16) & 0x3ff;
 	texwshift = (val2 >> 6) & 7;
@@ -1121,15 +1038,6 @@ void midzeus_state::zeus_draw_quad(int long_fmt, const UINT32 *databuffer, UINT3
 		vert[i].p[1] = u * uscale;
 		vert[i].p[2] = v * vscale;
 		vert[i].p[3] = dotnormal;
-
-		if (logit)
-		{
-			logerror("\t\t(%f,%f,%f) (%02X,%02X) (%03X,%03X,%03X) dot=%08X\n",
-					vert[i].x * (1.0f / 65536.0f), vert[i].y * (1.0f / 65536.0f), vert[i].p[0] * (1.0f / 65536.0f),
-					(int)(vert[i].p[1] / 256.0f), (int)(vert[i].p[2] / 256.0f),
-					(databuffer[10 + i] >> 20) & 0x3ff, (databuffer[10 + i] >> 10) & 0x3ff, (databuffer[10 + i] >> 0) & 0x3ff,
-					dotnormal);
-		}
 	}
 
 	numverts = poly_zclip_if_less(4, &vert[0], &clipvert[0], 4, 512.0f);
@@ -1148,8 +1056,6 @@ void midzeus_state::zeus_draw_quad(int long_fmt, const UINT32 *databuffer, UINT3
 
 		maxx = MAX(maxx, clipvert[i].x);
 		maxy = MAX(maxy, clipvert[i].y);
-		if (logit)
-			logerror("\t\t\tTranslated=(%f,%f)\n", clipvert[i].x, clipvert[i].y);
 	}
 	for (i = 0; i < numverts; i++)
 	{

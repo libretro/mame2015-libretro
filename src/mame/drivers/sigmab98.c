@@ -319,18 +319,6 @@ UINT32 sigmab98_state::screen_update_sigmab98(screen_device &screen, bitmap_ind1
 {
 	int layers_ctrl = -1;
 
-#ifdef MAME_DEBUG
-	if (machine().input().code_pressed(KEYCODE_Z))
-	{
-		int msk = 0;
-		if (machine().input().code_pressed(KEYCODE_Q))  msk |= 1;
-		if (machine().input().code_pressed(KEYCODE_W))  msk |= 2;
-		if (machine().input().code_pressed(KEYCODE_E))  msk |= 4;
-		if (machine().input().code_pressed(KEYCODE_R))  msk |= 8;
-		if (msk != 0) layers_ctrl &= msk;
-	}
-#endif
-
 	bitmap.fill(m_palette->black_pen(), cliprect);
 
 	// Draw from priority 3 (bottom, converted to a bitmask) to priority 0 (top)

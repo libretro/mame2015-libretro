@@ -95,10 +95,10 @@ UINT32 paso1600_state::screen_update_paso1600(screen_device &screen, bitmap_ind1
 	UINT32 count;
 	static int test_x;
 
-	if(machine().input().code_pressed(KEYCODE_Z))
+	if(machine().input().code_value(KEYCODE_Z) != 0)
 		test_x++;
 
-	if(machine().input().code_pressed(KEYCODE_X))
+	if(machine().input().code_value(KEYCODE_X) != 0)
 		test_x--;
 
 	popmessage("%d",test_x);

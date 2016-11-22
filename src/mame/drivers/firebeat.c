@@ -634,45 +634,6 @@ UINT32 firebeat_state::update_screen(screen_device &screen, bitmap_ind16 &bitmap
 	if (m_tick >= 5)
 	{
 		m_tick = 0;
-#if 0
-		if (machine().input().code_pressed(KEYCODE_0))
-		{
-			m_layer++;
-			if (m_layer > 2)
-			{
-				m_layer = 0;
-			}
-		}
-#endif
-
-		/*
-		if (machine().input().code_pressed_once(KEYCODE_9))
-		{
-		    FILE *file = fopen("vram0.bin", "wb");
-		    int i;
-
-		    for (i=0; i < 0x2000000/4; i++)
-		    {
-		        fputc((m_gcu[0].vram[i] >> 24) & 0xff, file);
-		        fputc((m_gcu[0].vram[i] >> 16) & 0xff, file);
-		        fputc((m_gcu[0].vram[i] >> 8) & 0xff, file);
-		        fputc((m_gcu[0].vram[i] >> 0) & 0xff, file);
-		    }
-
-		    fclose(file);
-		    file = fopen("vram1.bin", "wb");
-
-		    for (i=0; i < 0x2000000/4; i++)
-		    {
-		        fputc((m_gcu[1].vram[i] >> 24) & 0xff, file);
-		        fputc((m_gcu[1].vram[i] >> 16) & 0xff, file);
-		        fputc((m_gcu[1].vram[i] >> 8) & 0xff, file);
-		        fputc((m_gcu[1].vram[i] >> 0) & 0xff, file);
-		    }
-
-		    fclose(file);
-		}
-		*/
 	}
 
 	return 0;

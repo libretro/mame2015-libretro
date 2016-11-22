@@ -6954,7 +6954,7 @@ UINT32 saturn_state::screen_update_stv_vdp2(screen_device &screen, bitmap_rgb32 
 
 	#if 0
 	/* Do NOT remove me, used to test video code performance. */
-	if(machine().input().code_pressed(KEYCODE_Q))
+	if(machine().input().code_value(KEYCODE_Q) != 0)
 	{
 		popmessage("Halt CPUs");
 		m_maincpu->set_input_line(INPUT_LINE_HALT, ASSERT_LINE);

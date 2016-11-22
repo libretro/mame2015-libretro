@@ -246,10 +246,10 @@ UINT32 casloopy_state::screen_update_casloopy(screen_device &screen, bitmap_ind1
 
 	static int test;
 
-	if(machine().input().code_pressed(KEYCODE_Z))
+	if(machine().input().code_value(KEYCODE_Z) != 0)
 		test+=0x100;
 
-	if(machine().input().code_pressed(KEYCODE_X))
+	if(machine().input().code_value(KEYCODE_X) != 0)
 		test-=0x100;
 
 	//popmessage("%08x",test);

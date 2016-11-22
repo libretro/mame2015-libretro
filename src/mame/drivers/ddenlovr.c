@@ -1592,60 +1592,7 @@ UINT32 ddenlovr_state::screen_update_ddenlovr(screen_device &screen, bitmap_ind1
 	int enab = m_ddenlovr_layer_enable;
 	int enab2 = m_ddenlovr_layer_enable2;
 
-#if 0
-	static int base = 0x0;
-	const UINT8 *gfx = memregion("blitter")->base();
-	int next;
-	memset(m_ddenlovr_pixmap[0], 0, 512 * 512);
-	memset(m_ddenlovr_pixmap[1], 0, 512 * 512);
-	memset(m_ddenlovr_pixmap[2], 0, 512 * 512);
-	memset(m_ddenlovr_pixmap[3], 0, 512 * 512);
-	m_ddenlovr_dest_layer = 8;
-	m_ddenlovr_blit_pen = 0;
-	m_ddenlovr_blit_pen_mode = 0;
-	m_ddenlovr_blit_y = 5;
-	m_ddenlovr_clip_ctrl = 0x0f;
-	next = blit_draw(machine(), base, 0);
-	popmessage("GFX %06x", base);
-	if (machine().input().code_pressed(KEYCODE_S)) base = next;
-	if (machine().input().code_pressed_once(KEYCODE_X)) base = next;
-	if (machine().input().code_pressed(KEYCODE_C)) { base--; while ((gfx[base] & 0xf0) != 0x30) base--; }
-	if (machine().input().code_pressed(KEYCODE_V)) { base++; while ((gfx[base] & 0xf0) != 0x30) base++; }
-	if (machine().input().code_pressed_once(KEYCODE_D)) { base--; while ((gfx[base] & 0xf0) != 0x30) base--; }
-	if (machine().input().code_pressed_once(KEYCODE_F)) { base++; while ((gfx[base] & 0xf0) != 0x30) base++; }
-#endif
-
 	bitmap.fill(m_ddenlovr_bgcolor, cliprect);
-
-#ifdef MAME_DEBUG
-	if (machine().input().code_pressed(KEYCODE_Z))
-	{
-		int mask, mask2;
-
-		mask = 0;
-
-		if (machine().input().code_pressed(KEYCODE_Q))  mask |= 1;
-		if (machine().input().code_pressed(KEYCODE_W))  mask |= 2;
-		if (machine().input().code_pressed(KEYCODE_E))  mask |= 4;
-		if (machine().input().code_pressed(KEYCODE_R))  mask |= 8;
-
-		mask2 = 0;
-
-		if (m_extra_layers)
-		{
-			if (machine().input().code_pressed(KEYCODE_A))  mask2 |= 1;
-			if (machine().input().code_pressed(KEYCODE_S))  mask2 |= 2;
-			if (machine().input().code_pressed(KEYCODE_D))  mask2 |= 4;
-			if (machine().input().code_pressed(KEYCODE_F))  mask2 |= 8;
-		}
-
-		if (mask || mask2)
-		{
-			m_ddenlovr_layer_enable &= mask;
-			m_ddenlovr_layer_enable2 &= mask2;
-		}
-	}
-#endif
 
 	pri = m_ddenlovr_priority;
 

@@ -174,18 +174,6 @@ UINT32 segas18_state::screen_update(screen_device &screen, bitmap_ind16 &bitmap,
 	int vdplayer = (m_vdp_mixing >> 1) & 3;
 	int vdppri = (m_vdp_mixing & 1) ? (1 << vdplayer) : 0;
 
-#if DEBUG_VDP
-	if (machine().input().code_pressed(KEYCODE_Q)) vdplayer = 0;
-	if (machine().input().code_pressed(KEYCODE_W)) vdplayer = 1;
-	if (machine().input().code_pressed(KEYCODE_E)) vdplayer = 2;
-	if (machine().input().code_pressed(KEYCODE_R)) vdplayer = 3;
-	if (machine().input().code_pressed(KEYCODE_A)) vdppri = 0x00;
-	if (machine().input().code_pressed(KEYCODE_S)) vdppri = 0x01;
-	if (machine().input().code_pressed(KEYCODE_D)) vdppri = 0x02;
-	if (machine().input().code_pressed(KEYCODE_F)) vdppri = 0x04;
-	if (machine().input().code_pressed(KEYCODE_G)) vdppri = 0x08;
-#endif
-
 	// if no drawing is happening, fill with black and get out
 	if (!m_segaic16vid->m_display_enable)
 	{
@@ -251,18 +239,5 @@ UINT32 segas18_state::screen_update(screen_device &screen, bitmap_ind16 &bitmap,
 		}
 	}
 
-#if DEBUG_VDP
-	if (m_vdp_enable && machine().input().code_pressed(KEYCODE_V))
-	{
-		bitmap.fill(m_palette->black_pen(), cliprect);
-		update_system18_vdp(bitmap, cliprect);
-	}
-	if (vdp_enable && machine().input().code_pressed(KEYCODE_B))
-	{
-		FILE *f = fopen("vdp.bin", "w");
-		fwrite(m_temp_bitmap->base(), 1, m_temp_bitmap->rowpixels() * (m_temp_bitmap->bpp() / 8) * m_temp_bitmap->height(), f);
-		fclose(f);
-	}
-#endif
 	return 0;
 }
