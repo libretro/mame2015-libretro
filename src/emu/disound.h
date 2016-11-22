@@ -85,9 +85,6 @@ public:
 	device_sound_interface(const machine_config &mconfig, device_t &device);
 	virtual ~device_sound_interface();
 
-	// configuration access
-	const sound_route *first_route() const { return m_route_list.first(); }
-
 	// static inline configuration helpers
 	static sound_route &static_add_route(device_t &device, UINT32 output, const char *target, double gain, UINT32 input = AUTO_ALLOC_INPUT, UINT32 mixoutput = 0);
 	static void static_reset_routes(device_t &device);
@@ -107,6 +104,11 @@ public:
 	void set_output_gain(int outputnum, float gain);
 	int inputnum_from_device(device_t &device, int outputnum = 0) const;
 
+	// internal state
+	simple_list<sound_route> m_route_list;      // list of sound routes
+	int             m_outputs;                  // number of outputs from this instance
+	int             m_auto_allocated_inputs;    // number of auto-allocated inputs targeting us
+
 protected:
 	// optional operation overrides
 	virtual void interface_validity_check(validity_checker &valid) const;
@@ -114,10 +116,6 @@ protected:
 	virtual void interface_post_start();
 	virtual void interface_pre_reset();
 
-	// internal state
-	simple_list<sound_route> m_route_list;      // list of sound routes
-	int             m_outputs;                  // number of outputs from this instance
-	int             m_auto_allocated_inputs;    // number of auto-allocated inputs targeting us
 };
 
 // iterator

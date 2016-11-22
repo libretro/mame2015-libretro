@@ -235,7 +235,7 @@ int device_sound_interface::inputnum_from_device(device_t &source_device, int ou
 void device_sound_interface::interface_validity_check(validity_checker &valid) const
 {
 	// loop over all the routes
-	for (const sound_route *route = first_route(); route != NULL; route = route->m_next)
+	for (const sound_route *route = m_route_list.first(); route != NULL; route = route->m_next)
 	{
 		// find a device with the requested tag
 		const device_t *target = device().siblingdevice(route->m_target.cstr());
@@ -262,7 +262,7 @@ void device_sound_interface::interface_pre_start()
 	for (device_sound_interface *sound = iter.first(); sound != NULL; sound = iter.next())
 	{
 		// scan each route on the device
-		for (const sound_route *route = sound->first_route(); route != NULL; route = route->m_next)
+		for (const sound_route *route = sound->m_route_list.first(); route != NULL; route = route->m_next)
 		{
 			// see if we are the target of this route; if we are, make sure the source device is started
 			device_t *target_device = sound->device().siblingdevice(route->m_target);
@@ -276,7 +276,7 @@ void device_sound_interface::interface_pre_start()
 	for (device_sound_interface *sound = iter.first(); sound != NULL; sound = iter.next())
 	{
 		// scan each route on the device
-		for (const sound_route *route = sound->first_route(); route != NULL; route = route->m_next)
+		for (const sound_route *route = sound->m_route_list.first(); route != NULL; route = route->m_next)
 		{
 			// see if we are the target of this route
 			device_t *target_device = sound->device().siblingdevice(route->m_target);
@@ -302,7 +302,7 @@ void device_sound_interface::interface_post_start()
 	for (device_sound_interface *sound = iter.first(); sound != NULL; sound = iter.next())
 	{
 		// scan each route on the device
-		for (const sound_route *route = sound->first_route(); route != NULL; route = route->m_next)
+		for (const sound_route *route = sound->m_route_list.first(); route != NULL; route = route->m_next)
 		{
 			// if we are the target of this route, hook it up
 			device_t *target_device = sound->device().siblingdevice(route->m_target);
@@ -418,7 +418,7 @@ void device_mixer_interface::interface_pre_start()
 	// iterate through all routes that point to us and note their mixer output
 	sound_interface_iterator iter(m_device.machine().root_device());
 	for (device_sound_interface *sound = iter.first(); sound != NULL; sound = iter.next())
-		for (const sound_route *route = sound->first_route(); route != NULL; route = route->m_next)
+		for (const sound_route *route = sound->m_route_list.first(); route != NULL; route = route->m_next)
 		{
 			// see if we are the target of this route
 			device_t *target_device = sound->device().siblingdevice(route->m_target);
