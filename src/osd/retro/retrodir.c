@@ -21,7 +21,6 @@
 #include <dirent.h>
 
 #include "osdcore.h"
-#include "retroos.h"
 
 #if defined(SDLMAME_WIN32) || defined(SDLMAME_OS2)
 #define PATHSEPCH '\\'

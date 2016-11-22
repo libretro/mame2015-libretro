@@ -16,20 +16,17 @@
 
 /* forward decls / externs / prototypes */
 
-int retro_pause = 0;
 
 static cothread_t mainThread;
 static cothread_t emuThread;
 
-int fb_width   = 320;
-int fb_height  = 240;
-int fb_pitch   = 1600;
-float retro_aspect = 0;
-float retro_fps = 60.0;
-#if 0
-static int max_width  = 0;
-static int max_height = 0;
-#endif
+int retro_pause       = 0;
+
+int fb_width          = 320;
+int fb_height         = 240;
+int fb_pitch          = 1600;
+float retro_aspect    = 0;
+float retro_fps       = 60.0;
 int SHIFTON           = -1;
 int NEWGAME_FROM_OSD  = 0;
 char RPATH[512];
@@ -459,8 +456,6 @@ static void retro_wrap_emulator(void)
    mmain(1,RPATH);
 
    retro_pause = -1;
-
-//   environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, 0);
 
    /* Were done here. */
    co_switch(mainThread);

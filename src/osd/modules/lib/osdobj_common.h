@@ -239,7 +239,6 @@ private:
 protected:
 	midi_module* m_midi;
 private:
-	//tagmap_t<osd_video_type>  m_video_options;
 	dynamic_array<const char *> m_video_names;
 };
 

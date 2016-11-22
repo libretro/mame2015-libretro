@@ -1447,12 +1447,6 @@ static int execute_game_cmd(char* path)
 extern "C"
 #endif
 
-#if 0
-int main(int argc, char **argv)
-{
-}
-#endif
-
 int mmain(int argc, const char *argv)
 {
    unsigned i;
@@ -1579,9 +1573,11 @@ void retro_osd_interface::init(running_machine &machine)
 	retro_fps    = ATTOSECONDS_TO_HZ(machine.first_screen()->refresh_attoseconds());
 
 	if (log_cb)
-		log_cb(RETRO_LOG_DEBUG, "Screen width=%d height=%d, aspect=%d/%d=%f\n", fb_width, fb_height, width,height, retro_aspect);
+		log_cb(RETRO_LOG_DEBUG, "Screen width=%d height=%d, aspect=%d/%d=%f\n",
+            fb_width, fb_height, width,height, retro_aspect);
 
 	NEWGAME_FROM_OSD=1;
+
 	if (log_cb)
 		log_cb(RETRO_LOG_INFO, "OSD initialization complete\n");
 

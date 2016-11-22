@@ -19,7 +19,6 @@
 #include <errno.h>
 
 // MAME headers
-#include "retroos.h"
 
 #include "osdcore.h"
 
@@ -322,11 +321,9 @@ file_error osd_read(osd_file *file, void *buffer, UINT64 offset, UINT32 count, U
             lseek(file->handle, (UINT32)offset&0xffffffff, SEEK_SET);
          result = read(file->handle, buffer, count);
          if (result < 0)
-#elif defined(SDLMAME_UNIX)
+#else
             result = pread64(file->handle, buffer, count, offset);
          if (result < 0)
-#else
-#error Unknown SDL SUBARCH!
 #endif
             return error_to_file_error(errno);
 
@@ -368,11 +365,9 @@ file_error osd_write(osd_file *file, const void *buffer, UINT64 offset, UINT32 c
             lseek(file->handle, (UINT32)offset&0xffffffff, SEEK_SET);
          result = write(file->handle, buffer, count);
          if (!result)
-#elif defined(SDLMAME_UNIX)
+#else
             result = pwrite64(file->handle, buffer, count, offset);
          if (!result)
-#else
-#error Unknown SDL SUBARCH!
 #endif
             return error_to_file_error(errno);
 
