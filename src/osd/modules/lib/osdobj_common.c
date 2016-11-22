@@ -161,20 +161,9 @@ osd_common_t::~osd_common_t()
 
 void osd_common_t::register_options()
 {
-#ifndef OSD_RETRO
-	REGISTER_MODULE(m_mod_man, FONT_OSX);
-	REGISTER_MODULE(m_mod_man, FONT_WINDOWS);
-	REGISTER_MODULE(m_mod_man, FONT_SDL);
-#endif
 	REGISTER_MODULE(m_mod_man, FONT_NONE);
 
 	REGISTER_MODULE(m_mod_man, DEBUG_NONE);
-
-#ifndef OSD_RETRO
-	REGISTER_MODULE(m_mod_man, NETDEV_TAPTUN);
-	REGISTER_MODULE(m_mod_man, NETDEV_PCAP);
-	REGISTER_MODULE(m_mod_man, NETDEV_NONE);
-#endif
 
 #ifndef NO_USE_MIDI
 	REGISTER_MODULE(m_mod_man, MIDI_PM);
