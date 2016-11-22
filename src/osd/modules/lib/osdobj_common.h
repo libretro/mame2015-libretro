@@ -16,7 +16,6 @@
 #include "osdepend.h"
 #include "modules/osdmodule.h"
 #include "modules/font/font_module.h"
-#include "modules/debugger/debug_module.h"
 #include "modules/netdev/netdev_module.h"
 #include "modules/midi/midi_module.h"
 #include "cliopts.h"
@@ -82,8 +81,6 @@ public:
 	// construction/destruction
 	osd_options();
 
-	// debugging options
-	const char *debugger() const { return value(OSDOPTION_DEBUGGER); }
 	int watchdog() const { return int_value(OSDOPTION_WATCHDOG); }
 
 	// performance options
@@ -153,10 +150,6 @@ public:
 	virtual void init(running_machine &machine);
 	virtual void update(bool skip_redraw);
 
-	// debugger overridables
-	virtual void init_debugger();
-	virtual void wait_for_debugger(device_t &device, bool firststop);
-
 	// audio overridables
 	virtual void update_audio_stream(const INT16 *buffer, int samples_this_frame);
 	virtual void set_mastervolume(int attenuation);
@@ -185,9 +178,6 @@ public:
 
 	// getters
 	running_machine &machine() { assert(m_machine != NULL); return *m_machine; }
-
-
-	virtual void debugger_update();
 
 	virtual void init_subsystems();
 
@@ -247,19 +237,10 @@ private:
 	}
 
 protected:
-	debug_module* m_debugger;
 	midi_module* m_midi;
 private:
 	//tagmap_t<osd_video_type>  m_video_options;
 	dynamic_array<const char *> m_video_names;
 };
-
-
-// this template function creates a stub which constructs a debugger
-template<class _DeviceClass>
-debug_module *osd_debugger_creator()
-{
-	return global_alloc(_DeviceClass());
-}
 
 #endif  /* __OSDOBJ_COMMON_H__ */

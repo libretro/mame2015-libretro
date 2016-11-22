@@ -53,9 +53,6 @@ OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_osd.o
 OSDOBJS = \
 	$(MINIOBJ)/libretro.o \
 	$(MINIOBJ)/retromain.o \
-	$(MINIOBJ)/../modules/debugger/none.o \
-	$(MINIOBJ)/../modules/debugger/debugint.o \
-	$(MINIOBJ)/../modules/debugger/debugint.o \
 	$(OSDOBJ)/modules/lib/osdobj_common.o
 
 DEFS    += -DNO_USE_MIDI

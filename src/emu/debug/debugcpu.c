@@ -1932,8 +1932,6 @@ void device_debug::instruction_hook(offs_t curpc)
 
 			// clear the memory modified flag and wait
 			global->memory_modified = false;
-			if (machine.debug_flags & DEBUG_FLAG_OSD_ENABLED)
-				machine.osd().wait_for_debugger(m_device, firststop);
 			firststop = false;
 
 			// if something modified memory, update the screen

@@ -139,8 +139,7 @@ osd_options::osd_options()
 
 osd_common_t::osd_common_t(osd_options &options)
 	: osd_output(), m_machine(NULL),
-		m_options(options),
-		m_debugger(NULL)
+		m_options(options)
 {
 	osd_output::push(this);
 }
@@ -163,8 +162,6 @@ void osd_common_t::register_options()
 {
 	REGISTER_MODULE(m_mod_man, FONT_NONE);
 
-	REGISTER_MODULE(m_mod_man, DEBUG_NONE);
-
 #ifndef NO_USE_MIDI
 	REGISTER_MODULE(m_mod_man, MIDI_PM);
 #endif
@@ -179,22 +176,6 @@ void osd_common_t::register_options()
 	for (int i = 0; i < num; i++)
 		dnames.append(names[i]);
 	update_option(OSD_FONT_PROVIDER, dnames);
-
-#if 0
-	// Register midi options and update options
-	m_mod_man.get_module_names(OSD_DEBUG_PROVIDER, 20, &num, names);
-	dnames.reset();
-	for (int i = 0; i < num; i++)
-		dnames.append(names[i]);
-	update_option(OSD_DEBUG_PROVIDER, dnames);
-#endif
-
-	// Register debugger options and update options
-	m_mod_man.get_module_names(OSD_DEBUG_PROVIDER, 20, &num, names);
-	dnames.reset();
-	for (int i = 0; i < num; i++)
-		dnames.append(names[i]);
-	update_option(OSD_DEBUG_PROVIDER, dnames);
 
 	// Register video options and update options
 	video_options_add("none", NULL);
@@ -312,45 +293,6 @@ void osd_common_t::update(bool skip_redraw)
 	// or games with asynchronous updates).
 	//
 }
-
-
-//-------------------------------------------------
-//  init_debugger - perform debugger-specific
-//  initialization
-//-------------------------------------------------
-
-void osd_common_t::init_debugger()
-{
-	//
-	// Unlike init() above, this method is only called if the debugger
-	// is active. This gives any OSD debugger interface a chance to
-	// create all of its structures.
-	//
-	m_debugger->init_debugger(machine());
-}
-
-
-//-------------------------------------------------
-//  wait_for_debugger - wait for a debugger
-//  command to be processed
-//-------------------------------------------------
-
-void osd_common_t::wait_for_debugger(device_t &device, bool firststop)
-{
-	//
-	// When implementing an OSD-driver debugger, this method should be
-	// overridden to wait for input, process it, and return. It will be
-	// called repeatedly until a command is issued that resumes
-	// execution.
-	//
-	m_debugger->wait_for_debugger(device, firststop);
-}
-
-void osd_common_t::debugger_update()
-{
-	if (m_debugger) m_debugger->debugger_update();
-}
-
 
 //-------------------------------------------------
 //  update_audio_stream - update the stereo audio
@@ -506,8 +448,6 @@ void osd_common_t::init_subsystems()
 	output_init();
 
 	m_font_module = select_module_options<font_module *>(options(), OSD_FONT_PROVIDER);
-
-	m_debugger = select_module_options<debug_module *>(options(), OSD_DEBUG_PROVIDER);
 
 	select_module_options<netdev_module *>(options(), OSD_NETDEV_PROVIDER);
 

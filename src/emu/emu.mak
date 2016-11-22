@@ -40,7 +40,6 @@ OBJDIRS += \
 	$(OSDOBJ) \
 	$(OSDOBJ)/modules \
 	$(OSDOBJ)/modules/sound \
-	$(OSDOBJ)/modules/debugger \
 
 
 #-------------------------------------------------

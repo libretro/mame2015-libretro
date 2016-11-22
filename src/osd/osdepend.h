@@ -50,10 +50,6 @@ public:
 	virtual void init(running_machine &machine) = 0;
 	virtual void update(bool skip_redraw) = 0;
 
-	// debugger overridables
-	virtual void init_debugger() = 0;
-	virtual void wait_for_debugger(device_t &device, bool firststop) = 0;
-
 	// audio overridables
 	virtual void update_audio_stream(const INT16 *buffer, int samples_this_frame) = 0;
 	virtual void set_mastervolume(int attenuation) = 0;
