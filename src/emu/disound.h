@@ -73,8 +73,6 @@ public:
 	public:
 		sound_route(int output, int input, float gain, const char *target, UINT32 mixoutput);
 
-		const sound_route *next() const { return m_next; }
-
 		sound_route *       m_next;             // pointer to next route
 		UINT32              m_output;           // output index, or ALL_OUTPUTS
 		UINT32              m_input;            // target input index
