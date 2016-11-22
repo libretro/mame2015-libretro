@@ -34,10 +34,7 @@ class osd_window
 public:
 	osd_window()
 	:
-#ifdef OSD_SDL
-#else
 		m_hwnd(0), m_dc(0), m_focus_hwnd(0), m_resize_state(0),
-#endif
 		m_primlist(NULL),
 		m_prescale(1)
 		{}
@@ -53,15 +50,6 @@ public:
 
 	virtual osd_dim get_size() = 0;
 
-#ifdef OSD_SDL
-	virtual osd_dim blit_surface_size() = 0;
-	virtual osd_monitor_info *monitor() const = 0;
-#if (SDLMAME_SDL2)
-	virtual SDL_Window *sdl_window() = 0;
-#else
-	virtual SDL_Surface *sdl_surface() = 0;
-#endif
-#else
 	virtual osd_monitor_info *monitor() const = 0;
 	virtual bool win_has_menu() = 0;
 	// FIXME: cann we replace winwindow_video_window_monitor(NULL) with monitor() ?
@@ -75,7 +63,6 @@ public:
 	HWND                    m_focus_hwnd;
 
 	int                     m_resize_state;
-#endif
 
 	render_primitive_list   *m_primlist;
 	osd_window_config		m_win_config;
@@ -114,13 +101,9 @@ public:
 	virtual render_primitive_list *get_primitives() = 0;
 
 	virtual int draw(const int update) = 0;
-#ifdef OSD_SDL
-	virtual int xy_to_render_target(const int x, const int y, int *xt, int *yt) = 0;
-#else
 	virtual void save() = 0;
 	virtual void record() = 0;
 	virtual void toggle_fsfx() = 0;
-#endif
 
 	virtual void destroy() = 0;
 

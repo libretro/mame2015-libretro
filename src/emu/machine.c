@@ -87,14 +87,6 @@
 
 #include <time.h>
 
-#ifdef SDLMAME_EMSCRIPTEN
-#include <emscripten.h>
-
-void js_set_main_loop(running_machine * machine);
-#endif
-
-
-
 //**************************************************************************
 //  GLOBAL VARIABLES
 //**************************************************************************
@@ -330,151 +322,87 @@ device_t &running_machine::add_dynamic_device(device_t &owner, device_type type,
 
 int running_machine::run(bool firstrun)
 {
-	int error = MAMERR_NONE;
+   int error = MAMERR_NONE;
 
-	// use try/catch for deep error recovery
-	try
-	{
-		// move to the init phase
-		m_current_phase = MACHINE_PHASE_INIT;
+   // move to the init phase
+   m_current_phase = MACHINE_PHASE_INIT;
 
-		// if we have a logfile, set up the callback
-		if (options().log())
-		{
-			m_logfile.reset(global_alloc(emu_file(OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS)));
-			file_error filerr = m_logfile->open("error.log");
-			assert_always(filerr == FILERR_NONE, "unable to open log file");
-			add_logerror_callback(logfile_callback);
-		}
+   // if we have a logfile, set up the callback
+   if (options().log())
+   {
+      m_logfile.reset(global_alloc(emu_file(OPEN_FLAG_WRITE | OPEN_FLAG_CREATE | OPEN_FLAG_CREATE_PATHS)));
+      file_error filerr = m_logfile->open("error.log");
+      assert_always(filerr == FILERR_NONE, "unable to open log file");
+      add_logerror_callback(logfile_callback);
+   }
 
-		// then finish setting up our local machine
-		start();
+   // then finish setting up our local machine
+   start();
 
-		// load the configuration settings and NVRAM
-		bool settingsloaded = config_load_settings(*this);
+   // load the configuration settings and NVRAM
+   bool settingsloaded = config_load_settings(*this);
 
-		//MKCHAMP - INITIALIZING THE HISCORE ENGINE
-		if (! options().disable_hiscore_patch())
-			hiscore_init(*this);
+   //MKCHAMP - INITIALIZING THE HISCORE ENGINE
+   if (! options().disable_hiscore_patch())
+      hiscore_init(*this);
 
-		// disallow save state registrations starting here.
-		// Don't do it earlier, config load can create network
-		// devices with timers.
-		m_save.allow_registration(false);
+   // disallow save state registrations starting here.
+   // Don't do it earlier, config load can create network
+   // devices with timers.
+   m_save.allow_registration(false);
 
-		nvram_load();
-		sound().ui_mute(false);
+   nvram_load();
+   sound().ui_mute(false);
 
-		// initialize ui lists
-		ui().initialize(*this);
+   // initialize ui lists
+   ui().initialize(*this);
 
-		// display the startup screens
-		ui().display_startup_screens(firstrun, !options().skip_nagscreen());
+   // display the startup screens
+   ui().display_startup_screens(firstrun, !options().skip_nagscreen());
 
-		// perform a soft reset -- this takes us to the running phase
-		soft_reset();
+   // perform a soft reset -- this takes us to the running phase
+   soft_reset();
 
-#ifdef MAME_DEBUG
-		g_tagmap_finds = 0;
-		if (strcmp(config().m_gamedrv.name, "___empty") != 0)
-			g_tagmap_counter_enabled = true;
-#endif
-		// handle initial load
-		if (m_saveload_schedule != SLS_NONE)
-			handle_saveload();
+   // handle initial load
+   if (m_saveload_schedule != SLS_NONE)
+      handle_saveload();
 
-		// run the CPUs until a reset or exit
-		m_hard_reset_pending = false;
-		while ((!m_hard_reset_pending && !m_exit_pending) || m_saveload_schedule != SLS_NONE)
-		{
-			#ifdef SDLMAME_EMSCRIPTEN
-			//break out to our async javascript loop and halt
-			js_set_main_loop(this);
-			#endif
+   // run the CPUs until a reset or exit
+   m_hard_reset_pending = false;
+   while ((!m_hard_reset_pending && !m_exit_pending) || m_saveload_schedule != SLS_NONE)
+   {
+      // execute CPUs if not paused
+      if (!m_paused)
+         m_scheduler.timeslice();
 
-			// execute CPUs if not paused
-			if (!m_paused)
-				m_scheduler.timeslice();
+      // otherwise, just pump video updates through
+      else
+         m_video->frame_update();
 
-			// otherwise, just pump video updates through
-			else
-				m_video->frame_update();
+      // handle save/load
+      if (m_saveload_schedule != SLS_NONE)
+         handle_saveload();
+   }
 
-			// handle save/load
-			if (m_saveload_schedule != SLS_NONE)
-				handle_saveload();
-		}
+   // and out via the exit phase
+   m_current_phase = MACHINE_PHASE_EXIT;
 
-		// and out via the exit phase
-		m_current_phase = MACHINE_PHASE_EXIT;
+   // save the NVRAM and configuration
+   sound().ui_mute(true);
+   nvram_save();
+   config_save_settings(*this);
 
-#ifdef MAME_DEBUG
-		if (g_tagmap_counter_enabled)
-		{
-			g_tagmap_counter_enabled = false;
-			if (*(options().command()) == 0)
-				osd_printf_info("%d tagmap lookups\n", g_tagmap_finds);
-		}
-#endif
+   // make sure our phase is set properly before cleaning up,
+   // in case we got here via exception
+   m_current_phase = MACHINE_PHASE_EXIT;
 
-		// save the NVRAM and configuration
-		sound().ui_mute(true);
-		nvram_save();
-		config_save_settings(*this);
-	}
-	catch (emu_fatalerror &fatal)
-	{
-		osd_printf_error("FATALERROR: %s\n", fatal.string());
-		error = MAMERR_FATALERROR;
-		if (fatal.exitcode() != 0)
-			error = fatal.exitcode();
-	}
-	catch (emu_exception &)
-	{
-		osd_printf_error("Caught unhandled emulator exception\n");
-		error = MAMERR_FATALERROR;
-	}
-	catch (binding_type_exception &btex)
-	{
-		osd_printf_error("Error performing a late bind of type %s to %s\n", btex.m_actual_type.name(), btex.m_target_type.name());
-		error = MAMERR_FATALERROR;
-	}
-	catch (add_exception &aex)
-	{
-		osd_printf_error("Tag '%s' already exists in tagged_list\n", aex.tag());
-		error = MAMERR_FATALERROR;
-	}
-	catch (std::exception &ex)
-	{
-		osd_printf_error("Caught unhandled %s exception: %s\n", typeid(ex).name(), ex.what());
-		error = MAMERR_FATALERROR;
-	}
-	catch (...)
-	{
-		osd_printf_error("Caught unhandled exception\n");
-		error = MAMERR_FATALERROR;
-	}
+   // call all exit callbacks registered
+   call_notifiers(MACHINE_NOTIFY_EXIT);
+   zip_file_cache_clear();
 
-	// make sure our phase is set properly before cleaning up,
-	// in case we got here via exception
-	m_current_phase = MACHINE_PHASE_EXIT;
-
-#ifdef MAME_DEBUG
-	if (g_tagmap_counter_enabled)
-	{
-		g_tagmap_counter_enabled = false;
-		if (*(options().command()) == 0)
-			osd_printf_info("%d tagmap lookups\n", g_tagmap_finds);
-	}
-#endif
-
-	// call all exit callbacks registered
-	call_notifiers(MACHINE_NOTIFY_EXIT);
-	zip_file_cache_clear();
-
-	// close the logfile
-	m_logfile.reset();
-	return error;
+   // close the logfile
+   m_logfile.reset();
+   return error;
 }
 
 
@@ -488,15 +416,6 @@ void running_machine::schedule_exit()
 
 	// if we're executing, abort out immediately
 	m_scheduler.eat_all_cycles();
-
-#ifdef MAME_DEBUG
-	if (g_tagmap_counter_enabled)
-	{
-		g_tagmap_counter_enabled = false;
-		if (*(options().command()) == 0)
-			osd_printf_info("%d tagmap lookups\n", g_tagmap_finds);
-	}
-#endif
 
 	// if we're autosaving on exit, schedule a save as well
 	if (options().autosave() && (m_system.flags & GAME_SUPPORTS_SAVE) && this->time() > attotime::zero)
@@ -1031,9 +950,6 @@ void running_machine::watchdog_fired(void *ptr, INT32 param)
 	logerror("Reset caused by the watchdog!!!\n");
 
 	bool verbose = options().verbose();
-#ifdef MAME_DEBUG
-	verbose = true;
-#endif
 	if (verbose)
 		popmessage("Reset caused by the watchdog!!!\n");
 
@@ -1331,44 +1247,3 @@ void system_time::full_time::set(struct tm &t)
 	day     = t.tm_yday;
 	is_dst  = t.tm_isdst;
 }
-
-
-
-//**************************************************************************
-//  JAVASCRIPT PORT-SPECIFIC
-//**************************************************************************
-
-#ifdef SDLMAME_EMSCRIPTEN
-
-static running_machine * jsmess_machine;
-
-void js_main_loop() {
-	device_scheduler * scheduler;
-	scheduler = &(jsmess_machine->scheduler());
-	attotime stoptime = scheduler->time() + attotime(0,HZ_TO_ATTOSECONDS(60));
-	while (scheduler->time() < stoptime) {
-		scheduler->timeslice();
-	}
-}
-
-void js_set_main_loop(running_machine * machine) {
-	jsmess_machine = machine;
-	EM_ASM (
-		JSMESS.running = true;
-	);
-	emscripten_set_main_loop(&js_main_loop, 0, 1);
-}
-
-running_machine * js_get_machine() {
-	return jsmess_machine;
-}
-
-ui_manager * js_get_ui() {
-	return &(jsmess_machine->ui());
-}
-
-sound_manager * js_get_sound() {
-	return &(jsmess_machine->sound());
-}
-
-#endif /* SDLMAME_EMSCRIPTEN */
