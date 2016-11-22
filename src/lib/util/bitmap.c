@@ -207,7 +207,10 @@ void bitmap_t::reset()
 {
 	// delete any existing stuff
 	set_palette(NULL);
-	delete[] m_alloc;
+
+   if (m_alloc)
+      delete[] m_alloc;
+
 	m_alloc = NULL;
 	m_base = NULL;
 
@@ -278,7 +281,7 @@ void bitmap_t::set_palette(palette_t *palette)
 	}
 
 	// then reference any new palette
-	if (palette != NULL)
+	if (palette && palette != NULL)
 	{
 		palette->ref();
 		m_palette = palette;
