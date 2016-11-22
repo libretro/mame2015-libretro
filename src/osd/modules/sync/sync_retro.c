@@ -105,9 +105,7 @@ struct osd_scalable_lock
 
 osd_scalable_lock *osd_scalable_lock_alloc(void)
 {
-	osd_scalable_lock *lock;
-
-	lock = (osd_scalable_lock *)calloc(1, sizeof(*lock));
+	osd_scalable_lock *lock = (osd_scalable_lock *)calloc(1, sizeof(*lock));
 
 #ifdef WIN32
 	memset(lock, 0, sizeof(*lock));
@@ -347,65 +345,60 @@ void osd_event_reset(osd_event *event)
 int osd_event_wait(osd_event *event, osd_ticks_t timeout)
 {
 #ifdef WIN32
-	int ret = WaitForSingleObject((HANDLE) event, timeout * 1000 / osd_ticks_per_second());
-	return ( ret == WAIT_OBJECT_0);
+   int ret = WaitForSingleObject((HANDLE) event, timeout * 1000 / osd_ticks_per_second());
+   if (ret != WAIT_OBJECT_0)
+      return FALSE;
 #else
 
-	pthread_mutex_lock(&event->mutex);
-	if (!timeout)
-	{
-		if (!event->signalled)
-		{
-				pthread_mutex_unlock(&event->mutex);
-				return FALSE;
-		}
-	}
-	else
-	{
-		if (!event->signalled)
-		{
-			struct timespec   ts;
-			struct timeval    tp;
-			UINT64 msec = timeout * 1000 / osd_ticks_per_second();
-			UINT64 nsec;
+   pthread_mutex_lock(&event->mutex);
+   if (!timeout)
+   {
+      if (!event->signalled)
+      {
+         pthread_mutex_unlock(&event->mutex);
+         return FALSE;
+      }
+   }
+   else
+   {
+      if (!event->signalled)
+      {
+         struct timespec   ts;
+         struct timeval    tp;
+         UINT64 msec = timeout * 1000 / osd_ticks_per_second();
+         UINT64 nsec;
 
-			gettimeofday(&tp, NULL);
+         gettimeofday(&tp, NULL);
 
-			ts.tv_sec  = tp.tv_sec;
-			nsec = (UINT64) tp.tv_usec * (UINT64) 1000 + (msec * (UINT64) 1000000);
-			ts.tv_nsec = nsec % (UINT64) 1000000000;
-			ts.tv_sec += nsec / (UINT64) 1000000000;
+         ts.tv_sec  = tp.tv_sec;
+         nsec = (UINT64) tp.tv_usec * (UINT64) 1000 + (msec * (UINT64) 1000000);
+         ts.tv_nsec = nsec % (UINT64) 1000000000;
+         ts.tv_sec += nsec / (UINT64) 1000000000;
 
-			do {
-				int ret = pthread_cond_timedwait(&event->cond, &event->mutex, &ts);
-				if ( ret == ETIMEDOUT )
-				{
-					if (!event->signalled)
-					{
-						pthread_mutex_unlock(&event->mutex);
-						return FALSE;
-					}
-					else
-						break;
-				}
-				if (ret == 0)
-					break;
-				if ( ret != EINTR)
-				{
-					printf("Error %d while waiting for pthread_cond_timedwait:  %s\n", ret, strerror(ret));
-				}
+         do
+         {
+            int ret = pthread_cond_timedwait(&event->cond, &event->mutex, &ts);
+            if ( ret == ETIMEDOUT )
+            {
+               if (event->signalled)
+                  break;
+               pthread_mutex_unlock(&event->mutex);
+               return FALSE;
+            }
+            if (ret == 0)
+               break;
 
-			} while (TRUE);
-		}
-	}
+         } while (TRUE);
+      }
+   }
 
-	if (event->autoreset)
-		event->signalled = 0;
+   if (event->autoreset)
+      event->signalled = 0;
 
-	pthread_mutex_unlock(&event->mutex);
+   pthread_mutex_unlock(&event->mutex);
 
-	return TRUE;
 #endif
+   return TRUE;
 }
 
 //============================================================
@@ -475,11 +468,8 @@ int osd_thread_adjust_priority(osd_thread *thread, int adjust)
 		sched.sched_priority += adjust;
 		if ( pthread_setschedparam(thread->thread, policy, &sched ) == 0)
 			return TRUE;
-		else
-			return FALSE;
 	}
-	else
-		return FALSE;
+   return FALSE;
 #endif
 }
 
@@ -490,7 +480,7 @@ int osd_thread_adjust_priority(osd_thread *thread, int adjust)
 int osd_thread_cpu_affinity(osd_thread *thread, UINT32 mask)
 {
 #if defined(__GNUC__) && defined(WIN32)
-   return TRUE; /* stub */
+   (void)0;
 #elif !defined(NO_AFFINITY_NP) && !defined(__MACH__) && !defined(SDLMAME_ARM)
 	cpu_set_t   cmask;
 	pthread_t   lthread;
@@ -512,11 +502,8 @@ int osd_thread_cpu_affinity(osd_thread *thread, UINT32 mask)
 		fprintf(stderr, "error %d setting cpu affinity to mask %08x", errno, mask);
 		return FALSE;
 	}
-	else
-		return TRUE;
-#else
-	return TRUE;
 #endif
+	return TRUE;
 }
 
 //============================================================
