@@ -472,14 +472,9 @@ static void retro_wrap_emulator(void)
 void retro_init (void)
 {
    struct retro_log_callback log;
-   const char *system_dir = NULL;
+   const char *system_dir  = NULL;
    const char *content_dir = NULL;
-   const char *save_dir = NULL;
-#ifdef M16B
-   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
-#else
-   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
-#endif
+   const char *save_dir    = NULL;
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
       log_cb = log.log;
@@ -522,27 +517,10 @@ void retro_init (void)
    if (log_cb)
       log_cb(RETRO_LOG_INFO, "SAVE_DIRECTORY: %s", retro_save_directory);
 
-   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
-   {
-      if (log_cb)
-         log_cb(RETRO_LOG_ERROR, "pixel format not supported");
-      exit(0);
-   }
-
-   if(!emuThread && !mainThread)
-   {
-      mainThread = co_active();
-      emuThread  = co_create(65536 * sizeof(void*), retro_wrap_emulator);
-   }
 }
 
 void retro_deinit(void)
 {
-   if (emuThread)
-   {
-      co_delete(emuThread);
-      emuThread = 0;
-   }
 }
 
 void retro_reset (void)
@@ -592,40 +570,58 @@ void retro_run (void)
 
 bool retro_load_game(const struct retro_game_info *info)
 {
-    char basename[256];
+   char basename[256];
+#ifdef M16B
+   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_RGB565;
+#else
+   enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
+#endif
 
-    check_variables();
+   if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
+   {
+      if (log_cb)
+         log_cb(RETRO_LOG_ERROR, "pixel format not supported");
+      return false;
+   }
+
+   if(!emuThread && !mainThread)
+   {
+      mainThread = co_active();
+      emuThread  = co_create(65536 * sizeof(void*), retro_wrap_emulator);
+   }
+
+   check_variables();
 
 #ifdef M16B
-    memset(videoBuffer, 0, 1600*1200*2);
+   memset(videoBuffer, 0, 1600*1200*2);
 #else
-    memset(videoBuffer, 0, 1600*1200*2*2);
+   memset(videoBuffer, 0, 1600*1200*2*2);
 #endif
 
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
 #if defined(HAVE_OPENGLES)
-    hw_render.context_type = RETRO_HW_CONTEXT_OPENGLES2;
+   hw_render.context_type = RETRO_HW_CONTEXT_OPENGLES2;
 #else
-    hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;
+   hw_render.context_type = RETRO_HW_CONTEXT_OPENGL;
 #endif
-    hw_render.context_reset = context_reset;
-    hw_render.context_destroy = context_destroy;
-    /*
-       hw_render.depth = true;
-       hw_render.stencil = true;
-       hw_render.bottom_left_origin = true;
-       */
-    if (!environ_cb(RETRO_ENVIRONMENT_SET_HW_RENDER, &hw_render))
-       return false;
+   hw_render.context_reset = context_reset;
+   hw_render.context_destroy = context_destroy;
+   /*
+      hw_render.depth = true;
+      hw_render.stencil = true;
+      hw_render.bottom_left_origin = true;
+      */
+   if (!environ_cb(RETRO_ENVIRONMENT_SET_HW_RENDER, &hw_render))
+      return false;
 #endif
 
-    extract_basename(basename, info->path, sizeof(basename));
-    extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
-    strcpy(RPATH,info->path);
+   extract_basename(basename, info->path, sizeof(basename));
+   extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
+   strcpy(RPATH,info->path);
 
-    co_switch(emuThread);
+   co_switch(emuThread);
 
-    return true;
+   return true;
 }
 
 void retro_unload_game(void)
@@ -634,6 +630,12 @@ void retro_unload_game(void)
    {
       retro_pause = -1;
       co_switch(emuThread);
+   }
+
+   if (emuThread)
+   {
+      co_delete(emuThread);
+      emuThread = 0;
    }
 }
 
