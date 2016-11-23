@@ -185,7 +185,6 @@ public:
 	virtual void video_register();
 	virtual bool window_init();
 
-	virtual void input_resume();
 	virtual bool output_init();
 
 	virtual void exit_subsystems();
@@ -204,8 +203,8 @@ public:
 	virtual void output_callback(osd_output_channel channel, const char *msg, va_list args);
 
 protected:
-	virtual bool input_init();
-	virtual void input_pause();
+   virtual bool input_init();
+
 
 private:
 	// internal state

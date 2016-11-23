@@ -441,10 +441,6 @@ void osd_common_t::init_subsystems()
 	}
 
 	input_init();
-	// we need pause callbacks
-	machine().add_notifier(MACHINE_NOTIFY_PAUSE, machine_notify_delegate(FUNC(osd_common_t::input_pause), this));
-	machine().add_notifier(MACHINE_NOTIFY_RESUME, machine_notify_delegate(FUNC(osd_common_t::input_resume), this));
-
 	output_init();
 
 	m_font_module = select_module_options<font_module *>(options(), OSD_FONT_PROVIDER);
@@ -479,14 +475,6 @@ void osd_common_t::video_register()
 bool osd_common_t::input_init()
 {
 	return true;
-}
-
-void osd_common_t::input_pause()
-{
-}
-
-void osd_common_t::input_resume()
-{
 }
 
 bool osd_common_t::output_init()
