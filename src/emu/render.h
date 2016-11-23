@@ -424,13 +424,6 @@ private:
 
 	static const int MAX_TEXTURE_SCALES = 8;
 
-	// a scaled_texture contains a single scaled entry for a texture
-	struct scaled_texture
-	{
-		bitmap_argb32 *     bitmap;                 // final bitmap
-		UINT32              seqid;                  // sequence number
-	};
-
 	// internal state
 	render_manager *    m_manager;                  // reference to our manager
 	render_texture *    m_next;                     // next texture (for free list)
@@ -440,10 +433,8 @@ private:
 	UINT64              m_osddata;                  // aux data to pass to osd
 
 	// scaling state (ARGB32 only)
-	texture_scaler_func m_scaler;                   // scaling callback
 	void *              m_param;                    // scaling callback parameter
 	UINT32              m_curseq;                   // current sequence number
-	scaled_texture      m_scaled[MAX_TEXTURE_SCALES];// array of scaled variants of this texture
 };
 
 

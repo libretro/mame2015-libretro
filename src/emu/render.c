@@ -333,12 +333,10 @@ render_texture::render_texture()
 		m_bitmap(NULL),
 		m_format(TEXFORMAT_ARGB32),
 		m_osddata(~0L),
-		m_scaler(NULL),
 		m_param(NULL),
 		m_curseq(0)
 {
 	m_sbounds.set(0, -1, 0, -1);
-	memset(m_scaled, 0, sizeof(m_scaled));
 }
 
 
@@ -363,7 +361,6 @@ void render_texture::reset(render_manager &manager, texture_scaler_func scaler, 
 	if (scaler != NULL)
 	{
 		assert(m_format == TEXFORMAT_ARGB32);
-		m_scaler = scaler;
 		m_param = param;
 	}
 	m_osddata = ~0L;
@@ -376,15 +373,6 @@ void render_texture::reset(render_manager &manager, texture_scaler_func scaler, 
 
 void render_texture::release()
 {
-	// free all scaled versions
-	for (int scalenum = 0; scalenum < ARRAY_LENGTH(m_scaled); scalenum++)
-	{
-		m_manager->invalidate_all(m_scaled[scalenum].bitmap);
-		global_free(m_scaled[scalenum].bitmap);
-		m_scaled[scalenum].bitmap = NULL;
-		m_scaled[scalenum].seqid = 0;
-	}
-
 	// invalidate references to the original bitmap as well
 	m_manager->invalidate_all(m_bitmap);
 	m_bitmap = NULL;
@@ -414,18 +402,6 @@ void render_texture::set_bitmap(bitmap_t &bitmap, const rectangle &sbounds, text
 	m_bitmap = &bitmap;
 	m_sbounds = sbounds;
 	m_format = format;
-
-	// invalidate all scaled versions
-	for (int scalenum = 0; scalenum < ARRAY_LENGTH(m_scaled); scalenum++)
-	{
-		if (m_scaled[scalenum].bitmap != NULL)
-		{
-			m_manager->invalidate_all(m_scaled[scalenum].bitmap);
-			global_free(m_scaled[scalenum].bitmap);
-		}
-		m_scaled[scalenum].bitmap = NULL;
-		m_scaled[scalenum].seqid = 0;
-	}
 }
 
 
@@ -448,82 +424,25 @@ void render_texture::hq_scale(bitmap_argb32 &dest, bitmap_argb32 &source, const 
 
 void render_texture::get_scaled(UINT32 dwidth, UINT32 dheight, render_texinfo &texinfo, render_primitive_list &primlist)
 {
-	// source width/height come from the source bounds
-	int swidth = m_sbounds.width();
-	int sheight = m_sbounds.height();
+   // source width/height come from the source bounds
+   int swidth = m_sbounds.width();
+   int sheight = m_sbounds.height();
 
-	// ensure height/width are non-zero
-	if (dwidth < 1) dwidth = 1;
-	if (dheight < 1) dheight = 1;
+   // ensure height/width are non-zero
+   if (dwidth < 1) dwidth = 1;
+   if (dheight < 1) dheight = 1;
 
-	texinfo.osddata = m_osddata;
+   texinfo.osddata = m_osddata;
 
-	// are we scaler-free? if so, just return the source bitmap
-	if (m_scaler == NULL || (m_bitmap != NULL && swidth == dwidth && sheight == dheight))
-	{
-		// add a reference and set up the source bitmap
-		primlist.add_reference(m_bitmap);
-		texinfo.base = m_bitmap->raw_pixptr(m_sbounds.min_y, m_sbounds.min_x);
-		texinfo.rowpixels = m_bitmap->rowpixels();
-		texinfo.width = swidth;
-		texinfo.height = sheight;
-		// palette will be set later
-		texinfo.seqid = ++m_curseq;
-	}
-	else
-	{
-		// make sure we can recover the original argb32 bitmap
-		bitmap_argb32 dummy;
-		bitmap_argb32 &srcbitmap = (m_bitmap != NULL) ? downcast<bitmap_argb32 &>(*m_bitmap) : dummy;
-
-		// is it a size we already have?
-		scaled_texture *scaled = NULL;
-		int scalenum;
-		for (scalenum = 0; scalenum < ARRAY_LENGTH(m_scaled); scalenum++)
-		{
-			scaled = &m_scaled[scalenum];
-
-			// we need a non-NULL bitmap with matching dest size
-			if (scaled->bitmap != NULL && dwidth == scaled->bitmap->width() && dheight == scaled->bitmap->height())
-				break;
-		}
-
-		// did we get one?
-		if (scalenum == ARRAY_LENGTH(m_scaled))
-		{
-			int lowest = -1;
-
-			// didn't find one -- take the entry with the lowest seqnum
-			for (scalenum = 0; scalenum < ARRAY_LENGTH(m_scaled); scalenum++)
-				if ((lowest == -1 || m_scaled[scalenum].seqid < m_scaled[lowest].seqid) && !primlist.has_reference(m_scaled[scalenum].bitmap))
-					lowest = scalenum;
-			assert_always(lowest != -1, "Too many live texture instances!");
-
-			// throw out any existing entries
-			scaled = &m_scaled[lowest];
-			if (scaled->bitmap != NULL)
-			{
-				m_manager->invalidate_all(scaled->bitmap);
-				global_free(scaled->bitmap);
-			}
-
-			// allocate a new bitmap
-			scaled->bitmap = global_alloc(bitmap_argb32(dwidth, dheight));
-			scaled->seqid = ++m_curseq;
-
-			// let the scaler do the work
-			(*m_scaler)(*scaled->bitmap, srcbitmap, m_sbounds, m_param);
-		}
-
-		// finally fill out the new info
-		primlist.add_reference(scaled->bitmap);
-		texinfo.base = &scaled->bitmap->pix32(0);
-		texinfo.rowpixels = scaled->bitmap->rowpixels();
-		texinfo.width = dwidth;
-		texinfo.height = dheight;
-		// palette will be set later
-		texinfo.seqid = scaled->seqid;
-	}
+   // are we scaler-free? if so, just return the source bitmap
+   // add a reference and set up the source bitmap
+   primlist.add_reference(m_bitmap);
+   texinfo.base = m_bitmap->raw_pixptr(m_sbounds.min_y, m_sbounds.min_x);
+   texinfo.rowpixels = m_bitmap->rowpixels();
+   texinfo.width = swidth;
+   texinfo.height = sheight;
+   // palette will be set later
+   texinfo.seqid = ++m_curseq;
 }
 
 
