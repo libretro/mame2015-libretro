@@ -1,7 +1,7 @@
 
 #include "options.h"
 #include "osdepend.h"
-#include "modules/lib/osdobj_common.h"
+#include "osdobj_common.h"
 
 //============================================================
 //  TYPE DEFINITIONS

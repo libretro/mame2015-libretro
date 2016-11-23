@@ -51,8 +51,7 @@ OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_osd.o
 
 OSDOBJS = \
 	$(MINIOBJ)/libretro.o \
-	$(MINIOBJ)/retromain.o \
-	$(OSDOBJ)/modules/lib/osdobj_common.o
+	$(MINIOBJ)/retromain.o
 
 DEFS    += -DNO_USE_MIDI
 OSDOBJS += $(OSDOBJ)/modules/midi/none.o
