@@ -208,18 +208,18 @@ void namcona1_state::pdraw_tile(
 	gfx_element *gfx = m_gfxdecode->gfx(gfx_region);
 	gfx_element *mask = m_gfxdecode->gfx(2);
 
-	int pal_base = gfx->colorbase() + gfx->granularity() * (color % gfx->colors());
-	const UINT8 *source_base = gfx->get_data((code % gfx->elements()));
-	const UINT8 *mask_base = mask->get_data((code % mask->elements()));
+	int pal_base = gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors);
+	const UINT8 *source_base = gfx->get_data((code % gfx->m_total_elements));
+	const UINT8 *mask_base = mask->get_data((code % mask->m_total_elements));
 
-	int sprite_screen_height = ((1<<16)*gfx->height()+0x8000)>>16;
-	int sprite_screen_width  = ((1<<16)*gfx->width()+0x8000)>>16;
+	int sprite_screen_height = ((1<<16)*gfx->m_height+0x8000)>>16;
+	int sprite_screen_width  = ((1<<16)*gfx->m_width+0x8000)>>16;
 
 	if (sprite_screen_width && sprite_screen_height)
 	{
 		/* compute sprite increment per screen pixel */
-		int dx = (gfx->width()<<16)/sprite_screen_width;
-		int dy = (gfx->height()<<16)/sprite_screen_height;
+		int dx = (gfx->m_width<<16)/sprite_screen_width;
+		int dy = (gfx->m_height<<16)/sprite_screen_height;
 
 		int ex = sx+sprite_screen_width;
 		int ey = sy+sprite_screen_height;
@@ -277,8 +277,8 @@ void namcona1_state::pdraw_tile(
 
 			for( y=sy; y<ey; y++ )
 			{
-				const UINT8 *source = source_base + (y_index>>16) * gfx->rowbytes();
-				const UINT8 *mask_addr = mask_base + (y_index>>16) * mask->rowbytes();
+				const UINT8 *source = source_base + (y_index>>16) * gfx->m_line_modulo;
+				const UINT8 *mask_addr = mask_base + (y_index>>16) * mask->m_line_modulo;
 				UINT16 *dest = &dest_bmp.pix16(y);
 				UINT8 *pri = &screen.priority().pix8(y);
 

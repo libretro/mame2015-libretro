@@ -110,7 +110,7 @@ TILE_GET_INFO_MEMBER(thepit_state::solid_get_tile_info)
 
 TILE_GET_INFO_MEMBER(thepit_state::get_tile_info)
 {
-	UINT8 fore_color = m_colorram[tile_index] % m_gfxdecode->gfx(0)->colors();
+	UINT8 fore_color = m_colorram[tile_index] % m_gfxdecode->gfx(0)->m_total_colors;
 	UINT8 code = m_videoram[tile_index];
 	SET_TILE_INFO_MEMBER(2 * m_graphics_bank, code, fore_color, 0);
 }

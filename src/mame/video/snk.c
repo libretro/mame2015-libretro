@@ -174,7 +174,7 @@ TILE_GET_INFO_MEMBER(snk_state::gwar_get_bg_tile_info)
 	// bermudat, tdfever use FFFF to blank the background.
 	// (still call SET_TILE_INFO_MEMBER, otherwise problems might occur on boot when
 	// the tile data hasn't been initialised)
-	if (code >= m_gfxdecode->gfx(1)->elements())
+	if (code >= m_gfxdecode->gfx(1)->m_total_elements)
 		tileinfo.pen_data = m_empty_tile;
 }
 
@@ -705,7 +705,7 @@ void snk_state::tnk3_draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 {
 	UINT8 *spriteram = m_spriteram;
 	gfx_element *gfx = m_gfxdecode->gfx(2);
-	const int size = gfx->width();
+	const int size = gfx->m_width;
 	int tile_number, attributes, color, sx, sy;
 	int xflip,yflip;
 	int offs;
@@ -728,12 +728,12 @@ void snk_state::tnk3_draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 		xflip = 0;
 		yflip = 0;
 
-		if (gfx->elements() > 256)  // all except jcross
+		if (gfx->m_total_elements > 256)  // all except jcross
 		{
 			tile_number |= (attributes & 0x40) << 2;
 		}
 
-		if (gfx->elements() > 512)  // athena
+		if (gfx->m_total_elements > 512)  // athena
 		{
 			tile_number |= (attributes & 0x20) << 4;
 		}
@@ -768,7 +768,7 @@ void snk_state::tnk3_draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 void snk_state::ikari_draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, const int start, const int xscroll, const int yscroll, const UINT8 *source, const int gfxnum )
 {
 	gfx_element *gfx = m_gfxdecode->gfx(gfxnum);
-	const int size = gfx->width();
+	const int size = gfx->m_width;
 	int tile_number, attributes, color, sx, sy;
 	int which, finish;
 
@@ -839,7 +839,7 @@ void snk_state::tdfever_draw_sprites(bitmap_ind16 &bitmap, const rectangle &clip
 										const int hw_xflip, const int from, const int to)
 {
 	gfx_element *gfx = m_gfxdecode->gfx(gfxnum);
-	const int size = gfx->width();
+	const int size = gfx->m_width;
 	int tile_number, attributes, sx, sy, color;
 	int which;
 	int flipx, flipy;

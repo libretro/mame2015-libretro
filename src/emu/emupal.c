@@ -147,14 +147,14 @@ void palette_device::set_pen_indirect(pen_t pen, UINT16 index)
 
 UINT32 palette_device::transpen_mask(gfx_element &gfx, int color, int transcolor)
 {
-	UINT32 entry = gfx.colorbase() + (color % gfx.colors()) * gfx.granularity();
+	UINT32 entry = gfx.m_color_base + (color % gfx.m_total_colors) * gfx.m_color_granularity;
 
 	// make sure we are in range
 	assert(entry < m_indirect_pens.count());
-	assert(gfx.depth() <= 32);
+	assert(gfx.m_color_depth <= 32);
 
 	// either gfx->color_depth entries or as many as we can get up until the end
-	int count = MIN(gfx.depth(), m_indirect_pens.count() - entry);
+	int count = MIN(gfx.m_color_depth, m_indirect_pens.count() - entry);
 
 	// set a bit anywhere the transcolor matches
 	UINT32 mask = 0;

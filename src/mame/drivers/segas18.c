@@ -298,7 +298,7 @@ WRITE16_MEMBER( segas18_state::rom_5987_bank_w )
 	// tile banking
 	if (offset < 8)
 	{
-		int maxbanks = m_gfxdecode->gfx(0)->elements() / 1024;
+		int maxbanks = m_gfxdecode->gfx(0)->m_total_elements / 1024;
 		if (data >= maxbanks)
 			data %= maxbanks;
 		m_segaic16vid->tilemap_set_bank(0, offset, data);

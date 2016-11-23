@@ -168,7 +168,7 @@ void k051960_device::device_start()
 	m_sprite_size = region()->bytes();
 
 	decode_gfx();
-	m_gfx[0]->set_colors(m_palette->entries() / m_gfx[0]->depth());
+	m_gfx[0]->set_colors(m_palette->entries() / m_gfx[0]->m_color_depth);
 
 	if (VERBOSE && !(m_palette->shadows_enabled()))
 		popmessage("driver should use VIDEO_HAS_SHADOWS");
@@ -431,7 +431,7 @@ void k051960_device::k051960_sprites_draw( bitmap_ind16 &bitmap, const rectangle
 			flipy = !flipy;
 		}
 
-		drawmode_table[m_gfx[0]->granularity() - 1] = shadow ? DRAWMODE_SHADOW : DRAWMODE_SOURCE;
+		drawmode_table[m_gfx[0]->m_color_granularity - 1] = shadow ? DRAWMODE_SHADOW : DRAWMODE_SOURCE;
 
 		if (zoomx == 0x10000 && zoomy == 0x10000)
 		{

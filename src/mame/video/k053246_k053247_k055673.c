@@ -477,7 +477,7 @@ void k053247_device::zdrawgfxzoom32GP(
 	if (!scalex || !scaley) return;
 
 	// find shadow pens and cull invisible shadows
-	granularity = shdpen = m_gfx->granularity();
+	granularity = shdpen = m_gfx->m_color_granularity;
 	shdpen--;
 
 	if (zcode >= 0)
@@ -501,9 +501,9 @@ void k053247_device::zdrawgfxzoom32GP(
 	src_pitch = 16;
 	src_fw    = 16;
 	src_fh    = 16;
-	src_base  = m_gfx->get_data(code % m_gfx->elements());
+	src_base  = m_gfx->get_data(code % m_gfx->m_total_elements);
 
-	pal_base  = m_palette->pens() + m_gfx->colorbase() + (color % m_gfx->colors()) * granularity;
+	pal_base  = m_palette->pens() + m_gfx->m_color_base + (color % m_gfx->m_total_colors) * granularity;
 	shd_base  = m_palette->shadow_table();
 
 	dst_ptr   = &bitmap.pix32(0);

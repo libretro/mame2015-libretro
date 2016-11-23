@@ -119,7 +119,7 @@ void docastle_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, 
 	{
 		int sx, sy, flipx, flipy, code, color;
 
-		if (m_gfxdecode->gfx(1)->elements() > 256)
+		if (m_gfxdecode->gfx(1)->m_total_elements > 256)
 		{
 			/* spriteram
 

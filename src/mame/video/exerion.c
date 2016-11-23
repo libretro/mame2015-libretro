@@ -371,9 +371,9 @@ UINT32 exerion_state::screen_update_exerion(screen_device &screen, bitmap_ind16 
 
 		if (m_cocktail_flip)
 		{
-			x = 64*8 - gfx->width() - x;
-			y = 32*8 - gfx->height() - y;
-			if (wide) y -= gfx->height();
+			x = 64*8 - gfx->m_width - x;
+			y = 32*8 - gfx->m_height - y;
+			if (wide) y -= gfx->m_height;
 			xflip = !xflip;
 			yflip = !yflip;
 		}
@@ -385,7 +385,7 @@ UINT32 exerion_state::screen_update_exerion(screen_device &screen, bitmap_ind16 
 			else
 				code &= ~0x10, code2 |= 0x10;
 
-				gfx->transmask(bitmap,cliprect, code2, color, xflip, yflip, x, y + gfx->height(),
+				gfx->transmask(bitmap,cliprect, code2, color, xflip, yflip, x, y + gfx->m_height,
 					m_palette->transpen_mask(*gfx, color, 0x10));
 		}
 

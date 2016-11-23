@@ -404,7 +404,7 @@ SCN2674_DRAW_CHARACTER_MEMBER(mpu4vid_state::display_pixels)
 	{
 		UINT16 tile = m_vid_mainram[address & 0x7fff];
 		const UINT8 *line = m_gfxdecode->gfx(m_gfx_index+0)->get_data(tile & 0xfff);
-		int offset = m_gfxdecode->gfx(m_gfx_index+0)->rowbytes() * linecount;
+		int offset = m_gfxdecode->gfx(m_gfx_index+0)->m_line_modulo * linecount;
 		for(int i = 0; i < 8; i++)
 			bitmap.pix32(y, x + i) = (tile >> 12) ? m_palette->pen(line[offset + i]) : m_palette->black_pen();
 	}

@@ -230,8 +230,8 @@ WRITE16_MEMBER(seibuspi_state::sprite_dma_start_w)
 
 void seibuspi_state::drawgfx_blend(bitmap_rgb32 &bitmap, const rectangle &cliprect, gfx_element *gfx, UINT32 code, UINT32 color, int flipx, int flipy, int sx, int sy, bitmap_ind8 &primap, int primask)
 {
-	int width = gfx->width();
-	int height = gfx->height();
+	int width = gfx->m_width;
+	int height = gfx->m_height;
 
 	int x1 = sx;
 	int x2 = sx + width - 1;
@@ -299,7 +299,7 @@ void seibuspi_state::drawgfx_blend(bitmap_rgb32 &bitmap, const rectangle &clipre
 		y2 = cliprect.max_y;
 	}
 
-	const pen_t *pens = &m_palette->pen(gfx->colorbase());
+	const pen_t *pens = &m_palette->pen(gfx->m_color_base);
 	const UINT8 *src = gfx->get_data(code);
 
 	// draw
@@ -331,7 +331,7 @@ void seibuspi_state::drawgfx_blend(bitmap_rgb32 &bitmap, const rectangle &clipre
 void seibuspi_state::draw_sprites(bitmap_rgb32 &bitmap, const rectangle &cliprect, bitmap_ind8 &primap, int priority)
 {
 	gfx_element *gfx = m_gfxdecode->gfx(2);
-	const int has_tile_high = (gfx->elements() > 0x10000) ? 1 : 0;
+	const int has_tile_high = (gfx->m_total_elements > 0x10000) ? 1 : 0;
 	const int colormask = (m_sprite_bpp == 6) ? 0x3f : 0x1f;
 
 	static const int sprite_xtable[2][8] =

@@ -28,7 +28,7 @@ PALETTE_INIT_MEMBER(xevious_state,xevious)
 {
 	const UINT8 *color_prom = memregion("proms")->base();
 	int i;
-	#define TOTAL_COLORS(gfxn) (m_gfxdecode->gfx(gfxn)->colors() *m_gfxdecode->gfx(gfxn)->granularity())
+	#define TOTAL_COLORS(gfxn) (m_gfxdecode->gfx(gfxn)->m_total_colors *m_gfxdecode->gfx(gfxn)->m_color_granularity)
 
 	for (i = 0;i < 128;i++)
 	{
@@ -67,7 +67,7 @@ PALETTE_INIT_MEMBER(xevious_state,xevious)
 	/* background tiles */
 	for (i = 0;i < TOTAL_COLORS(1);i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->colorbase() + i,
+		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + i,
 				(color_prom[0] & 0x0f) | ((color_prom[TOTAL_COLORS(1)] & 0x0f) << 4));
 
 		color_prom++;
@@ -79,7 +79,7 @@ PALETTE_INIT_MEMBER(xevious_state,xevious)
 	{
 		int c = (color_prom[0] & 0x0f) | ((color_prom[TOTAL_COLORS(2)] & 0x0f) << 4);
 
-		palette.set_pen_indirect(m_gfxdecode->gfx(2)->colorbase() + i,
+		palette.set_pen_indirect(m_gfxdecode->gfx(2)->m_color_base + i,
 				(c & 0x80) ? (c & 0x7f) : 0x80);
 
 		color_prom++;
@@ -89,7 +89,7 @@ PALETTE_INIT_MEMBER(xevious_state,xevious)
 	/* foreground characters */
 	for (i = 0;i < TOTAL_COLORS(0);i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(0)->colorbase() + i,
+		palette.set_pen_indirect(m_gfxdecode->gfx(0)->m_color_base + i,
 				(i % 2 != 0) ? (i / 2) : 0x80);
 	}
 }
@@ -138,7 +138,7 @@ PALETTE_INIT_MEMBER(xevious_state,battles)
 	/* background tiles */
 	for (i = 0;i < TOTAL_COLORS(1);i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->colorbase() + i,
+		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + i,
 				(color_prom[0] & 0x0f) | ((color_prom[0x400] & 0x0f) << 4));
 
 		color_prom++;
@@ -150,7 +150,7 @@ PALETTE_INIT_MEMBER(xevious_state,battles)
 	{
 		int c = (color_prom[0] & 0x0f) | ((color_prom[0x400] & 0x0f) << 4);
 
-		palette.set_pen_indirect(m_gfxdecode->gfx(2)->colorbase() + i,
+		palette.set_pen_indirect(m_gfxdecode->gfx(2)->m_color_base + i,
 				(c & 0x80) ? (c & 0x7f) : 0x80);
 
 		color_prom++;
@@ -159,7 +159,7 @@ PALETTE_INIT_MEMBER(xevious_state,battles)
 	/* foreground characters */
 	for (i = 0;i < TOTAL_COLORS(0);i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(0)->colorbase() + i,
+		palette.set_pen_indirect(m_gfxdecode->gfx(0)->m_color_base + i,
 				(i % 2 != 0) ? (i / 2) : 0x80);
 	}
 }

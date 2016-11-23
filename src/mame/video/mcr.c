@@ -289,7 +289,7 @@ void mcr_state::render_sprites_91399(screen_device &screen, bitmap_ind16 &bitmap
 		for (y = 0; y < 32; y++, sy = (sy + 1) & 0x1ff)
 			if (sy >= cliprect.min_y && sy <= cliprect.max_y)
 			{
-				const UINT8 *src = gfx->get_data(code) + gfx->rowbytes() * (y ^ vflip);
+				const UINT8 *src = gfx->get_data(code) + gfx->m_line_modulo * (y ^ vflip);
 				UINT16 *dst = &bitmap.pix16(sy);
 				UINT8 *pri = &screen.priority().pix8(sy);
 
@@ -336,7 +336,7 @@ void mcr_state::render_sprites_91464(screen_device &screen, bitmap_ind16 &bitmap
 		int code, color, x, y, sx, sy, hflip, vflip;
 
 		/* extract the bits of information */
-		code = (spriteram[offs + 2] + 256 * ((spriteram[offs + 1] >> 3) & 0x01)) % gfx->elements();
+		code = (spriteram[offs + 2] + 256 * ((spriteram[offs + 1] >> 3) & 0x01)) % gfx->m_total_elements;
 		color = (((~spriteram[offs + 1] & 3) << 4) & sprmask) | colormask;
 		hflip = (spriteram[offs + 1] & 0x10) ? 31 : 0;
 		vflip = (spriteram[offs + 1] & 0x20) ? 31 : 0;
@@ -360,7 +360,7 @@ void mcr_state::render_sprites_91464(screen_device &screen, bitmap_ind16 &bitmap
 		for (y = 0; y < 32; y++, sy = (sy + 1) & 0x1ff)
 			if (sy >= 2 && sy >= cliprect.min_y && sy <= cliprect.max_y)
 			{
-				const UINT8 *src = gfx->get_data(code) + gfx->rowbytes() * (y ^ vflip);
+				const UINT8 *src = gfx->get_data(code) + gfx->m_line_modulo * (y ^ vflip);
 				UINT16 *dst = &bitmap.pix16(sy);
 				UINT8 *pri = &screen.priority().pix8(sy);
 

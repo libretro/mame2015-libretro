@@ -335,7 +335,7 @@ void m52_state::draw_background(bitmap_ind16 &bitmap, const rectangle &cliprect,
 		rect.max_y = ypos + 2 * BGHEIGHT - 1;
 	}
 
-	bitmap.fill(m_gfxdecode->gfx(image)->colorbase() + 3, rect);
+	bitmap.fill(m_gfxdecode->gfx(image)->m_color_base + 3, rect);
 }
 
 

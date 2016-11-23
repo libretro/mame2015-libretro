@@ -149,25 +149,48 @@ enum
 class gfx_element
 {
 public:
+	// internal state
+	palette_device  *m_palette;             // palette used for drawing
+
+	UINT16          m_width;                // current pixel width of each element (changeable with source clipping)
+	UINT16          m_height;               // current pixel height of each element (changeable with source clipping)
+	UINT16          m_startx;               // current source clip X offset
+	UINT16          m_starty;               // current source clip Y offset
+
+	UINT16          m_origwidth;            // starting pixel width of each element
+	UINT16          m_origheight;           // staring pixel height of each element
+	UINT32          m_total_elements;       // total number of decoded elements
+
+	UINT32          m_color_base;           // base color for rendering
+	UINT16          m_color_depth;          // number of colors each pixel can represent
+	UINT16          m_color_granularity;    // number of colors for each color code
+	UINT32          m_total_colors;         // number of color codes
+
+	UINT32          m_line_modulo;          // bytes between each row of data
+	UINT32          m_char_modulo;          // bytes between each element
+	const UINT8 *   m_srcdata;              // pointer to the source data for decoding
+	UINT32          m_dirtyseq;             // sequence number; incremented each time a tile is dirtied
+
+	UINT8 *         m_gfxdata;              // pointer to decoded pixel data, 8bpp
+	dynamic_buffer  m_gfxdata_allocated;    // allocated decoded pixel data, 8bpp
+	dynamic_buffer  m_dirty;                // dirty array for detecting chars that need decoding
+	dynamic_array<UINT32> m_pen_usage;      // bitmask of pens that are used (pens 0-31 only)
+
+	bool            m_layout_is_raw;        // raw layout?
+	UINT8           m_layout_planes;        // bit planes in the layout
+	UINT32          m_layout_xormask;       // xor mask applied to each bit offset
+	UINT32          m_layout_charincrement; // per-character increment in source data
+	dynamic_array<UINT32> m_layout_planeoffset;// plane offsets
+	dynamic_array<UINT32> m_layout_xoffset; // X offsets
+	dynamic_array<UINT32> m_layout_yoffset; // Y offsets
+
 	// construction/destruction
 	gfx_element();
 	gfx_element(palette_device *palette, const gfx_layout &gl, const UINT8 *srcdata, UINT32 xormask, UINT32 total_colors, UINT32 color_base);
 	gfx_element(palette_device *palette, UINT8 *base, UINT32 width, UINT32 height, UINT32 rowbytes, UINT32 total_colors, UINT32 color_base, UINT32 color_granularity);
 
 	// getters
-	palette_device *palette() const { return m_palette; }
-	UINT16 width() const { return m_width; }
-	UINT16 height() const { return m_height; }
-	UINT32 elements() const { return m_total_elements; }
-	UINT32 colorbase() const { return m_color_base; }
-	UINT16 depth() const { return m_color_depth; }
-	UINT16 granularity() const { return m_color_granularity; }
-	UINT32 colors() const { return m_total_colors; }
-	UINT32 rowbytes() const { return m_line_modulo; }
 	bool has_pen_usage() const { return (m_pen_usage.count() > 0); }
-
-	// used by tilemaps
-	UINT32 dirtyseq() const { return m_dirtyseq; }
 
 	// setters
 	void set_layout(const gfx_layout &gl, const UINT8 *srcdata);
@@ -182,12 +205,12 @@ public:
 	void set_source_clip(UINT32 xoffs, UINT32 width, UINT32 yoffs, UINT32 height);
 
 	// operations
-	void mark_dirty(UINT32 code) { if (code < elements()) { m_dirty[code] = 1; m_dirtyseq++; } }
-	void mark_all_dirty() { memset(&m_dirty[0], 1, elements()); }
+	void mark_dirty(UINT32 code) { if (code < m_total_elements) { m_dirty[code] = 1; m_dirtyseq++; } }
+	void mark_all_dirty() { memset(&m_dirty[0], 1, m_total_elements); }
 
 	const UINT8 *get_data(UINT32 code)
 	{
-		assert(code < elements());
+		assert(code < m_total_elements);
 		if (code < m_dirty.count() && m_dirty[code]) decode(code);
 		return m_gfxdata + code * m_char_modulo + m_starty * m_line_modulo + m_startx;
 	}
@@ -268,40 +291,6 @@ private:
 	// internal helpers
 	void decode(UINT32 code);
 
-	// internal state
-	palette_device  *m_palette;             // palette used for drawing
-
-	UINT16          m_width;                // current pixel width of each element (changeable with source clipping)
-	UINT16          m_height;               // current pixel height of each element (changeable with source clipping)
-	UINT16          m_startx;               // current source clip X offset
-	UINT16          m_starty;               // current source clip Y offset
-
-	UINT16          m_origwidth;            // starting pixel width of each element
-	UINT16          m_origheight;           // staring pixel height of each element
-	UINT32          m_total_elements;       // total number of decoded elements
-
-	UINT32          m_color_base;           // base color for rendering
-	UINT16          m_color_depth;          // number of colors each pixel can represent
-	UINT16          m_color_granularity;    // number of colors for each color code
-	UINT32          m_total_colors;         // number of color codes
-
-	UINT32          m_line_modulo;          // bytes between each row of data
-	UINT32          m_char_modulo;          // bytes between each element
-	const UINT8 *   m_srcdata;              // pointer to the source data for decoding
-	UINT32          m_dirtyseq;             // sequence number; incremented each time a tile is dirtied
-
-	UINT8 *         m_gfxdata;              // pointer to decoded pixel data, 8bpp
-	dynamic_buffer  m_gfxdata_allocated;    // allocated decoded pixel data, 8bpp
-	dynamic_buffer  m_dirty;                // dirty array for detecting chars that need decoding
-	dynamic_array<UINT32> m_pen_usage;      // bitmask of pens that are used (pens 0-31 only)
-
-	bool            m_layout_is_raw;        // raw layout?
-	UINT8           m_layout_planes;        // bit planes in the layout
-	UINT32          m_layout_xormask;       // xor mask applied to each bit offset
-	UINT32          m_layout_charincrement; // per-character increment in source data
-	dynamic_array<UINT32> m_layout_planeoffset;// plane offsets
-	dynamic_array<UINT32> m_layout_xoffset; // X offsets
-	dynamic_array<UINT32> m_layout_yoffset; // Y offsets
 };
 
 

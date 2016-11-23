@@ -101,7 +101,7 @@ UINT32 rbisland_state::screen_update_jumping(screen_device &screen, bitmap_ind16
 	for (offs = m_spriteram.bytes() / 2 - 8; offs >= 0; offs -= 8)
 	{
 		int tile = spriteram[offs];
-		if (tile < m_gfxdecode->gfx(1)->elements())
+		if (tile < m_gfxdecode->gfx(1)->m_total_elements)
 		{
 			int sx,sy,color,data1;
 

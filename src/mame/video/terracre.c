@@ -34,7 +34,7 @@ void terracre_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 	int flip = flip_screen();
 	int transparent_pen;
 
-	if( pGfx->elements() > 0x200 )
+	if( pGfx->m_total_elements > 0x200 )
 	{ /* HORE HORE Kid */
 		transparent_pen = 0xf;
 	}

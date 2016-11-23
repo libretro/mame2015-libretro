@@ -521,18 +521,18 @@ inline void cps3_state::cps3_drawgfxzoom(bitmap_rgb32 &dest_bmp,const rectangle 
 		if( gfx )
 		{
 //          const pen_t *pal = &gfx->colortable[gfx->granularity() * (color % gfx->colors())];
-			UINT32 palbase = (gfx->granularity() * color) & 0x1ffff;
+			UINT32 palbase = (gfx->m_color_granularity * color) & 0x1ffff;
 			const pen_t *pal = &m_mame_colours[palbase];
-			const UINT8 *source_base = gfx->get_data(code % gfx->elements());
+			const UINT8 *source_base = gfx->get_data(code % gfx->m_total_elements);
 
-			int sprite_screen_height = (scaley*gfx->height()+0x8000)>>16;
-			int sprite_screen_width = (scalex*gfx->width()+0x8000)>>16;
+			int sprite_screen_height = (scaley*gfx->m_height +0x8000)>>16;
+			int sprite_screen_width = (scalex*gfx->m_width +0x8000)>>16;
 
 			if (sprite_screen_width && sprite_screen_height)
 			{
 				/* compute sprite increment per screen pixel */
-				int dx = (gfx->width()<<16)/sprite_screen_width;
-				int dy = (gfx->height()<<16)/sprite_screen_height;
+				int dx = (gfx->m_width <<16)/sprite_screen_width;
+				int dy = (gfx->m_height <<16)/sprite_screen_height;
 
 				int ex = sx+sprite_screen_width;
 				int ey = sy+sprite_screen_height;
@@ -593,7 +593,7 @@ inline void cps3_state::cps3_drawgfxzoom(bitmap_rgb32 &dest_bmp,const rectangle 
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = source_base + (y_index>>16) * gfx->rowbytes();
+								const UINT8 *source = source_base + (y_index>>16) * gfx->m_line_modulo;
 								UINT32 *dest = &dest_bmp.pix32(y);
 
 								int x, x_index = x_index_base;
@@ -612,7 +612,7 @@ inline void cps3_state::cps3_drawgfxzoom(bitmap_rgb32 &dest_bmp,const rectangle 
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = source_base + (y_index>>16) * gfx->rowbytes();
+								const UINT8 *source = source_base + (y_index>>16) * gfx->m_line_modulo;
 								UINT32 *dest = &dest_bmp.pix32(y);
 
 								int x, x_index = x_index_base;
@@ -632,7 +632,7 @@ inline void cps3_state::cps3_drawgfxzoom(bitmap_rgb32 &dest_bmp,const rectangle 
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = source_base + (y_index>>16) * gfx->rowbytes();
+								const UINT8 *source = source_base + (y_index>>16) * gfx->m_line_modulo;
 								UINT32 *dest = &dest_bmp.pix32(y);
 
 								int x, x_index = x_index_base;
@@ -652,7 +652,7 @@ inline void cps3_state::cps3_drawgfxzoom(bitmap_rgb32 &dest_bmp,const rectangle 
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = source_base + (y_index>>16) * gfx->rowbytes();
+								const UINT8 *source = source_base + (y_index>>16) * gfx->m_line_modulo;
 								UINT32 *dest = &dest_bmp.pix32(y);
 
 								int x, x_index = x_index_base;
@@ -662,7 +662,7 @@ inline void cps3_state::cps3_drawgfxzoom(bitmap_rgb32 &dest_bmp,const rectangle 
 									if( c != transparent_color )
 									{
 										/* blending isn't 100% understood */
-										if (gfx->granularity() == 64)
+										if (gfx->m_color_granularity == 64)
 										{
 											// OK for sfiii2 spotlight
 											if (c&0x01) dest[x] |= 0x2000;

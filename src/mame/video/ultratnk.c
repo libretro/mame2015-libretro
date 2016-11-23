@@ -112,8 +112,8 @@ void ultratnk_state::screen_eof_ultratnk(screen_device &screen, bool state)
 
 			rect.min_x = horz - 15;
 			rect.min_y = vert - 15;
-			rect.max_x = horz - 15 + m_gfxdecode->gfx(1)->width() - 1;
-			rect.max_y = vert - 15 + m_gfxdecode->gfx(1)->height() - 1;
+			rect.max_x = horz - 15 + m_gfxdecode->gfx(1)->m_width - 1;
+			rect.max_y = vert - 15 + m_gfxdecode->gfx(1)->m_height - 1;
 
 			rect &= m_screen->visible_area();
 

@@ -197,7 +197,7 @@ inline void dooyong_state::get_tile_info(tile_data &tileinfo, int tile_index,
 		int codemask = 0x03;
 		int palmask  = 0x3c;
 
-		if (m_gfxdecode->gfx(1)->depth() == 256) // pop bingo has an 8bpp layer and uses what would be the low palette bit to address more tiles (girls 4,5,6 in bonus game)
+		if (m_gfxdecode->gfx(1)->m_color_depth == 256) // pop bingo has an 8bpp layer and uses what would be the low palette bit to address more tiles (girls 4,5,6 in bonus game)
 		{
 			codemask = 0x07;
 			palmask = 0x00;

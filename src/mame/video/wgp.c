@@ -345,7 +345,7 @@ void wgp_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, const
 	UINT8 small_sprite, col, flipx, flipy;
 	UINT16 code, bigsprite, map_index;
 //  UINT16 rotate = 0;
-	UINT16 tile_mask = (m_gfxdecode->gfx(0)->elements()) - 1;
+	UINT16 tile_mask = (m_gfxdecode->gfx(0)->m_total_elements) - 1;
 	static const int primasks[2] = {0x0, 0xfffc};   /* fff0 => under rhs of road only */
 
 	for (offs = 0x1ff; offs >= 0; offs--)

@@ -425,9 +425,9 @@ void cave_state::cave_vh_start( int num )
 	m_row_effect_offs_n = -1;
 	m_row_effect_offs_f = 1;
 
-	m_background_pen    =  m_gfxdecode->gfx(0)->colorbase() +
-							(m_gfxdecode->gfx(0)->colors() - 1) *
-							m_gfxdecode->gfx(0)->granularity();
+	m_background_pen    =  m_gfxdecode->gfx(0)->m_color_base +
+							(m_gfxdecode->gfx(0)->m_total_colors - 1) *
+							m_gfxdecode->gfx(0)->m_color_granularity;
 
 	switch (m_kludge)
 	{

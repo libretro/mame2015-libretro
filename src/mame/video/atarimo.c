@@ -300,8 +300,8 @@ void atari_motion_objects_device::device_start()
 	m_absolutemask.set(m_absolute_entry);
 
 	// derive tile information
-	m_tilewidth = gfx->width();
-	m_tileheight = gfx->height();
+	m_tilewidth = gfx->m_width;
+	m_tileheight = gfx->m_height;
 	m_tilexshift = compute_log(m_tilewidth);
 	m_tileyshift = compute_log(m_tileheight);
 
@@ -444,9 +444,9 @@ void atari_motion_objects_device::render_object(bitmap_ind16 &bitmap, const rect
 	// select the gfx element and save off key information
 	int rawcode = m_codemask.extract(entry);
 	gfx_element *gfx = m_gfxdecode->gfx(m_gfxlookup[rawcode >> 8]);
-	int save_granularity = gfx->granularity();
-	int save_colorbase = gfx->colorbase();
-	int save_colors = gfx->colors();
+	int save_granularity = gfx->m_color_granularity;
+	int save_colorbase = gfx->m_color_base;
+	int save_colors = gfx->m_total_colors;
 	gfx->set_granularity(1);
 	gfx->set_colorbase(0);
 	gfx->set_colors(65536);

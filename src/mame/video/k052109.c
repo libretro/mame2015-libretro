@@ -207,7 +207,7 @@ void k052109_device::device_start()
 	}
 
 	decode_gfx();
-	m_gfx[0]->set_colors(m_palette->entries() / m_gfx[0]->depth());
+	m_gfx[0]->set_colors(m_palette->entries() / m_gfx[0]->m_color_depth);
 
 	m_ram = auto_alloc_array_clear(machine(), UINT8, 0x6000);
 

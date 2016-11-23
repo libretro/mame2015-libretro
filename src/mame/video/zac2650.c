@@ -68,9 +68,9 @@ int zac2650_state::SpriteCollision(int first,int second)
 
 		/* Get fingerprint */
 
-		for (x = fx; x < fx + m_gfxdecode->gfx(expand)->width(); x++)
+		for (x = fx; x < fx + m_gfxdecode->gfx(expand)->m_width; x++)
 		{
-			for (y = fy; y < fy + m_gfxdecode->gfx(expand)->height(); y++)
+			for (y = fy; y < fy + m_gfxdecode->gfx(expand)->m_height; y++)
 			{
 				if (visarea.contains(x, y))
 					Checksum += m_spritebitmap.pix16(y, x);
@@ -87,9 +87,9 @@ int zac2650_state::SpriteCollision(int first,int second)
 
 		/* Remove fingerprint */
 
-		for (x = fx; x < fx + m_gfxdecode->gfx(expand)->width(); x++)
+		for (x = fx; x < fx + m_gfxdecode->gfx(expand)->m_width; x++)
 		{
-			for (y = fy; y < fy +m_gfxdecode->gfx(expand)->height(); y++)
+			for (y = fy; y < fy +m_gfxdecode->gfx(expand)->m_height; y++)
 			{
 				if (visarea.contains(x, y))
 					Checksum -= m_spritebitmap.pix16(y, x);
@@ -170,9 +170,9 @@ void zac2650_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect
 					0,0,
 					bx,by, 0);
 
-			for (x = bx; x < bx + m_gfxdecode->gfx(expand)->width(); x++)
+			for (x = bx; x < bx + m_gfxdecode->gfx(expand)->m_width; x++)
 			{
-				for (y = by; y < by +m_gfxdecode->gfx(expand)->height(); y++)
+				for (y = by; y < by +m_gfxdecode->gfx(expand)->m_height; y++)
 				{
 					if (visarea.contains(x, y))
 						if (bitmap.pix16(y, x) != m_bitmap.pix16(y, x))

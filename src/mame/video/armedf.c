@@ -260,24 +260,24 @@ void armedf_state::armedf_drawgfx(bitmap_ind16 &dest_bmp,const rectangle &clip,g
 							UINT32 code,UINT32 color, UINT32 clut,int flipx,int flipy,int offsx,int offsy,
 							int transparent_color)
 {
-	const pen_t *pal = &m_palette->pen(gfx->colorbase() + gfx->granularity() * (color % gfx->colors()));
-	const UINT8 *source_base = gfx->get_data(code % gfx->elements());
+	const pen_t *pal = &m_palette->pen(gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors));
+	const UINT8 *source_base = gfx->get_data(code % gfx->m_total_elements);
 	int x_index_base, y_index, sx, sy, ex, ey;
 	int xinc, yinc;
 
 	xinc = flipx ? -1 : 1;
 	yinc = flipy ? -1 : 1;
 
-	x_index_base = flipx ? gfx->width()-1 : 0;
-	y_index = flipy ? gfx->height()-1 : 0;
+	x_index_base = flipx ? gfx->m_width-1 : 0;
+	y_index = flipy ? gfx->m_height-1 : 0;
 
 	/* start coordinates */
 	sx = offsx;
 	sy = offsy;
 
 	/* end coordinates */
-	ex = sx + gfx->width();
-	ey = sy + gfx->height();
+	ex = sx + gfx->m_width;
+	ey = sy + gfx->m_height;
 
 	if (sx < clip.min_x)
 	{ /* clip left */
@@ -308,7 +308,7 @@ void armedf_state::armedf_drawgfx(bitmap_ind16 &dest_bmp,const rectangle &clip,g
 		{
 			for (y = sy; y < ey; y++)
 			{
-				const UINT8 *source = source_base + y_index*gfx->rowbytes();
+				const UINT8 *source = source_base + y_index*gfx->m_line_modulo;
 				UINT16 *dest = &dest_bmp.pix16(y);
 				int x_index = x_index_base;
 				for (x = sx; x < ex; x++)

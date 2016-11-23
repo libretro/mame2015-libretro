@@ -190,9 +190,9 @@ INLINE void roundupt_drawgfxzoomrotate(tatsumi_state *state,
 	{
 		if( gfx )
 		{
-			const pen_t *pal = &state->m_palette->pen(gfx->colorbase() + gfx->granularity() * (color % gfx->colors()));
-			const UINT8 *shadow_pens = state->m_shadow_pen_array + (gfx->granularity() * (color % gfx->colors()));
-			const UINT8 *code_base = gfx->get_data(code % gfx->elements());
+			const pen_t *pal = &state->m_palette->pen(gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors));
+			const UINT8 *shadow_pens = state->m_shadow_pen_array + (gfx->m_color_granularity * (color % gfx->m_total_colors));
+			const UINT8 *code_base = gfx->get_data(code % gfx->m_total_elements);
 
 			int block_size = 8 * scalex;
 			int sprite_screen_height = ((ssy&0xffff)+block_size)>>16;
@@ -201,8 +201,8 @@ INLINE void roundupt_drawgfxzoomrotate(tatsumi_state *state,
 			if (sprite_screen_width && sprite_screen_height)
 			{
 				/* compute sprite increment per screen pixel */
-				int dx = (gfx->width()<<16)/sprite_screen_width;
-				int dy = (gfx->height()<<16)/sprite_screen_height;
+				int dx = (gfx->m_width<<16)/sprite_screen_width;
+				int dy = (gfx->m_height<<16)/sprite_screen_height;
 
 				int sx;//=ssx>>16;
 				int sy;//=ssy>>16;
@@ -312,7 +312,7 @@ INLINE void roundupt_drawgfxzoomrotate(tatsumi_state *state,
 								int x, x_index = x_index_base;
 								for( x=sx; x<ex; x++ )
 								{
-									const UINT8 *source = code_base + (cy>>16) * gfx->rowbytes();
+									const UINT8 *source = code_base + (cy>>16) * gfx->m_line_modulo;
 									int c = source[(cx >> 16)];
 									if( c != transparent_color )
 									{
@@ -335,7 +335,7 @@ INLINE void roundupt_drawgfxzoomrotate(tatsumi_state *state,
 						{
 							for( y=sy; y<ey; y++ )
 							{
-								const UINT8 *source = code_base + (y_index>>16) * gfx->rowbytes();
+								const UINT8 *source = code_base + (y_index>>16) * gfx->m_line_modulo;
 								typename _BitmapClass::pixel_t *dest = &dest_bmp.pix(y);
 
 								int x, x_index = x_index_base;

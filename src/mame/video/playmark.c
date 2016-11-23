@@ -356,8 +356,8 @@ WRITE16_MEMBER(playmark_state::hrdtimes_scroll_w)
 void playmark_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect, int codeshift )
 {
 	int offs, start_offset = m_spriteram.bytes() / 2 - 4;
-	int height = m_gfxdecode->gfx(0)->height();
-	int colordiv = m_gfxdecode->gfx(0)->granularity() / 16;
+	int height = m_gfxdecode->gfx(0)->m_height;
+	int colordiv = m_gfxdecode->gfx(0)->m_color_granularity / 16;
 	UINT16 *spriteram = m_spriteram;
 
 	// find the "end of list" to draw the sprites in reverse order
@@ -399,7 +399,7 @@ void playmark_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, 
 void playmark_state::bigtwinb_draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect, int codeshift )
 {
 	int offs, start_offset = m_spriteram.bytes() / 2 - 4;
-	int height = m_gfxdecode->gfx(0)->height();
+	int height = m_gfxdecode->gfx(0)->m_height;
 	UINT16 *spriteram = m_spriteram;
 
 	// find the "end of list" to draw the sprites in reverse order

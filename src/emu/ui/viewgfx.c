@@ -609,8 +609,8 @@ static void gfxset_handler(running_machine &machine, render_container *container
 	cellboxheight = (cellboxbounds.y1 - cellboxbounds.y0) * (float)targheight;
 
 	// compute the number of source pixels in a cell
-	cellxpix = 1 + ((info.rotate[set] & ORIENTATION_SWAP_XY) ? gfx.height() : gfx.width());
-	cellypix = 1 + ((info.rotate[set] & ORIENTATION_SWAP_XY) ? gfx.width() : gfx.height());
+	cellxpix = 1 + ((info.rotate[set] & ORIENTATION_SWAP_XY) ? gfx.m_height : gfx.m_width);
+	cellypix = 1 + ((info.rotate[set] & ORIENTATION_SWAP_XY) ? gfx.m_width : gfx.m_height);
 
 	// compute the largest pixel scale factor that still fits
 	xcells = info.columns[set];
@@ -652,7 +652,7 @@ static void gfxset_handler(running_machine &machine, render_container *container
 	sprintf(title, "'%s' %d/%d %dx%d COLOR %X",
 					interface.device().tag(),
 					set, info.setcount - 1,
-					gfx.width(), gfx.height(),
+					gfx.m_width, gfx.m_height,
 					info.color[set]);
 	titlewidth = ui_font->string_width(chheight, machine.render().ui_aspect(), title);
 	x0 = 0.0f;
@@ -690,7 +690,7 @@ static void gfxset_handler(running_machine &machine, render_container *container
 	for (y = 0; y < ycells; y += 1 + skip)
 
 		// only display if there is data to show
-		if (info.offset[set] + y * xcells < gfx.elements())
+		if (info.offset[set] + y * xcells < gfx.m_total_elements)
 		{
 			char buffer[10];
 
@@ -793,12 +793,12 @@ static void gfxset_handle_keys(running_machine &machine, ui_gfx_state &state, in
 	if (ui_input_pressed_repeat(machine, IPT_UI_HOME, 4))
 	{ info.offset[set] = 0; state.bitmap_dirty = true; }
 	if (ui_input_pressed_repeat(machine, IPT_UI_END, 4))
-	{ info.offset[set] = gfx.elements(); state.bitmap_dirty = true; }
+	{ info.offset[set] = gfx.m_total_elements; state.bitmap_dirty = true; }
 
 	// clamp within range
-	if (info.offset[set] + xcells * ycells > ((gfx.elements() + xcells - 1) / xcells) * xcells)
+	if (info.offset[set] + xcells * ycells > ((gfx.m_total_elements + xcells - 1) / xcells) * xcells)
 	{
-		info.offset[set] = ((gfx.elements() + xcells - 1) / xcells) * xcells - xcells * ycells;
+		info.offset[set] = ((gfx.m_total_elements + xcells - 1) / xcells) * xcells - xcells * ycells;
 		state.bitmap_dirty = true;
 	}
 	if (info.offset[set] < 0)
@@ -811,8 +811,8 @@ static void gfxset_handle_keys(running_machine &machine, ui_gfx_state &state, in
 	{ info.color[set] += 1; state.bitmap_dirty = true; }
 
 	// clamp within range
-	if (info.color[set] >= (int)gfx.colors())
-	{ info.color[set] = gfx.colors() - 1; state.bitmap_dirty = true; }
+	if (info.color[set] >= (int)gfx.m_total_colors)
+	{ info.color[set] = gfx.m_total_colors - 1; state.bitmap_dirty = true; }
 	if (info.color[set] < 0)
 	{ info.color[set] = 0; state.bitmap_dirty = true; }
 }
@@ -832,8 +832,8 @@ static void gfxset_update_bitmap(running_machine &machine, ui_gfx_state &state, 
 	int x, y;
 
 	// compute the number of source pixels in a cell
-	cellxpix = 1 + ((info.rotate[set] & ORIENTATION_SWAP_XY) ? gfx.height() : gfx.width());
-	cellypix = 1 + ((info.rotate[set] & ORIENTATION_SWAP_XY) ? gfx.width() : gfx.height());
+	cellxpix = 1 + ((info.rotate[set] & ORIENTATION_SWAP_XY) ? gfx.m_height : gfx.m_width);
+	cellypix = 1 + ((info.rotate[set] & ORIENTATION_SWAP_XY) ? gfx.m_width : gfx.m_height);
 
 	// realloc the bitmap if it is too small
 	if (state.bitmap == NULL || state.texture == NULL || state.bitmap->bpp() != 32 || state.bitmap->width() != cellxpix * xcells || state.bitmap->height() != cellypix * ycells)
@@ -863,7 +863,7 @@ static void gfxset_update_bitmap(running_machine &machine, ui_gfx_state &state, 
 			cellbounds.set(0, state.bitmap->width() - 1, y * cellypix, (y + 1) * cellypix - 1);
 
 			// only display if there is data to show
-			if (info.offset[set] + y * xcells < gfx.elements())
+			if (info.offset[set] + y * xcells < gfx.m_total_elements)
 			{
 				// draw the individual cells
 				for (x = 0; x < xcells; x++)
@@ -875,7 +875,7 @@ static void gfxset_update_bitmap(running_machine &machine, ui_gfx_state &state, 
 					cellbounds.max_x = (x + 1) * cellxpix - 1;
 
 					// only render if there is data
-					if (index < gfx.elements())
+					if (index < gfx.m_total_elements)
 						gfxset_draw_item(machine, gfx, index, *state.bitmap, cellbounds.min_x, cellbounds.min_y, info.color[set], info.rotate[set]);
 
 					// otherwise, fill with transparency
@@ -903,9 +903,9 @@ static void gfxset_update_bitmap(running_machine &machine, ui_gfx_state &state, 
 
 static void gfxset_draw_item(running_machine &machine, gfx_element &gfx, int index, bitmap_rgb32 &bitmap, int dstx, int dsty, int color, int rotate)
 {
-	int width = (rotate & ORIENTATION_SWAP_XY) ? gfx.height() : gfx.width();
-	int height = (rotate & ORIENTATION_SWAP_XY) ? gfx.width() : gfx.height();
-	const rgb_t *palette = gfx.palette()->palette()->entry_list_raw() + gfx.colorbase() + color * gfx.granularity();
+	int width = (rotate & ORIENTATION_SWAP_XY) ? gfx.m_height : gfx.m_width;
+	int height = (rotate & ORIENTATION_SWAP_XY) ? gfx.m_width : gfx.m_height;
+	const rgb_t *palette = gfx.m_palette->palette()->entry_list_raw() + gfx.m_color_base + color * gfx.m_color_granularity;
 	int x, y;
 
 	// loop over rows in the cell
@@ -924,22 +924,22 @@ static void gfxset_draw_item(running_machine &machine, gfx_element &gfx, int ind
 			if (!(rotate & ORIENTATION_SWAP_XY))
 			{
 				if (rotate & ORIENTATION_FLIP_X)
-					effx = gfx.width() - 1 - effx;
+					effx = gfx.m_width - 1 - effx;
 				if (rotate & ORIENTATION_FLIP_Y)
-					effy = gfx.height() - 1 - effy;
+					effy = gfx.m_height - 1 - effy;
 			}
 			else
 			{
 				int temp;
 				if (rotate & ORIENTATION_FLIP_X)
-					effx = gfx.height() - 1 - effx;
+					effx = gfx.m_height - 1 - effx;
 				if (rotate & ORIENTATION_FLIP_Y)
-					effy = gfx.width() - 1 - effy;
+					effy = gfx.m_width - 1 - effy;
 				temp = effx; effx = effy; effy = temp;
 			}
 
 			// get a pointer to the start of this source row
-			s = src + effy * gfx.rowbytes();
+			s = src + effy * gfx.m_line_modulo;
 
 			// extract the pixel
 			*dest++ = 0xff000000 | palette[s[effx]];

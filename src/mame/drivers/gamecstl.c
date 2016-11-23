@@ -129,9 +129,9 @@ void gamecstl_state::draw_char(bitmap_ind16 &bitmap, const rectangle &cliprect, 
 		{
 			UINT8 pen = dp[index++];
 			if (pen)
-				p[i] = gfx->colorbase() + (att & 0xf);
+				p[i] = gfx->m_color_base + (att & 0xf);
 			else
-				p[i] = gfx->colorbase()  + ((att >> 4) & 0x7);
+				p[i] = gfx->m_color_base  + ((att >> 4) & 0x7);
 		}
 	}
 }

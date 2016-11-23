@@ -1435,31 +1435,31 @@ void atarigen_state::blend_gfx(int gfx0, int gfx1, int mask0, int mask1)
 	int c, x, y;
 
 	// allocate memory for the assembled data
-	srcdata = auto_alloc_array(machine(), UINT8, gx0->elements() * gx0->width() * gx0->height());
+	srcdata = auto_alloc_array(machine(), UINT8, gx0->m_total_elements * gx0->m_width * gx0->m_height);
 
 	// loop over elements
 	dest = srcdata;
-	for (c = 0; c < gx0->elements(); c++)
+	for (c = 0; c < gx0->m_total_elements; c++)
 	{
 		const UINT8 *c0base = gx0->get_data(c);
 		const UINT8 *c1base = gx1->get_data(c);
 
 		// loop over height
-		for (y = 0; y < gx0->height(); y++)
+		for (y = 0; y < gx0->m_height; y++)
 		{
 			const UINT8 *c0 = c0base;
 			const UINT8 *c1 = c1base;
 
-			for (x = 0; x < gx0->width(); x++)
+			for (x = 0; x < gx0->m_width; x++)
 				*dest++ = (*c0++ & mask0) | (*c1++ & mask1);
-			c0base += gx0->rowbytes();
-			c1base += gx1->rowbytes();
+			c0base += gx0->m_line_modulo;
+			c1base += gx1->m_line_modulo;
 		}
 	}
 
 //  int newdepth = gx0->depth() * gx1->depth();
-	int granularity = gx0->granularity();
-	gx0->set_raw_layout(srcdata, gx0->width(), gx0->height(), gx0->elements(), 8 * gx0->width(), 8 * gx0->width() * gx0->height());
+	int granularity = gx0->m_color_granularity;
+	gx0->set_raw_layout(srcdata, gx0->m_width, gx0->m_height, gx0->m_total_elements, 8 * gx0->m_width, 8 * gx0->m_width * gx0->m_height);
 	gx0->set_granularity(granularity);
 
 	// free the second graphics element

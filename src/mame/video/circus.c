@@ -76,7 +76,7 @@ void circus_state::draw_sprite_collision( bitmap_ind16 &bitmap, const rectangle 
 				dx = m_clown_y + sx;
 				if (dx>=0 && dx<bitmap.width())
 				{
-					pixel = sprite_data[sy * sprite_gfx->rowbytes() + sx];
+					pixel = sprite_data[sy * sprite_gfx->m_line_modulo + sx];
 					if (pixel)
 					{
 						collision |= bitmap.pix16(dy, dx);

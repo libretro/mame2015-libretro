@@ -10,8 +10,8 @@
 #include "includes/snk6502.h"
 
 
-#define TOTAL_COLORS(gfxn) (m_gfxdecode->gfx(gfxn)->colors() * m_gfxdecode->gfx(gfxn)->granularity())
-#define COLOR(gfxn,offs) (m_gfxdecode->gfx(gfxn)->colorbase() + offs)
+#define TOTAL_COLORS(gfxn) (m_gfxdecode->gfx(gfxn)->m_total_colors * m_gfxdecode->gfx(gfxn)->m_color_granularity)
+#define COLOR(gfxn,offs) (m_gfxdecode->gfx(gfxn)->m_color_base + offs)
 
 
 

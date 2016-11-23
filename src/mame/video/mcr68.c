@@ -27,7 +27,7 @@ TILE_GET_INFO_MEMBER(mcr68_state::get_bg_tile_info)
 	int code = (data & 0x3ff) | ((data >> 4) & 0xc00);
 	int color = (~data >> 12) & 3;
 	SET_TILE_INFO_MEMBER(0, code, color, TILE_FLIPYX((data >> 10) & 3));
-	if (m_gfxdecode->gfx(0)->elements() < 0x1000)
+	if (m_gfxdecode->gfx(0)->m_total_elements < 0x1000)
 		tileinfo.category = (data >> 15) & 1;
 }
 
@@ -83,13 +83,13 @@ VIDEO_START_MEMBER(mcr68_state,zwackery)
 	m_fg_tilemap->set_transparent_pen(0);
 
 	/* allocate memory for the assembled gfx data */
-	srcdata0 = auto_alloc_array(machine(), UINT8, gfx0->elements() * gfx0->width() * gfx0->height());
-	srcdata2 = auto_alloc_array(machine(), UINT8, gfx2->elements() * gfx2->width() * gfx2->height());
+	srcdata0 = auto_alloc_array(machine(), UINT8, gfx0->m_total_elements * gfx0->m_width * gfx0->m_height);
+	srcdata2 = auto_alloc_array(machine(), UINT8, gfx2->m_total_elements * gfx2->m_width * gfx2->m_height);
 
 	/* "colorize" each code */
 	dest0 = srcdata0;
 	dest2 = srcdata2;
-	for (code = 0; code < gfx0->elements(); code++)
+	for (code = 0; code < gfx0->m_total_elements; code++)
 	{
 		const UINT8 *coldata = colordatabase + code * 32;
 		const UINT8 *gfxdata0 = gfx0->get_data(code);
@@ -119,14 +119,14 @@ VIDEO_START_MEMBER(mcr68_state,zwackery)
 			}
 
 			/* advance */
-			gfxdata0 += gfx0->rowbytes();
-			gfxdata2 += gfx2->rowbytes();
+			gfxdata0 += gfx0->m_line_modulo;
+			gfxdata2 += gfx2->m_line_modulo;
 		}
 	}
 
 	/* make the assembled data our new source data */
-	gfx0->set_raw_layout(srcdata0, gfx0->width(), gfx0->height(), gfx0->elements(), 8 * gfx0->width(), 8 * gfx0->width() * gfx0->height());
-	gfx2->set_raw_layout(srcdata2, gfx2->width(), gfx2->height(), gfx2->elements(), 8 * gfx2->width(), 8 * gfx2->width() * gfx2->height());
+	gfx0->set_raw_layout(srcdata0, gfx0->m_width, gfx0->m_height, gfx0->m_total_elements, 8 * gfx0->m_width, 8 * gfx0->m_width * gfx0->m_height);
+	gfx2->set_raw_layout(srcdata2, gfx2->m_width, gfx2->m_height, gfx2->m_total_elements, 8 * gfx2->m_width, 8 * gfx2->m_width * gfx2->m_height);
 }
 
 

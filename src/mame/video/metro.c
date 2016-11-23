@@ -162,7 +162,7 @@ inline UINT8 metro_state::get_tile_pix( UINT16 code, UINT8 x, UINT8 y, int big, 
 		const UINT8* data;
 		UINT8 flipxy = (code & 0x6000) >> 13;
 
-		if (tile2 < gfx1->elements())
+		if (tile2 < gfx1->m_total_elements)
 			data = gfx1->get_data(tile2);
 		else
 		{
@@ -194,7 +194,7 @@ inline UINT8 metro_state::get_tile_pix( UINT16 code, UINT8 x, UINT8 y, int big, 
 		const UINT8* data;
 		UINT8 flipxy = (code & 0x6000) >> 13;
 
-		if (tile2 < gfx1->elements())
+		if (tile2 < gfx1->m_total_elements)
 			data = gfx1->get_data(tile2);
 		else
 		{

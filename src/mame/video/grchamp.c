@@ -270,7 +270,7 @@ void grchamp_state::draw_objects(int y, UINT8 *objdata)
 			int code = (codeflip & 0x3f) + (change >> 2);
 			int yflip = (codeflip & 0x80) ? 0x0f : 0x00;
 			int xflip = (codeflip & 0x40) ? 0x0f : 0x00;
-			const UINT8 *src = gfx->get_data(code) + ((dy ^ yflip) & 15) * gfx->rowbytes();
+			const UINT8 *src = gfx->get_data(code) + ((dy ^ yflip) & 15) * gfx->m_line_modulo;
 
 			/* the third byte is: color in bits 0-2 */
 			int color = (m_spriteram[0x42 + (dataoffs & ~0x20)] & 0x07) << 2;
@@ -314,7 +314,7 @@ void grchamp_state::draw_objects(int y, UINT8 *objdata)
 		int dy = sy + ~y;
 		int color = (m_spriteram[0x01 + dataoffs] & 0x07) << 2;
 		int code = m_videoram[hprime | ((dy & 0xf8) << 2)] + change;
-		const UINT8 *src = gfx->get_data(code) + (dy & 7) * gfx->rowbytes();
+		const UINT8 *src = gfx->get_data(code) + (dy & 7) * gfx->m_line_modulo;
 		int x;
 
 		/* draw 8 pixels */

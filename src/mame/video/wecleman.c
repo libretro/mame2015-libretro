@@ -669,8 +669,8 @@ void wecleman_state::draw_cloud(bitmap_rgb32 &bitmap,
 
 	if (alpha > 0x1f) return;
 
-	tilew = gfx->width();
-	tileh = gfx->height();
+	tilew = gfx->m_width;
+	tileh = gfx->m_height;
 
 	tmmaskx = (1<<tmw_l2) - 1;
 	tmmasky = (1<<tmh_l2) - 1;
@@ -685,7 +685,7 @@ void wecleman_state::draw_cloud(bitmap_rgb32 &bitmap,
 
 	dst_base = &bitmap.pix32(y0+dy, x0+dx);
 
-	pal_base = m_palette->pens() + pal_offset * gfx->granularity();
+	pal_base = m_palette->pens() + pal_offset * gfx->m_color_granularity;
 
 	alpha <<= 6;
 
@@ -706,7 +706,7 @@ void wecleman_state::draw_cloud(bitmap_rgb32 &bitmap,
 			UINT16 tile_color = ((tiledata >> 5) & 0x78) + (tiledata >> 12);
 
 			src_ptr = gfx->get_data(tile_index);
-			pal_ptr = pal_base + tile_color * gfx->granularity();
+			pal_ptr = pal_base + tile_color * gfx->m_color_granularity;
 			dst_ptr = dst_base + j * tilew;
 
 			/* alpha case */

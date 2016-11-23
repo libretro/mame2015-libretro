@@ -101,7 +101,7 @@ void toaplan_scu_device::draw_sprites_to_tempbitmap(const rectangle &cliprect, U
 void toaplan_scu_device::copy_sprites_from_tempbitmap(bitmap_ind16 &bitmap, const rectangle &cliprect, int priority)
 {
 	int y, x;
-	int colourbase = m_gfx[0]->colorbase();
+	int colourbase = m_gfx[0]->m_color_base;
 
 	for (y=cliprect.min_y;y<=cliprect.max_y;y++)
 	{

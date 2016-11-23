@@ -66,14 +66,14 @@ PALETTE_INIT_MEMBER(bankp_state, bankp)
 	/* color_prom now points to the beginning of the lookup table */
 
 	/* charset #1 lookup table */
-	for (i = 0; i < m_gfxdecode->gfx(0)->colors() * m_gfxdecode->gfx(0)->granularity(); i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(0)->colorbase() + i, *color_prom++ & 0x0f);
+	for (i = 0; i < m_gfxdecode->gfx(0)->m_total_colors * m_gfxdecode->gfx(0)->m_color_granularity; i++)
+		palette.set_pen_indirect(m_gfxdecode->gfx(0)->m_color_base + i, *color_prom++ & 0x0f);
 
 	color_prom += 128;  /* skip the bottom half of the PROM - seems to be not used */
 
 	/* charset #2 lookup table */
-	for (i = 0; i < m_gfxdecode->gfx(1)->colors() * m_gfxdecode->gfx(1)->granularity(); i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->colorbase() + i, *color_prom++ & 0x0f);
+	for (i = 0; i < m_gfxdecode->gfx(1)->m_total_colors * m_gfxdecode->gfx(1)->m_color_granularity; i++)
+		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + i, *color_prom++ & 0x0f);
 
 	/* the bottom half of the PROM seems to be not used */
 }

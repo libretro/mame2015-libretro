@@ -50,20 +50,20 @@ PALETTE_INIT_MEMBER(vulgus_state, vulgus)
 
 
 	/* characters use colors 32-47 (?) */
-	for (i = 0;i < m_gfxdecode->gfx(0)->colors() * m_gfxdecode->gfx(0)->granularity();i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(0)->colorbase() + i, 32 + *color_prom++);
+	for (i = 0;i < m_gfxdecode->gfx(0)->m_total_colors * m_gfxdecode->gfx(0)->m_color_granularity;i++)
+		palette.set_pen_indirect(m_gfxdecode->gfx(0)->m_color_base + i, 32 + *color_prom++);
 
 	/* sprites use colors 16-31 */
-	for (i = 0;i < m_gfxdecode->gfx(2)->colors() * m_gfxdecode->gfx(2)->granularity();i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(2)->colorbase() + i, 16 + *color_prom++);
+	for (i = 0;i < m_gfxdecode->gfx(2)->m_total_colors * m_gfxdecode->gfx(2)->m_color_granularity;i++)
+		palette.set_pen_indirect(m_gfxdecode->gfx(2)->m_color_base + i, 16 + *color_prom++);
 
 	/* background tiles use colors 0-15, 64-79, 128-143, 192-207 in four banks */
-	for (i = 0;i < m_gfxdecode->gfx(1)->colors() * m_gfxdecode->gfx(1)->granularity() / 4;i++)
+	for (i = 0;i < m_gfxdecode->gfx(1)->m_total_colors * m_gfxdecode->gfx(1)->m_color_granularity / 4;i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->colorbase() + 0*32*8 + i, *color_prom);
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->colorbase() + 1*32*8 + i, *color_prom + 64);
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->colorbase() + 2*32*8 + i, *color_prom + 128);
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->colorbase() + 3*32*8 + i, *color_prom + 192);
+		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + 0*32*8 + i, *color_prom);
+		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + 1*32*8 + i, *color_prom + 64);
+		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + 2*32*8 + i, *color_prom + 128);
+		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + 3*32*8 + i, *color_prom + 192);
 		color_prom++;
 	}
 }

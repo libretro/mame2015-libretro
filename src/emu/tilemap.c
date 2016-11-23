@@ -85,9 +85,9 @@ inline bool tilemap_t::gfx_elements_changed()
 	// iterate over all used gfx types and set the dirty flag if any of them have changed
 	for (int gfxnum = 0; usedmask != 0; usedmask >>= 1, gfxnum++)
 		if ((usedmask & 1) != 0)
-			if (m_gfx_dirtyseq[gfxnum] != m_tileinfo.decoder->gfx(gfxnum)->dirtyseq())
+			if (m_gfx_dirtyseq[gfxnum] != m_tileinfo.decoder->gfx(gfxnum)->m_dirtyseq)
 			{
-				m_gfx_dirtyseq[gfxnum] = m_tileinfo.decoder->gfx(gfxnum)->dirtyseq();
+				m_gfx_dirtyseq[gfxnum] = m_tileinfo.decoder->gfx(gfxnum)->m_dirtyseq;
 				isdirty = true;
 			}
 
@@ -535,10 +535,10 @@ void tilemap_t::configure_groups(gfx_element &gfx, int transcolor)
 {
 	int color;
 
-	assert(gfx.colors() <= TILEMAP_NUM_GROUPS);
+	assert(gfx.m_total_colors <= TILEMAP_NUM_GROUPS);
 
 	// iterate over all colors in the tilemap
-	for (color = 0; color < gfx.colors(); color++)
+	for (color = 0; color < gfx.m_total_colors; color++)
 		set_transmask(color, m_palette->transpen_mask(gfx, color, transcolor), 0);
 }
 
@@ -762,7 +762,7 @@ void tilemap_t::tile_update(logical_index logindex, UINT32 col, UINT32 row)
 	if (m_tileinfo.gfxnum != 0xff && (m_gfx_used & (1 << m_tileinfo.gfxnum)) == 0)
 	{
 		m_gfx_used |= 1 << m_tileinfo.gfxnum;
-		m_gfx_dirtyseq[m_tileinfo.gfxnum] = m_tileinfo.decoder->gfx(m_tileinfo.gfxnum)->dirtyseq();
+		m_gfx_dirtyseq[m_tileinfo.gfxnum] = m_tileinfo.decoder->gfx(m_tileinfo.gfxnum)->m_dirtyseq;
 	}
 
 }

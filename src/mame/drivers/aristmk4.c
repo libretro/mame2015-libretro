@@ -373,7 +373,7 @@ static const UINT8 cashcade_p[] ={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0
 void aristmk4_state::video_start()
 {
 	int tile;
-	for (tile = 0; tile < m_gfxdecode->gfx(0)->elements(); tile++)
+	for (tile = 0; tile < m_gfxdecode->gfx(0)->m_total_elements; tile++)
 	{
 		m_gfxdecode->gfx(0)->get_data(tile);
 	}

@@ -595,14 +595,14 @@ do {                                                                            
 		assert(dest.valid());                                                           \
 		assert(gfx != NULL);                                                            \
 		assert(dest.cliprect().contains(cliprect));                                     \
-		assert(code < gfx->elements());                                             \
+		assert(code < gfx->m_total_elements);                                             \
 																						\
 		/* ignore empty/invalid cliprects */                                            \
 		if (cliprect.empty())                                                           \
 			break;                                                                      \
 																						\
 		/* compute final pixel in X and exit if we are entirely clipped */              \
-		destendx = destx + gfx->width() - 1;                                                \
+		destendx = destx + gfx->m_width - 1;                                                \
 		if (destx > cliprect.max_x || destendx < cliprect.min_x)                        \
 			break;                                                                      \
 																						\
@@ -619,7 +619,7 @@ do {                                                                            
 			destendx = cliprect.max_x;                                                  \
 																						\
 		/* compute final pixel in Y and exit if we are entirely clipped */              \
-		destendy = desty + gfx->height() - 1;                                               \
+		destendy = desty + gfx->m_height - 1;                                               \
 		if (desty > cliprect.max_y || destendy < cliprect.min_y)                        \
 			break;                                                                      \
 																						\
@@ -637,13 +637,13 @@ do {                                                                            
 																						\
 		/* apply X flipping */                                                          \
 		if (flipx)                                                                      \
-			srcx = gfx->width() - 1 - srcx;                                             \
+			srcx = gfx->m_width - 1 - srcx;                                             \
 																						\
 		/* apply Y flipping */                                                          \
-		dy = gfx->rowbytes();                                                           \
+		dy = gfx->m_line_modulo;                                                           \
 		if (flipy)                                                                      \
 		{                                                                               \
-			srcy = gfx->height() - 1 - srcy;                                                \
+			srcy = gfx->m_height - 1 - srcy;                                                \
 			dy = -dy;                                                                   \
 		}                                                                               \
 																						\
@@ -655,7 +655,7 @@ do {                                                                            
 		UINT32 leftovers = (destendx + 1 - destx) - 4 * numblocks;                  \
 																					\
 		/* adjust srcdata to point to the first source pixel of the row */          \
-		srcdata += srcy * gfx->rowbytes() + srcx;                                   \
+		srcdata += srcy * gfx->m_line_modulo + srcx;                                   \
 																					\
 		/* non-flipped 8bpp case */                                                 \
 		if (!flipx)                                                                 \
@@ -745,8 +745,8 @@ while (0)
 void coolridr_state::coolriders_drawgfx_opaque(bitmap_ind16 &dest, const rectangle &cliprect, gfx_element *gfx,
 		UINT32 code, UINT32 color, int flipx, int flipy, INT32 destx, INT32 desty)
 {
-	const pen_t *paldata = &m_tilepals[gfx->colorbase() + gfx->granularity() * (color % gfx->colors())];
-	code %= gfx->elements();
+	const pen_t *paldata = &m_tilepals[gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors)];
+	code %= gfx->m_total_elements;
 	COOLRIDERS_DRAWGFX_CORE(UINT16, COOLRIDERS_PIXEL_OP_REMAP_OPAQUE);
 }
 
@@ -759,7 +759,7 @@ void coolridr_state::coolriders_drawgfx_transpen(bitmap_ind16 &dest, const recta
 		return coolriders_drawgfx_opaque(dest, cliprect, gfx, code, color, flipx, flipy, destx, desty);
 
 	// use pen usage to optimize
-	code %= gfx->elements();
+	code %= gfx->m_total_elements;
 	if (gfx->has_pen_usage())
 	{
 		// fully transparent; do nothing
@@ -773,7 +773,7 @@ void coolridr_state::coolriders_drawgfx_transpen(bitmap_ind16 &dest, const recta
 	}
 
 	// render
-		const pen_t *paldata = &m_tilepals[gfx->colorbase() + gfx->granularity() * (color % gfx->colors())] ;
+		const pen_t *paldata = &m_tilepals[gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors)] ;
 	COOLRIDERS_DRAWGFX_CORE(UINT16, COOLRIDERS_PIXEL_OP_REMAP_TRANSPEN);
 }
 

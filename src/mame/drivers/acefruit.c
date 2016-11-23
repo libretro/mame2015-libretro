@@ -152,7 +152,7 @@ UINT32 acefruit_state::screen_update_acefruit(screen_device &screen, bitmap_ind1
 					for( y = 0; y < 8; y++ )
 					{
 						UINT16 *dst = &bitmap.pix16(y + ( row * 8 ), x + ( col * 16 ) );
-						*( dst ) = *( gfxdata + ( ( spriterow + y ) * gfx->rowbytes() ) + ( ( spriteindex % 64 ) >> 1 ) );
+						*( dst ) = *( gfxdata + ( ( spriterow + y ) * gfx->m_line_modulo ) + ( ( spriteindex % 64 ) >> 1 ) );
 					}
 
 					spriteindex += spritesize;

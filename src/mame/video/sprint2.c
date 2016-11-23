@@ -157,8 +157,8 @@ void sprint2_state::screen_eof_sprint2(screen_device &screen, bool state)
 
 			rect.min_x = get_sprite_x(video_ram, i);
 			rect.min_y = get_sprite_y(video_ram, i);
-			rect.max_x = get_sprite_x(video_ram, i) + m_gfxdecode->gfx(1)->width() - 1;
-			rect.max_y = get_sprite_y(video_ram, i) + m_gfxdecode->gfx(1)->height() - 1;
+			rect.max_x = get_sprite_x(video_ram, i) + m_gfxdecode->gfx(1)->m_width - 1;
+			rect.max_y = get_sprite_y(video_ram, i) + m_gfxdecode->gfx(1)->m_height - 1;
 
 			rect &= visarea;
 

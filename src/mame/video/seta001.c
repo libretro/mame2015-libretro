@@ -217,7 +217,7 @@ void seta001_device::draw_background( bitmap_ind16 &bitmap, const rectangle &cli
 	int offs, col;
 	int xoffs, yoffs;
 
-	int total_color_codes   =   m_gfxdecode->gfx(0)->colors();
+	int total_color_codes   =   m_gfxdecode->gfx(0)->m_total_colors;
 
 	int ctrl    =   m_spritectrl[0];
 	int ctrl2   =   m_spritectrl[1];
@@ -337,7 +337,7 @@ void seta001_device::draw_foreground( screen_device &screen, bitmap_ind16 &bitma
 	int ctrl2 = m_spritectrl[1];
 	int xoffs, yoffs;
 
-	int total_color_codes   =   m_gfxdecode->gfx(0)->colors();
+	int total_color_codes   =   m_gfxdecode->gfx(0)->m_total_colors;
 
 	UINT8 *char_pointer = m_spritecodelow + 0x0000;
 	UINT8 *x_pointer = m_spritecodelow + 0x0200;

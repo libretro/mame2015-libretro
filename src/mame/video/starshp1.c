@@ -381,8 +381,8 @@ void starshp1_state::screen_eof_starshp1(screen_device &screen, bool state)
 
 		rect.min_x = get_sprite_hpos(13);
 		rect.min_y = get_sprite_vpos(13);
-		rect.max_x = rect.min_x + m_gfxdecode->gfx(1)->width() - 1;
-		rect.max_y = rect.min_y + m_gfxdecode->gfx(1)->height() - 1;
+		rect.max_x = rect.min_x + m_gfxdecode->gfx(1)->m_width - 1;
+		rect.max_y = rect.min_y + m_gfxdecode->gfx(1)->m_height - 1;
 
 		rect &= m_helper.cliprect();
 

@@ -144,13 +144,13 @@ inline const UINT8 *bbusters_state::get_source_ptr(gfx_element *gfx, UINT32 spri
 		break;
 	}
 
-	return gfx->get_data((sprite+code) % gfx->elements()) + ((dy%16) * gfx->rowbytes());
+	return gfx->get_data((sprite+code) % gfx->m_total_elements) + ((dy%16) * gfx->m_line_modulo);
 }
 
 void bbusters_state::draw_block(bitmap_ind16 &dest,int x,int y,int size,int flipx,int flipy,UINT32 sprite,int color,int bank,int block)
 {
 	gfx_element *gfx = m_gfxdecode->gfx(bank);
-	pen_t pen_base = gfx->colorbase() + gfx->granularity() * (color % gfx->colors());
+	pen_t pen_base = gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors);
 	UINT32 xinc=(m_scale_line_count * 0x10000 ) / size;
 	UINT8 pixel;
 	int x_index;

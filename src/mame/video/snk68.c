@@ -188,7 +188,7 @@ void snk68_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, 
 	// pow has 0x4000 tiles and independent x/y flipping
 	// the other games have > 0x4000 tiles and flipping in only one direction
 	// (globally selected)
-	int const is_pow = (m_gfxdecode->gfx(1)->elements() <= 0x4000);
+	int const is_pow = (m_gfxdecode->gfx(1)->m_total_elements <= 0x4000);
 	int offs;
 
 	for (offs = 0; offs < 0x800; offs += 0x40)

@@ -430,7 +430,7 @@ VIDEO_START_MEMBER(galaxold_state,galaxold_plain)
 
 	m_bg_tilemap->set_scroll_cols(32);
 
-	m_color_mask = (m_gfxdecode->gfx(0)->granularity() == 4) ? 7 : 3;
+	m_color_mask = (m_gfxdecode->gfx(0)->m_color_granularity == 4) ? 7 : 3;
 }
 
 VIDEO_START_MEMBER(galaxold_state,galaxold)
@@ -733,7 +733,7 @@ VIDEO_START_MEMBER(galaxold_state,harem)
 
 	m_bg_tilemap->set_scroll_cols(32);
 
-	m_color_mask = (m_gfxdecode->gfx(0)->granularity() == 4) ? 7 : 3;
+	m_color_mask = (m_gfxdecode->gfx(0)->m_color_granularity == 4) ? 7 : 3;
 
 	m_modify_spritecode = &galaxold_state::harem_modify_spritecode;
 }

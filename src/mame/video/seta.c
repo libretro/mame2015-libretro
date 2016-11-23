@@ -751,8 +751,8 @@ void seta_state::draw_tilemap_palette_effect(bitmap_ind16 &bitmap, const rectang
 	gfx_element *gfx_tilemap = m_gfxdecode->gfx(gfxnum);
 	const bitmap_ind16 &src_bitmap = tilemap->pixmap();
 	int width_mask, height_mask;
-	int opaque_mask = gfx_tilemap->granularity() - 1;
-	int pixel_effect_mask = gfx_tilemap->colorbase() + (gfx_tilemap->colors() - 1) * gfx_tilemap->granularity();
+	int opaque_mask = gfx_tilemap->m_color_granularity - 1;
+	int pixel_effect_mask = gfx_tilemap->m_color_base + (gfx_tilemap->m_total_colors - 1) * gfx_tilemap->m_color_granularity;
 	int p;
 
 	width_mask = src_bitmap.width() - 1;

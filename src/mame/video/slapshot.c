@@ -330,7 +330,7 @@ void slapshot_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, 
 		{
 			sprite_ptr->code = code;
 			sprite_ptr->color = color;
-			if (m_gfxdecode->gfx(0)->granularity() == 64)    /* Final Blow, Slapshot are 6bpp */
+			if (m_gfxdecode->gfx(0)->m_color_granularity == 64)    /* Final Blow, Slapshot are 6bpp */
 				sprite_ptr->color /= 4;
 			sprite_ptr->flipx = flipx;
 			sprite_ptr->flipy = flipy;

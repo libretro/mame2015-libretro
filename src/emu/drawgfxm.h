@@ -407,7 +407,7 @@ do {                                                                            
 			break;                                                                      \
 																						\
 		/* compute final pixel in X and exit if we are entirely clipped */              \
-		destendx = destx + width() - 1;                                                \
+		destendx = destx + m_width - 1;                                                \
 		if (destx > cliprect.max_x || destendx < cliprect.min_x)                        \
 			break;                                                                      \
 																						\
@@ -424,7 +424,7 @@ do {                                                                            
 			destendx = cliprect.max_x;                                                  \
 																						\
 		/* compute final pixel in Y and exit if we are entirely clipped */              \
-		destendy = desty + height() - 1;                                               \
+		destendy = desty + m_height - 1;                                               \
 		if (desty > cliprect.max_y || destendy < cliprect.min_y)                        \
 			break;                                                                      \
 																						\
@@ -442,13 +442,13 @@ do {                                                                            
 																						\
 		/* apply X flipping */                                                          \
 		if (flipx)                                                                      \
-			srcx = width() - 1 - srcx;                                             \
+			srcx = m_width - 1 - srcx;                                             \
 																						\
 		/* apply Y flipping */                                                          \
-		dy = rowbytes();                                                           \
+		dy = m_line_modulo;                                                           \
 		if (flipy)                                                                      \
 		{                                                                               \
-			srcy = height() - 1 - srcy;                                                \
+			srcy = m_height - 1 - srcy;                                                \
 			dy = -dy;                                                                   \
 		}                                                                               \
 																						\
@@ -460,7 +460,7 @@ do {                                                                            
 		UINT32 leftovers = (destendx + 1 - destx) - 4 * numblocks;                  \
 																					\
 		/* adjust srcdata to point to the first source pixel of the row */          \
-		srcdata += srcy * rowbytes() + srcx;                                   \
+		srcdata += srcy * m_line_modulo + srcx;                                   \
 																					\
 		/* non-flipped 8bpp case */                                                 \
 		if (!flipx)                                                                 \
@@ -577,14 +577,14 @@ do {                                                                            
 			break;                                                                      \
 																						\
 		/* compute scaled size */                                                       \
-		dstwidth = (scalex * width() + 0x8000) >> 16;                              \
-		dstheight = (scaley * height() + 0x8000) >> 16;                                \
+		dstwidth = (scalex * m_width + 0x8000) >> 16;                              \
+		dstheight = (scaley * m_height + 0x8000) >> 16;                                \
 		if (dstwidth < 1 || dstheight < 1)                                              \
 			break;                                                                      \
 																						\
 		/* compute 16.16 source steps in dx and dy */                                   \
-		dx = (width() << 16) / dstwidth;                                               \
-		dy = (height() << 16) / dstheight;                                         \
+		dx = (m_width << 16) / dstwidth;                                               \
+		dy = (m_height << 16) / dstheight;                                         \
 																						\
 		/* compute final pixel in X and exit if we are entirely clipped */              \
 		destendx = destx + dstwidth - 1;                                                \
@@ -648,7 +648,7 @@ do {                                                                            
 		{                                                                           \
 			PRIORITY_TYPE *priptr = PRIORITY_ADDR(priority, PRIORITY_TYPE, cury, destx); \
 			PIXEL_TYPE *destptr = &dest.pixt<PIXEL_TYPE>(cury, destx);              \
-			const UINT8 *srcptr = srcdata + (srcy >> 16) * rowbytes();     \
+			const UINT8 *srcptr = srcdata + (srcy >> 16) * m_line_modulo;     \
 			INT32 cursrcx = srcx;                                                   \
 			srcy += dy;                                                             \
 																					\

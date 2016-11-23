@@ -320,17 +320,17 @@ void limenko_state::draw_single_sprite(bitmap_ind16 &dest_bmp,const rectangle &c
 		UINT32 code,UINT32 color,int flipx,int flipy,int sx,int sy,
 		int priority)
 {
-	int pal_base = gfx->colorbase() + gfx->granularity() * (color % gfx->colors());
-	const UINT8 *source_base = gfx->get_data(code % gfx->elements());
+	int pal_base = gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors);
+	const UINT8 *source_base = gfx->get_data(code % gfx->m_total_elements);
 
-	int sprite_screen_height = ((1<<16)*gfx->height()+0x8000)>>16;
-	int sprite_screen_width = ((1<<16)*gfx->width()+0x8000)>>16;
+	int sprite_screen_height = ((1<<16)*gfx->m_height+0x8000)>>16;
+	int sprite_screen_width = ((1<<16)*gfx->m_width+0x8000)>>16;
 
 	if (sprite_screen_width && sprite_screen_height)
 	{
 		/* compute sprite increment per screen pixel */
-		int dx = (gfx->width()<<16)/sprite_screen_width;
-		int dy = (gfx->height()<<16)/sprite_screen_height;
+		int dx = (gfx->m_width<<16)/sprite_screen_width;
+		int dy = (gfx->m_height<<16)/sprite_screen_height;
 
 		int ex = sx+sprite_screen_width;
 		int ey = sy+sprite_screen_height;
@@ -388,7 +388,7 @@ void limenko_state::draw_single_sprite(bitmap_ind16 &dest_bmp,const rectangle &c
 
 			for( y=sy; y<ey; y++ )
 			{
-				const UINT8 *source = source_base + (y_index>>16) * gfx->rowbytes();
+				const UINT8 *source = source_base + (y_index>>16) * gfx->m_line_modulo;
 				UINT16 *dest = &dest_bmp.pix16(y);
 				UINT8 *pri = &m_sprites_bitmap_pri.pix8(y);
 

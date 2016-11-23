@@ -58,13 +58,13 @@ PALETTE_INIT_MEMBER(gaplus_state, gaplus)
 	/* color_prom now points to the beginning of the lookup table */
 
 	/* characters use colors 0xf0-0xff */
-	for (i = 0;i < m_gfxdecode->gfx(0)->colors() * m_gfxdecode->gfx(0)->granularity();i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(0)->colorbase() + i, 0xf0 + (*color_prom++ & 0x0f));
+	for (i = 0;i < m_gfxdecode->gfx(0)->m_total_colors * m_gfxdecode->gfx(0)->m_color_granularity;i++)
+		palette.set_pen_indirect(m_gfxdecode->gfx(0)->m_color_base + i, 0xf0 + (*color_prom++ & 0x0f));
 
 	/* sprites */
-	for (i = 0;i < m_gfxdecode->gfx(1)->colors() * m_gfxdecode->gfx(1)->granularity();i++)
+	for (i = 0;i < m_gfxdecode->gfx(1)->m_total_colors * m_gfxdecode->gfx(1)->m_color_granularity;i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->colorbase() + i, (color_prom[0] & 0x0f) + ((color_prom[0x200] & 0x0f) << 4));
+		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + i, (color_prom[0] & 0x0f) + ((color_prom[0x200] & 0x0f) << 4));
 		color_prom++;
 	}
 }

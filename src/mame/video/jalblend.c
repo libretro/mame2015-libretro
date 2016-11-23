@@ -101,25 +101,25 @@ void jaleco_blend_device::drawgfx_common(palette_device &palette,_BitmapClass &d
 							int transparent_color)
 {
 	/* Start drawing */
-	const pen_t *pal = &palette.pen(gfx->colorbase() + gfx->granularity() * (color % gfx->colors()));
-	const UINT8 *alpha = &m_table[gfx->granularity() * (color % gfx->colors())];
-	const UINT8 *source_base = gfx->get_data(code % gfx->elements());
+	const pen_t *pal = &palette.pen(gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors));
+	const UINT8 *alpha = &m_table[gfx->m_color_granularity * (color % gfx->m_total_colors)];
+	const UINT8 *source_base = gfx->get_data(code % gfx->m_total_elements);
 	int x_index_base, y_index, sx, sy, ex, ey;
 	int xinc, yinc;
 
 	xinc = flipx ? -1 : 1;
 	yinc = flipy ? -1 : 1;
 
-	x_index_base = flipx ? gfx->width()-1 : 0;
-	y_index = flipy ? gfx->height()-1 : 0;
+	x_index_base = flipx ? gfx->m_width-1 : 0;
+	y_index = flipy ? gfx->m_height-1 : 0;
 
 	// start coordinates
 	sx = offsx;
 	sy = offsy;
 
 	// end coordinates
-	ex = sx + gfx->width();
-	ey = sy + gfx->height();
+	ex = sx + gfx->m_width;
+	ey = sy + gfx->m_height;
 
 	if (sx < clip.min_x)
 	{ // clip left
@@ -150,7 +150,7 @@ void jaleco_blend_device::drawgfx_common(palette_device &palette,_BitmapClass &d
 		// taken from case 7: TRANSPARENCY_ALPHARANGE
 		for (y = sy; y < ey; y++)
 		{
-			const UINT8 *source = source_base + y_index*gfx->rowbytes();
+			const UINT8 *source = source_base + y_index*gfx->m_line_modulo;
 			typename _BitmapClass::pixel_t *dest = &dest_bmp.pix(y);
 			int x_index = x_index_base;
 			for (x = sx; x < ex; x++)

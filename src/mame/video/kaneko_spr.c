@@ -237,16 +237,16 @@ void kaneko16_sprite_device::kaneko16_draw_sprites_custom(_BitmapClass &dest_bmp
 		UINT32 code,UINT32 color,int flipx,int flipy,int sx,int sy,
 		bitmap_ind8 &priority_bitmap, int priority)
 {
-	pen_t pen_base = gfx->colorbase() + gfx->granularity() * (color % gfx->colors());
-	const UINT8 *source_base = gfx->get_data(code % gfx->elements());
-	int sprite_screen_height = ((1<<16)*gfx->height()+0x8000)>>16;
-	int sprite_screen_width = ((1<<16)*gfx->width()+0x8000)>>16;
+	pen_t pen_base = gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors);
+	const UINT8 *source_base = gfx->get_data(code % gfx->m_total_elements);
+	int sprite_screen_height = ((1<<16)*gfx->m_height +0x8000)>>16;
+	int sprite_screen_width = ((1<<16)*gfx->m_width +0x8000)>>16;
 
 	if (sprite_screen_width && sprite_screen_height)
 	{
 		/* compute sprite increment per screen pixel */
-		int dx = (gfx->width()<<16)/sprite_screen_width;
-		int dy = (gfx->height()<<16)/sprite_screen_height;
+		int dx = (gfx->m_width <<16)/sprite_screen_width;
+		int dy = (gfx->m_height <<16)/sprite_screen_height;
 
 		int ex = sx+sprite_screen_width;
 		int ey = sy+sprite_screen_height;
@@ -306,11 +306,11 @@ void kaneko16_sprite_device::kaneko16_draw_sprites_custom(_BitmapClass &dest_bmp
 			if (sizeof(*dest) == 2) rgb = 0;
 			else rgb = 1;
 
-			const pen_t *pal = gfx->palette()->pens();
+			const pen_t *pal = gfx->m_palette->pens();
 
 			for (int y = sy; y < ey; y++)
 			{
-				const UINT8 *source = source_base + (y_index >> 16) * gfx->rowbytes();
+				const UINT8 *source = source_base + (y_index >> 16) * gfx->m_line_modulo;
 				dest = &dest_bmp.pix(y);
 				UINT8 *pri = &priority_bitmap.pix8(y);
 
@@ -574,7 +574,7 @@ void kaneko16_sprite_device::kaneko16_copybitmap(bitmap_ind16 &bitmap, const rec
 
 void kaneko16_sprite_device::kaneko16_copybitmap(bitmap_rgb32 &bitmap, const rectangle &cliprect)
 {
-	const pen_t *pal = m_gfxdecode->gfx(0)->palette()->pens();
+	const pen_t *pal = m_gfxdecode->gfx(0)->m_palette->pens();
 	UINT16* srcbitmap;
 	UINT32* dstbitmap;
 

@@ -251,11 +251,11 @@ void mediagx_state::draw_char(bitmap_rgb32 &bitmap, const rectangle &cliprect, g
 		{
 			UINT8 pen = dp[index++];
 			if (pen)
-				p[i] = pens[gfx->colorbase() + (att & 0xf)];
+				p[i] = pens[gfx->m_color_base + (att & 0xf)];
 			else
 			{
 				if (((att >> 4) & 7) > 0)
-					p[i] = pens[gfx->colorbase() + ((att >> 4) & 0x7)];
+					p[i] = pens[gfx->m_color_base + ((att >> 4) & 0x7)];
 			}
 		}
 	}

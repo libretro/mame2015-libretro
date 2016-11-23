@@ -117,8 +117,7 @@ TILEMAP_MAPPER_MEMBER( ygv608_device::get_tile_offset )
 	return( ( col << 6 ) | row );
 }
 
-#define layout_total(x) \
-(m_gfxdecode->gfx(x)->elements())
+#define layout_total(x) (m_gfxdecode->gfx(x)->m_total_elements)
 
 TILE_GET_INFO_MEMBER( ygv608_device::get_tile_info_A_8 )
 {

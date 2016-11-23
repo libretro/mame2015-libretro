@@ -160,9 +160,9 @@ UINT32 fcombat_state::screen_update_fcombat(screen_device &screen, bitmap_ind16 
 
 		if (m_cocktail_flip)
 		{
-			x = 64 * 8 - gfx->width() - x;
-			y = 32 * 8 - gfx->height() - y;
-			if (wide) y -= gfx->height();
+			x = 64 * 8 - gfx->m_width - x;
+			y = 32 * 8 - gfx->m_height - y;
+			if (wide) y -= gfx->m_height;
 			xflip = !xflip;
 			yflip = !yflip;
 		}
@@ -174,14 +174,14 @@ UINT32 fcombat_state::screen_update_fcombat(screen_device &screen, bitmap_ind16 
 			else
 				code &= ~0x10, code2 |= 0x10;
 
-				gfx->transpen(bitmap,cliprect, code2, color, xflip, yflip, x, y + gfx->height(), 0);
+				gfx->transpen(bitmap,cliprect, code2, color, xflip, yflip, x, y + gfx->m_height, 0);
 		}
 
 		if(flags&0x10)
 		{
-				gfx->transpen(bitmap,cliprect, code2 + 16, color, xflip, yflip, x, y + gfx->height(), 0);
-				gfx->transpen(bitmap,cliprect, code2 + 16 * 2, color, xflip, yflip, x, y + 2 * gfx->height(), 0);
-				gfx->transpen(bitmap,cliprect, code2 + 16 * 3, color, xflip, yflip, x, y + 3 * gfx->height(), 0);
+				gfx->transpen(bitmap,cliprect, code2 + 16, color, xflip, yflip, x, y + gfx->m_height, 0);
+				gfx->transpen(bitmap,cliprect, code2 + 16 * 2, color, xflip, yflip, x, y + 2 * gfx->m_height, 0);
+				gfx->transpen(bitmap,cliprect, code2 + 16 * 3, color, xflip, yflip, x, y + 3 * gfx->m_height, 0);
 
 		}
 

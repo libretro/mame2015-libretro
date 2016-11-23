@@ -316,9 +316,9 @@ UINT32 deco32_state::screen_update_fghthist(screen_device &screen, bitmap_rgb32 
 void deco32_state::mixDualAlphaSprites(screen_device &screen, bitmap_rgb32 &bitmap, const rectangle &cliprect, gfx_element *gfx0, gfx_element *gfx1, int mixAlphaTilemap)
 {
 	const pen_t *pens = m_palette->pens();
-	const pen_t *pal0 = &pens[gfx0->colorbase()];
-	const pen_t *pal1 = &pens[gfx1->colorbase()];
-	const pen_t *pal2 = &pens[m_gfxdecode->gfx((m_pri&1) ? 1 : 2)->colorbase()];
+	const pen_t *pal0 = &pens[gfx0->m_color_base];
+	const pen_t *pal1 = &pens[gfx1->m_color_base];
+	const pen_t *pal2 = &pens[m_gfxdecode->gfx((m_pri&1) ? 1 : 2)->m_color_base];
 	int x,y;
 	bitmap_ind16& sprite0_mix_bitmap = machine().device<decospr_device>("spritegen1")->get_sprite_temp_bitmap();
 	bitmap_ind16& sprite1_mix_bitmap = machine().device<decospr_device>("spritegen2")->get_sprite_temp_bitmap();
@@ -337,8 +337,8 @@ void deco32_state::mixDualAlphaSprites(screen_device &screen, bitmap_rgb32 &bitm
 			UINT16 priColAlphaPal1=sprite1[x];
 			UINT16 pri0=(priColAlphaPal0&0x6000)>>13;
 			UINT16 pri1=(priColAlphaPal1&0x6000)>>13;
-			UINT16 col0=((priColAlphaPal0&0x1f00)>>8) % gfx0->colors();
-			UINT16 col1=((priColAlphaPal1&0x0f00)>>8) % gfx1->colors();
+			UINT16 col0=((priColAlphaPal0&0x1f00)>>8) % gfx0->m_total_colors;
+			UINT16 col1=((priColAlphaPal1&0x0f00)>>8) % gfx1->m_total_colors;
 			UINT16 alpha1=priColAlphaPal1&0x8000;
 
 			// Apply sprite bitmap 0 according to priority rules
@@ -354,17 +354,17 @@ void deco32_state::mixDualAlphaSprites(screen_device &screen, bitmap_rgb32 &bitm
 				*/
 				if ((pri0&0x3)==0 || (pri0&0x3)==1 || ((pri0&0x3)==2 && mixAlphaTilemap)) // Spri0 on top of everything, or under alpha playfield
 				{
-					destLine[x]=pal0[(priColAlphaPal0&0xff) + (gfx0->granularity() * col0)];
+					destLine[x]=pal0[(priColAlphaPal0&0xff) + (gfx0->m_color_granularity * col0)];
 				}
 				else if ((pri0&0x3)==2) // Spri0 under top playfield
 				{
 					if (tilemapPri[x]<4)
-						destLine[x]=pal0[(priColAlphaPal0&0xff) + (gfx0->granularity() * col0)];
+						destLine[x]=pal0[(priColAlphaPal0&0xff) + (gfx0->m_color_granularity * col0)];
 				}
 				else // Spri0 under top & middle playfields
 				{
 					if (tilemapPri[x]<2)
-						destLine[x]=pal0[(priColAlphaPal0&0xff) + (gfx0->granularity() * col0)];
+						destLine[x]=pal0[(priColAlphaPal0&0xff) + (gfx0->m_color_granularity * col0)];
 				}
 			}
 
@@ -394,14 +394,14 @@ void deco32_state::mixDualAlphaSprites(screen_device &screen, bitmap_rgb32 &bitm
 					if (pri1==0 && (((priColAlphaPal0&0xff)==0 || ((pri0&0x3)!=0 && (pri0&0x3)!=1 && (pri0&0x3)!=2))))
 					{
 						if ((m_pri&1)==0 || ((m_pri&1)==1 && tilemapPri[x]<4) || ((m_pri&1)==1 && mixAlphaTilemap))
-							destLine[x]=alpha_blend_r32(destLine[x], pal1[(priColAlphaPal1&0xff) + (gfx1->granularity() * col1)], 0x80);
+							destLine[x]=alpha_blend_r32(destLine[x], pal1[(priColAlphaPal1&0xff) + (gfx1->m_color_granularity * col1)], 0x80);
 					}
 					else if (pri1==1 && ((priColAlphaPal0&0xff)==0 || ((pri0&0x3)!=0 && (pri0&0x3)!=1 && (pri0&0x3)!=2)))
-						destLine[x]=alpha_blend_r32(destLine[x], pal1[(priColAlphaPal1&0xff) + (gfx1->granularity() * col1)], 0x80);
+						destLine[x]=alpha_blend_r32(destLine[x], pal1[(priColAlphaPal1&0xff) + (gfx1->m_color_granularity * col1)], 0x80);
 					else if (pri1==2)// TOdo
-						destLine[x]=alpha_blend_r32(destLine[x], pal1[(priColAlphaPal1&0xff) + (gfx1->granularity() * col1)], 0x80);
+						destLine[x]=alpha_blend_r32(destLine[x], pal1[(priColAlphaPal1&0xff) + (gfx1->m_color_granularity * col1)], 0x80);
 					else if (pri1==3)// TOdo
-						destLine[x]=alpha_blend_r32(destLine[x], pal1[(priColAlphaPal1&0xff) + (gfx1->granularity() * col1)], 0x80);
+						destLine[x]=alpha_blend_r32(destLine[x], pal1[(priColAlphaPal1&0xff) + (gfx1->m_color_granularity * col1)], 0x80);
 				}
 				else
 				{
@@ -411,13 +411,13 @@ void deco32_state::mixDualAlphaSprites(screen_device &screen, bitmap_rgb32 &bitm
 					    Pri 0 - Under sprite 0 pri 0, over all tilemaps
 					*/
 					if (pri1==0 && ((priColAlphaPal0&0xff)==0 || ((pri0&0x3)!=0)))
-						destLine[x]=pal1[(priColAlphaPal1&0xff) + (gfx1->granularity() * col1)];
+						destLine[x]=pal1[(priColAlphaPal1&0xff) + (gfx1->m_color_granularity * col1)];
 					else if (pri1==1) // todo
-						destLine[x]=pal1[(priColAlphaPal1&0xff) + (gfx1->granularity() * col1)];
+						destLine[x]=pal1[(priColAlphaPal1&0xff) + (gfx1->m_color_granularity * col1)];
 					else if (pri1==2) // todo
-						destLine[x]=pal1[(priColAlphaPal1&0xff) + (gfx1->granularity() * col1)];
+						destLine[x]=pal1[(priColAlphaPal1&0xff) + (gfx1->m_color_granularity * col1)];
 					else if (pri1==3) // todo
-						destLine[x]=pal1[(priColAlphaPal1&0xff) + (gfx1->granularity() * col1)];
+						destLine[x]=pal1[(priColAlphaPal1&0xff) + (gfx1->m_color_granularity * col1)];
 				}
 			}
 

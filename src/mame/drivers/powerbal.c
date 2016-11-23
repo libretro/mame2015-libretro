@@ -401,7 +401,7 @@ void powerbal_state::draw_sprites_powerbal(bitmap_ind16 &bitmap, const rectangle
 {
 	UINT16 *spriteram = m_spriteram;
 	int offs;
-	int height = m_gfxdecode->gfx(0)->height();
+	int height = m_gfxdecode->gfx(0)->m_height;
 
 	for (offs = 4; offs < m_spriteram.bytes() / 2; offs += 4)
 	{

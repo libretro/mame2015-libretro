@@ -293,10 +293,10 @@ void tc0100scn_device::device_start()
 	gfx_element *gfx = m_gfxdecode->gfx(m_gfxnum);
 	gfx_element *txt = m_gfxdecode->gfx(m_txnum);
 
-	if (gfx->granularity() == 2)    /* Yuyugogo, Yesnoj */
+	if (gfx->m_color_granularity == 2)    /* Yuyugogo, Yesnoj */
 		gfx->set_granularity(16);
 
-	txt->set_granularity(gfx->granularity());
+	txt->set_granularity(gfx->m_color_granularity);
 
 	set_colbanks(0, 0, 0);  /* standard values, only Wgp & multiscreen games change them */
 									/* we call this here, so that they can be modified at video_start*/

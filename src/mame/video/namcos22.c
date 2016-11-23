@@ -504,14 +504,14 @@ void namcos22_renderer::poly3d_drawsprite(
 )
 {
 	gfx_element *gfx = m_state.m_gfxdecode->gfx(2);
-	int sprite_screen_height = (scaley * gfx->height() + 0x8000) >> 16;
-	int sprite_screen_width = (scalex * gfx->width() + 0x8000) >> 16;
+	int sprite_screen_height = (scaley * gfx->m_height + 0x8000) >> 16;
+	int sprite_screen_width = (scalex * gfx->m_width + 0x8000) >> 16;
 	if (sprite_screen_width && sprite_screen_height)
 	{
 		float fsx = sx;
 		float fsy = sy;
-		float fwidth = gfx->width();
-		float fheight = gfx->height();
+		float fwidth = gfx->m_width;
+		float fheight = gfx->m_height;
 		float fsw = sprite_screen_width;
 		float fsh = sprite_screen_height;
 
@@ -525,12 +525,12 @@ void namcos22_renderer::poly3d_drawsprite(
 		extra.destbase = &dest_bmp;
 		extra.alpha = alpha;
 		extra.prioverchar = 2 | prioverchar;
-		extra.line_modulo = gfx->rowbytes();
+		extra.line_modulo = gfx->m_line_modulo;
 		extra.flipx = flipx;
 		extra.flipy = flipy;
-		extra.pens = &m_state.m_palette->pen(gfx->colorbase() + gfx->granularity() * (color & 0x7f));
+		extra.pens = &m_state.m_palette->pen(gfx->m_color_base + gfx->m_color_granularity * (color & 0x7f));
 		extra.primap = &screen.priority();
-		extra.source = gfx->get_data(code % gfx->elements());
+		extra.source = gfx->get_data(code % gfx->m_total_elements);
 
 		vert[0].x = fsx;
 		vert[0].y = fsy;
@@ -2390,7 +2390,7 @@ void namcos22_state::init_tables()
 	m_pointram = auto_alloc_array_clear(machine(), UINT32, 0x20000);
 
 	// force all texture tiles to be decoded now
-	for (int i = 0; i < m_gfxdecode->gfx(1)->elements(); i++)
+	for (int i = 0; i < m_gfxdecode->gfx(1)->m_total_elements; i++)
 		m_gfxdecode->gfx(1)->get_data(i);
 
 	m_texture_tilemap = (UINT16 *)memregion("textilemap")->base();

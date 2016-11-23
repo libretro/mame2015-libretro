@@ -293,7 +293,7 @@ public:
 
 			color &= 0xffff; // strip attribute flags
 
-			drawmode_table[m_gfx->granularity() - 1] = shadow ? DRAWMODE_SHADOW : DRAWMODE_SOURCE;
+			drawmode_table[m_gfx->m_color_granularity - 1] = shadow ? DRAWMODE_SHADOW : DRAWMODE_SOURCE;
 
 			k053247_draw_yxloop_gx(bitmap, cliprect,
 				code,

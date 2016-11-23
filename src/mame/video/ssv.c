@@ -151,14 +151,14 @@ void ssv_state::drawgfx(bitmap_ind16 &bitmap, const rectangle &cliprect, gfx_ele
 	int sx, x1, dx;
 	int sy, y1, dy;
 
-	addr    =   gfx->get_data(code  % gfx->elements());
-	color   =   gfx->granularity() * (color % gfx->colors());
+	addr    =   gfx->get_data(code  % gfx->m_total_elements);
+	color   =   gfx->m_color_granularity * (color % gfx->m_total_colors);
 
-	if ( flipx )    {   x1 = x0-1;              x0 += gfx->width()-1;       dx = -1;    }
-	else            {   x1 = x0 + gfx->width();                         dx =  1;    }
+	if ( flipx )    {   x1 = x0-1;              x0 += gfx->m_width-1;       dx = -1;    }
+	else            {   x1 = x0 + gfx->m_width;                         dx =  1;    }
 
-	if ( flipy )    {   y1 = y0-1;              y0 += gfx->height()-1;  dy = -1;    }
-	else            {   y1 = y0 + gfx->height();                            dy =  1;    }
+	if ( flipy )    {   y1 = y0-1;              y0 += gfx->m_height-1;  dy = -1;    }
+	else            {   y1 = y0 + gfx->m_height;                            dy =  1;    }
 
 #define SSV_DRAWGFX(SETPIXELCOLOR)                                              \
 	for ( sy = y0; sy != y1; sy += dy )                                         \
@@ -177,7 +177,7 @@ void ssv_state::drawgfx(bitmap_ind16 &bitmap, const rectangle &cliprect, gfx_ele
 			}                                                                   \
 		}                                                                       \
 																				\
-		addr    +=  gfx->rowbytes();                                            \
+		addr    +=  gfx->m_line_modulo;                                            \
 	}
 
 	if (shadow)

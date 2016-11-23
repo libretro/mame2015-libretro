@@ -292,8 +292,8 @@ void mermaid_state::screen_eof_mermaid(screen_device &screen, bool state)
 
 			rect.min_x = sx;
 			rect.min_y = sy;
-			rect.max_x = sx + m_gfxdecode->gfx(1)->width() - 1;
-			rect.max_y = sy + m_gfxdecode->gfx(1)->height() - 1;
+			rect.max_x = sx + m_gfxdecode->gfx(1)->m_width - 1;
+			rect.max_y = sy + m_gfxdecode->gfx(1)->m_height - 1;
 
 			rect &= visarea;
 
@@ -395,8 +395,8 @@ void mermaid_state::screen_eof_mermaid(screen_device &screen, bool state)
 
 			rect.min_x = sx;
 			rect.min_y = sy;
-			rect.max_x = sx + m_gfxdecode->gfx(1)->width() - 1;
-			rect.max_y = sy + m_gfxdecode->gfx(1)->height() - 1;
+			rect.max_x = sx + m_gfxdecode->gfx(1)->m_width - 1;
+			rect.max_y = sy + m_gfxdecode->gfx(1)->m_height - 1;
 
 			rect &= visarea;
 
@@ -476,8 +476,8 @@ void mermaid_state::screen_eof_mermaid(screen_device &screen, bool state)
 
 			rect.min_x = sx;
 			rect.min_y = sy;
-			rect.max_x = sx + m_gfxdecode->gfx(1)->width() - 1;
-			rect.max_y = sy + m_gfxdecode->gfx(1)->height() - 1;
+			rect.max_x = sx + m_gfxdecode->gfx(1)->m_width - 1;
+			rect.max_y = sy + m_gfxdecode->gfx(1)->m_height - 1;
 
 			rect &= visarea;
 

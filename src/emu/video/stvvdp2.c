@@ -2414,17 +2414,17 @@ void saturn_state::stv_vdp2_drawgfxzoom(
 
 	if( gfx )
 	{
-		const pen_t *pal = &m_palette->pen(gfx->colorbase() + gfx->granularity() * (color % gfx->colors()));
-		const UINT8 *source_base = gfx->get_data(code % gfx->elements());
+		const pen_t *pal = &m_palette->pen(gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors));
+		const UINT8 *source_base = gfx->get_data(code % gfx->m_total_elements);
 
-		//int sprite_screen_height = (scaley*gfx->height()+0x8000)>>16;
-		//int sprite_screen_width = (scalex*gfx->width()+0x8000)>>16;
+		//int sprite_screen_height = (scaley*gfx->m_height+0x8000)>>16;
+		//int sprite_screen_width = (scalex*gfx->m_width+0x8000)>>16;
 
 		if (sprite_screen_width && sprite_screen_height)
 		{
 			/* compute sprite increment per screen pixel */
-			//int dx = (gfx->width()<<16)/sprite_screen_width;
-			//int dy = (gfx->height()<<16)/sprite_screen_height;
+			//int dx = (gfx->m_width<<16)/sprite_screen_width;
+			//int dy = (gfx->m_height<<16)/sprite_screen_height;
 			int dx = stv2_current_tilemap.incx;
 			int dy = stv2_current_tilemap.incy;
 
@@ -2487,7 +2487,7 @@ void saturn_state::stv_vdp2_drawgfxzoom(
 				{
 					for( y=sy; y<ey; y++ )
 					{
-						const UINT8 *source = source_base + (y_index>>16) * gfx->rowbytes();
+						const UINT8 *source = source_base + (y_index>>16) * gfx->m_line_modulo;
 						UINT32 *dest = &dest_bmp.pix32(y);
 
 						int x, x_index = x_index_base;
@@ -2505,7 +2505,7 @@ void saturn_state::stv_vdp2_drawgfxzoom(
 				{
 					for( y=sy; y<ey; y++ )
 					{
-						const UINT8 *source = source_base + (y_index>>16) * gfx->rowbytes();
+						const UINT8 *source = source_base + (y_index>>16) * gfx->m_line_modulo;
 						UINT32 *dest = &dest_bmp.pix32(y);
 
 						int x, x_index = x_index_base;
@@ -2526,7 +2526,7 @@ void saturn_state::stv_vdp2_drawgfxzoom(
 				{
 					for( y=sy; y<ey; y++ )
 					{
-						const UINT8 *source = source_base + (y_index>>16) * gfx->rowbytes();
+						const UINT8 *source = source_base + (y_index>>16) * gfx->m_line_modulo;
 						UINT32 *dest = &dest_bmp.pix32(y);
 
 						int x, x_index = x_index_base;
@@ -2547,7 +2547,7 @@ void saturn_state::stv_vdp2_drawgfxzoom(
 				{
 					for( y=sy; y<ey; y++ )
 					{
-						const UINT8 *source = source_base + (y_index>>16) * gfx->rowbytes();
+						const UINT8 *source = source_base + (y_index>>16) * gfx->m_line_modulo;
 						UINT32 *dest = &dest_bmp.pix32(y);
 
 						int x, x_index = x_index_base;
@@ -2616,16 +2616,16 @@ void saturn_state::stv_vdp2_drawgfxzoom_rgb555(
 
 //  if( gfx )
 	{
-//      const UINT8 *source_base = gfx->get_data(code % gfx->elements());
+//      const UINT8 *source_base = gfx->get_data(code % gfx->m_total_elements);
 
-		//int sprite_screen_height = (scaley*gfx->height()+0x8000)>>16;
-		//int sprite_screen_width = (scalex*gfx->width()+0x8000)>>16;
+		//int sprite_screen_height = (scaley*gfx->m_height+0x8000)>>16;
+		//int sprite_screen_width = (scalex*gfx->m_width+0x8000)>>16;
 
 		if (sprite_screen_width && sprite_screen_height)
 		{
 			/* compute sprite increment per screen pixel */
-			//int dx = (gfx->width()<<16)/sprite_screen_width;
-			//int dy = (gfx->height()<<16)/sprite_screen_height;
+			//int dx = (gfx->m_width<<16)/sprite_screen_width;
+			//int dy = (gfx->m_height<<16)/sprite_screen_height;
 			int dx = stv2_current_tilemap.incx;
 			int dy = stv2_current_tilemap.incy;
 
@@ -3028,24 +3028,24 @@ void saturn_state::stv_vdp2_drawgfx_alpha(bitmap_rgb32 &dest_bmp,const rectangle
 							UINT32 code,UINT32 color, int flipx,int flipy,int offsx,int offsy,
 							int transparent_color, int alpha)
 {
-	const pen_t *pal = &m_palette->pen(gfx->colorbase() + gfx->granularity() * (color % gfx->colors()));
-	const UINT8 *source_base = gfx->get_data(code % gfx->elements());
+	const pen_t *pal = &m_palette->pen(gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors));
+	const UINT8 *source_base = gfx->get_data(code % gfx->m_total_elements);
 	int x_index_base, y_index, sx, sy, ex, ey;
 	int xinc, yinc;
 
 	xinc = flipx ? -1 : 1;
 	yinc = flipy ? -1 : 1;
 
-	x_index_base = flipx ? gfx->width()-1 : 0;
-	y_index = flipy ? gfx->height()-1 : 0;
+	x_index_base = flipx ? gfx->m_width-1 : 0;
+	y_index = flipy ? gfx->m_height-1 : 0;
 
 	/* start coordinates */
 	sx = offsx;
 	sy = offsy;
 
 	/* end coordinates */
-	ex = sx + gfx->width();
-	ey = sy + gfx->height();
+	ex = sx + gfx->m_width;
+	ey = sy + gfx->m_height;
 
 	/* clip left */
 	if (sx < clip.min_x)
@@ -3081,7 +3081,7 @@ void saturn_state::stv_vdp2_drawgfx_alpha(bitmap_rgb32 &dest_bmp,const rectangle
 		{
 			for (y = sy; y < ey; y++)
 			{
-				const UINT8 *source = source_base + y_index*gfx->rowbytes();
+				const UINT8 *source = source_base + y_index*gfx->m_line_modulo;
 				UINT32 *dest = &dest_bmp.pix32(y);
 				int x_index = x_index_base;
 				for (x = sx; x < ex; x++)
@@ -3105,24 +3105,24 @@ void saturn_state::stv_vdp2_drawgfx_transpen(bitmap_rgb32 &dest_bmp,const rectan
 							UINT32 code,UINT32 color, int flipx,int flipy,int offsx,int offsy,
 							int transparent_color)
 {
-	const pen_t *pal = &m_palette->pen(gfx->colorbase() + gfx->granularity() * (color % gfx->colors()));
-	const UINT8 *source_base = gfx->get_data(code % gfx->elements());
+	const pen_t *pal = &m_palette->pen(gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors));
+	const UINT8 *source_base = gfx->get_data(code % gfx->m_total_elements);
 	int x_index_base, y_index, sx, sy, ex, ey;
 	int xinc, yinc;
 
 	xinc = flipx ? -1 : 1;
 	yinc = flipy ? -1 : 1;
 
-	x_index_base = flipx ? gfx->width()-1 : 0;
-	y_index = flipy ? gfx->height()-1 : 0;
+	x_index_base = flipx ? gfx->m_width-1 : 0;
+	y_index = flipy ? gfx->m_height-1 : 0;
 
 	/* start coordinates */
 	sx = offsx;
 	sy = offsy;
 
 	/* end coordinates */
-	ex = sx + gfx->width();
-	ey = sy + gfx->height();
+	ex = sx + gfx->m_width;
+	ey = sy + gfx->m_height;
 
 	/* clip left */
 	if (sx < clip.min_x)
@@ -3158,7 +3158,7 @@ void saturn_state::stv_vdp2_drawgfx_transpen(bitmap_rgb32 &dest_bmp,const rectan
 		{
 			for (y = sy; y < ey; y++)
 			{
-				const UINT8 *source = source_base + y_index*gfx->rowbytes();
+				const UINT8 *source = source_base + y_index*gfx->m_line_modulo;
 				UINT32 *dest = &dest_bmp.pix32(y);
 				int x_index = x_index_base;
 				for (x = sx; x < ex; x++)
@@ -6104,8 +6104,8 @@ int saturn_state::stv_vdp2_start ( void )
 	m_vdp2_cram = auto_alloc_array_clear(machine(), UINT32, 0x080000/4 );
 	m_vdp2.gfx_decode = auto_alloc_array(machine(), UINT8, 0x100000 );
 
-//  m_gfxdecode->gfx(0)->granularity()=4;
-//  m_gfxdecode->gfx(1)->granularity()=4;
+//  m_gfxdecode->gfx(0)->m_color_granularity=4;
+//  m_gfxdecode->gfx(1)->m_color_granularity=4;
 
 	memset( &stv_rbg_cache_data, 0, sizeof(stv_rbg_cache_data));
 	stv_rbg_cache_data.is_cache_dirty = 3;

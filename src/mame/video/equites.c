@@ -339,7 +339,7 @@ void equites_state::splndrbt_draw_sprites( bitmap_ind16 &bitmap, const rectangle
 //      const UINT8 * const xromline = xrom + (scalex << 4);
 		const UINT8 * const yromline = yrom + (scaley << 4) + (15 - scaley);
 		const UINT8* const srcgfx = gfx->get_data(tile);
-		const pen_t *paldata = &m_palette->pen(gfx->colorbase() + gfx->granularity() * color);
+		const pen_t *paldata = &m_palette->pen(gfx->m_color_base + gfx->m_color_granularity * color);
 		int x,yy;
 
 		sy += 16;
@@ -373,7 +373,7 @@ void equites_state::splndrbt_draw_sprites( bitmap_ind16 &bitmap, const rectangle
 						if (bx >= cliprect.min_x && bx <= cliprect.max_x)
 						{
 							int xx = scalex ? (x * 29 + scalex) / (scalex << 1) + 1 : 16;   // FIXME This is wrong. Should use the PROM.
-							int const offset = (fx ? (31 - xx) : xx) + ((fy ^ yhalf) ? (16 + line) : (15 - line) ) * gfx->rowbytes();
+							int const offset = (fx ? (31 - xx) : xx) + ((fy ^ yhalf) ? (16 + line) : (15 - line) ) * gfx->m_line_modulo;
 
 							int pen = srcgfx[offset];
 

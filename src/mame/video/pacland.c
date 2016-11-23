@@ -98,15 +98,15 @@ PALETTE_INIT_MEMBER(pacland_state, pacland)
 	/* color_prom now points to the beginning of the lookup table */
 
 	for (i = 0;i < 0x400;i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(0)->colorbase() + i, *color_prom++);
+		palette.set_pen_indirect(m_gfxdecode->gfx(0)->m_color_base + i, *color_prom++);
 
 	/* Background */
 	for (i = 0;i < 0x400;i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->colorbase() + i, *color_prom++);
+		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + i, *color_prom++);
 
 	/* Sprites */
 	for (i = 0;i < 0x400;i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(2)->colorbase() + i, *color_prom++);
+		palette.set_pen_indirect(m_gfxdecode->gfx(2)->m_color_base + i, *color_prom++);
 
 	m_palette_bank = 0;
 	switch_palette();
@@ -201,8 +201,8 @@ void pacland_state::video_start()
 
 	/* create one group per color code; for each group, set the transparency mask
 	   to correspond to the pens that are 0x7f or 0xff */
-	assert(m_gfxdecode->gfx(0)->colors() <= TILEMAP_NUM_GROUPS);
-	for (color = 0; color < m_gfxdecode->gfx(0)->colors(); color++)
+	assert(m_gfxdecode->gfx(0)->m_total_colors <= TILEMAP_NUM_GROUPS);
+	for (color = 0; color < m_gfxdecode->gfx(0)->m_total_colors; color++)
 	{
 		UINT32 mask = m_palette->transpen_mask(*m_gfxdecode->gfx(0), color, 0x7f);
 		mask |= m_palette->transpen_mask(*m_gfxdecode->gfx(0), color, 0xff);

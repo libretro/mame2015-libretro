@@ -194,7 +194,7 @@ void tecmo_spr_device::gaiden_draw_sprites(screen_device &screen, gfxdecode_devi
 
 					gfx->transpen_raw(*bitmap, cliprect,
 						number + layout[row][col],
-						gfx->colorbase() + color * gfx->granularity(),
+						gfx->m_color_base + color * gfx->m_color_granularity,
 						flipx, flipy,
 						sx, sy,
 						0);

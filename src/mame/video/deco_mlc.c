@@ -15,9 +15,9 @@
 
 VIDEO_START_MEMBER(deco_mlc_state,mlc)
 {
-	if (m_gfxdecode->gfx(0)->granularity()==16)
+	if (m_gfxdecode->gfx(0)->m_color_granularity==16)
 		m_colour_mask=0x7f;
-	else if (m_gfxdecode->gfx(0)->granularity()==32)
+	else if (m_gfxdecode->gfx(0)->m_color_granularity==32)
 		m_colour_mask=0x3f;
 	else
 		m_colour_mask=0x1f;
@@ -93,15 +93,15 @@ static void mlc_drawgfxzoomline(deco_mlc_state *state,
 
 		if( ex>sx )
 		{ /* skip if inner loop doesn't draw anything */
-			const pen_t *pal = &state->m_palette->pen(gfx->colorbase() + gfx->granularity() * (color % gfx->colors()));
-			const UINT8 *code_base1 = gfx->get_data(code1 % gfx->elements());
+			const pen_t *pal = &state->m_palette->pen(gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors));
+			const UINT8 *code_base1 = gfx->get_data(code1 % gfx->m_total_elements);
 
 			/* no alpha */
 			if (alpha == 0xff)
 			{
-				const UINT8 *code_base2 = gfx->get_data(code2 % gfx->elements());
-				const UINT8 *source1 = code_base1 + (srcline) * gfx->rowbytes();
-				const UINT8 *source2 = code_base2 + (srcline) * gfx->rowbytes();
+				const UINT8 *code_base2 = gfx->get_data(code2 % gfx->m_total_elements);
+				const UINT8 *source1 = code_base1 + (srcline) * gfx->m_line_modulo;
+				const UINT8 *source2 = code_base2 + (srcline) * gfx->m_line_modulo;
 
 				int x, x_index = x_index_base;
 
@@ -118,7 +118,7 @@ static void mlc_drawgfxzoomline(deco_mlc_state *state,
 			}
 			else
 			{
-				const UINT8 *source = code_base1 + (srcline) * gfx->rowbytes();
+				const UINT8 *source = code_base1 + (srcline) * gfx->m_line_modulo;
 
 				int x, x_index = x_index_base;
 				for( x=sx; x<ex; x++ )

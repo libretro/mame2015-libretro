@@ -486,7 +486,7 @@ void cps_state::fcrash_render_sprites( screen_device &screen, bitmap_ind16 &bitm
 {
 	int pos;
 	int base = m_sprite_base / 2;
-	int num_sprites = m_gfxdecode->gfx(2)->elements();
+	int num_sprites = m_gfxdecode->gfx(2)->m_total_elements;
 	int last_sprite_offset = 0x1ffc;
 	UINT16 *sprite_ram = m_gfxram;
 	UINT16 tileno,flipx,flipy,colour,xpos,ypos;

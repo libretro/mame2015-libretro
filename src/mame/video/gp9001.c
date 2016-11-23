@@ -680,8 +680,8 @@ void gp9001vdp_device::draw_sprites( bitmap_ind16 &bitmap, const rectangle &clip
 
 	if (sp.use_sprite_buffer) source = sp.vram16_buffer;
 	else source = m_spriteram;
-	int total_elements = m_gfx[1]->elements();
-	int total_colors = m_gfx[1]->colors();
+	int total_elements = m_gfx[1]->m_total_elements;
+	int total_colors = m_gfx[1]->m_total_colors;
 
 	int old_x = (-(sp.scrollx)) & 0x1ff;
 	int old_y = (-(sp.scrolly)) & 0x1ff;
