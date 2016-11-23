@@ -282,7 +282,7 @@ void osd_common_t::init(running_machine &machine)
 //  update - periodic system update
 //-------------------------------------------------
 
-void osd_common_t::update(bool skip_redraw)
+void osd_common_t::update(bool skip_redraw, UINT32 flags)
 {
 	//
 	// This method is called periodically to flush video updates to the

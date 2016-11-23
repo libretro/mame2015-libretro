@@ -38,7 +38,7 @@ typedef struct joystate_t
 }Joystate;
 
 /* rendering target */
-static render_target *our_target = NULL;
+render_target *our_target = NULL;
 
 /* input device */
 static input_device *retrokbd_device; // KEYBD
@@ -53,7 +53,7 @@ int mouseLY;
 int mouseBUT[4];
 static Joystate joystate[4];
 
-static int ui_ipt_pushchar=-1;
+int ui_ipt_pushchar=-1;
 
 int mame_reset = -1;
 
@@ -1584,21 +1584,8 @@ void retro_osd_interface::init(running_machine &machine)
    retro_switch_to_main_thread();
 }
 
-void retro_osd_interface::update(bool skip_redraw)
+void retro_osd_interface::update(bool skip_redraw, UINT32 flags)
 {
-
-   if (mame_reset == 1)
-   {
-      machine().schedule_soft_reset();
-      mame_reset = -1;
-   }
-
-	if(retro_pause == -1)
-   {
-		machine().schedule_exit();
-		return;
-	}
-
 	if (FirstTimeUpdate == 1)
 		skip_redraw = 0; //force redraw to make sure the video texture is created
 
@@ -1633,8 +1620,8 @@ void retro_osd_interface::update(bool skip_redraw)
          fb_height = minheight;
          fb_pitch  = minwidth;
 
-         orient  = (machine().system().flags & ORIENTATION_MASK);
-         vertical = (machine().system().flags & ORIENTATION_SWAP_XY);
+         orient  = (flags & ORIENTATION_MASK);
+         vertical = (flags & ORIENTATION_SWAP_XY);
 
          gamRot = (ROT270 == orient) ? 1 : gamRot;
          gamRot = (ROT180 == orient) ? 2 : gamRot;
@@ -1680,14 +1667,6 @@ void retro_osd_interface::update(bool skip_redraw)
    }
 	else
       retro_frame_draw_enable(false);
-
-	if(ui_ipt_pushchar!=-1)
-   {
-		ui_input_push_char_event(machine(), our_target, (unicode_char)ui_ipt_pushchar);
-		ui_ipt_pushchar=-1;
-	}
-
-   retro_switch_to_main_thread();
 }
 
 //============================================================

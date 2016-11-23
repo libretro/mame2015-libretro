@@ -16,7 +16,7 @@ public:
 
 	// general overridables
 	virtual void init(running_machine &machine);
-	virtual void update(bool skip_redraw);
+	virtual void update(bool skip_redraw, UINT32 flags);
 
 	// input overridables
 //	virtual void customize_input_type_list(input_type_desc *typelist);

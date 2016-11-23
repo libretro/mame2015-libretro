@@ -15,6 +15,7 @@
 #include "aviio.h"
 #include "crsshair.h"
 #include "output.h"
+#include "uiinput.h"
 
 #include "snap.lh"
 
@@ -27,6 +28,12 @@
 //**************************************************************************
 //  GLOBAL VARIABLES
 //**************************************************************************
+
+void retro_switch_to_main_thread();
+extern render_target *our_target;
+extern int mame_reset;
+extern int retro_pause;
+extern int ui_ipt_pushchar;
 
 // frameskipping tables
 const UINT8 video_manager::s_skiptable[FRAMESKIP_LEVELS][FRAMESKIP_LEVELS] =
@@ -158,8 +165,25 @@ void video_manager::frame_update(bool debug)
 	// draw the user interface
 	machine().ui().update_and_render(&machine().render().ui_container());
 
+   if (mame_reset == 1)
+   {
+      machine().schedule_soft_reset();
+      mame_reset = -1;
+   }
+
 	// ask the OSD to update
-	machine().osd().update(!debug && skipped_it);
+   if(retro_pause == -1)
+      machine().schedule_exit();
+   else
+   {
+      machine().osd().update(!debug && skipped_it, machine().system().flags);
+
+      if(ui_ipt_pushchar!=-1)
+      {
+         ui_input_push_char_event(machine(), our_target, (unicode_char)ui_ipt_pushchar);
+         ui_ipt_pushchar=-1;
+      }
+   }
 
 	// perform tasks for this frame
 	if (!debug)
@@ -176,6 +200,8 @@ void video_manager::frame_update(bool debug)
 		if (machine().first_screen() != NULL && (machine().paused() || debug || debugger_within_instruction_hook(machine())))
 			machine().first_screen()->reset_partial_updates();
 	}
+
+   retro_switch_to_main_thread();
 }
 
 

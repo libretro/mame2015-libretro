@@ -48,7 +48,7 @@ public:
 
 	// general overridables
 	virtual void init(running_machine &machine) = 0;
-	virtual void update(bool skip_redraw) = 0;
+	virtual void update(bool skip_redraw, UINT32 flags) = 0;
 
 	// audio overridables
 	virtual void update_audio_stream(const INT16 *buffer, int samples_this_frame) = 0;

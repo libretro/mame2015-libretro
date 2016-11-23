@@ -148,7 +148,7 @@ public:
 
 	// general overridables
 	virtual void init(running_machine &machine);
-	virtual void update(bool skip_redraw);
+	virtual void update(bool skip_redraw, UINT32 flags);
 
 	// audio overridables
 	virtual void update_audio_stream(const INT16 *buffer, int samples_this_frame);
