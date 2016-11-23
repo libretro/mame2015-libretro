@@ -183,8 +183,8 @@ terminal_t *apple1_state::terminal_create(
 	terminal_t *term;
 	int char_width, char_height;
 
-	char_width = m_gfxdecode->gfx(gfx)->width();
-	char_height = m_gfxdecode->gfx(gfx)->height();
+	char_width = m_gfxdecode->gfx(gfx)->m_width;
+	char_height = m_gfxdecode->gfx(gfx)->m_height;
 
 	term = (terminal_t *) auto_alloc_array(machine(), char, sizeof(terminal_t) - sizeof(term->mem)
 		+ (num_cols * num_rows * sizeof(termchar_t)));
