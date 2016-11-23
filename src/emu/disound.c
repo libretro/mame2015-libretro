@@ -91,7 +91,7 @@ int device_sound_interface::inputs() const
 {
 	// scan the list counting streams we own and summing their inputs
 	int inputs = 0;
-	for (sound_stream *stream = m_device.machine().sound().first_stream(); stream != NULL; stream = stream->m_next)
+	for (sound_stream *stream = m_device.machine().sound().m_stream_list.first(); stream != NULL; stream = stream->m_next)
 		if (&stream->device() == &m_device)
 			inputs += stream->input_count();
 	return inputs;
@@ -107,7 +107,7 @@ int device_sound_interface::outputs() const
 {
 	// scan the list counting streams we own and summing their outputs
 	int outputs = 0;
-	for (sound_stream *stream = m_device.machine().sound().first_stream(); stream != NULL; stream = stream->m_next)
+	for (sound_stream *stream = m_device.machine().sound().m_stream_list.first(); stream != NULL; stream = stream->m_next)
 		if (&stream->device() == &m_device)
 			outputs += stream->output_count();
 	return outputs;
@@ -125,7 +125,7 @@ sound_stream *device_sound_interface::input_to_stream_input(int inputnum, int &s
 	assert(inputnum >= 0);
 
 	// scan the list looking for streams owned by this device
-	for (sound_stream *stream = m_device.machine().sound().first_stream(); stream != NULL; stream = stream->m_next)
+	for (sound_stream *stream = m_device.machine().sound().m_stream_list.first(); stream != NULL; stream = stream->m_next)
 		if (&stream->device() == &m_device)
 		{
 			if (inputnum < stream->input_count())
@@ -152,7 +152,7 @@ sound_stream *device_sound_interface::output_to_stream_output(int outputnum, int
 	assert(outputnum >= 0);
 
 	// scan the list looking for streams owned by this device
-	for (sound_stream *stream = m_device.machine().sound().first_stream(); stream != NULL; stream = stream->m_next)
+	for (sound_stream *stream = m_device.machine().sound().m_stream_list.first(); stream != NULL; stream = stream->m_next)
 		if (&stream->device() == &device())
 		{
 			if (outputnum < stream->output_count())
@@ -192,7 +192,7 @@ void device_sound_interface::set_output_gain(int outputnum, float gain)
 	// handle ALL_OUTPUTS as a special case
 	if (outputnum == ALL_OUTPUTS)
 	{
-		for (sound_stream *stream = m_device.machine().sound().first_stream(); stream != NULL; stream = stream->m_next)
+		for (sound_stream *stream = m_device.machine().sound().m_stream_list.first(); stream != NULL; stream = stream->m_next)
 			if (&stream->device() == &device())
 				for (int outputnum = 0; outputnum < stream->output_count(); outputnum++)
 					stream->set_output_gain(outputnum, gain);
@@ -217,7 +217,7 @@ void device_sound_interface::set_output_gain(int outputnum, float gain)
 int device_sound_interface::inputnum_from_device(device_t &source_device, int outputnum) const
 {
 	int overall = 0;
-	for (sound_stream *stream = m_device.machine().sound().first_stream(); stream != NULL; stream = stream->m_next)
+	for (sound_stream *stream = m_device.machine().sound().m_stream_list.first(); stream != NULL; stream = stream->m_next)
 		if (&stream->device() == &device())
 			for (int inputnum = 0; inputnum < stream->input_count(); inputnum++, overall++)
 				if (stream->input_source_device(inputnum) == &source_device && stream->input_source_outputnum(inputnum) == outputnum)
@@ -343,7 +343,7 @@ void device_sound_interface::interface_post_start()
 void device_sound_interface::interface_pre_reset()
 {
 	// update all streams on this device prior to reset
-	for (sound_stream *stream = m_device.machine().sound().first_stream(); stream != NULL; stream = stream->m_next)
+	for (sound_stream *stream = m_device.machine().sound().m_stream_list.first(); stream != NULL; stream = stream->m_next)
 		if (&stream->device() == &device())
 			stream->update();
 }

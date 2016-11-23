@@ -1975,8 +1975,8 @@ static INT32 slider_volume(running_machine &machine, void *arg, astring *string,
 	if (newval != SLIDER_NOCHANGE)
 		machine.sound().set_attenuation(newval);
 	if (string != NULL)
-		string->printf("%3ddB", machine.sound().attenuation());
-	return machine.sound().attenuation();
+		string->printf("%3ddB", machine.sound().m_attenuation);
+	return machine.sound().m_attenuation;
 }
 
 

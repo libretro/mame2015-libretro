@@ -116,7 +116,7 @@ sound_stream::sound_stream(device_t &device, int inputs, int outputs, int sample
 
 attotime sound_stream::sample_time() const
 {
-	return attotime(m_device.machine().sound().last_update().seconds, 0) + attotime(0, m_output_sampindex * m_attoseconds_per_sample);
+	return attotime(m_device.machine().sound().m_last_update.seconds, 0) + attotime(0, m_output_sampindex * m_attoseconds_per_sample);
 }
 
 
@@ -262,7 +262,7 @@ void sound_stream::update()
 	INT32 update_sampindex = INT32(time.attoseconds / m_attoseconds_per_sample);
 
 	// if we're ahead of the last update, then adjust upwards
-	attotime last_update = m_device.machine().sound().last_update();
+	attotime last_update = m_device.machine().sound().m_last_update;
 	if (time.seconds > last_update.seconds)
 	{
 		assert(time.seconds == last_update.seconds + 1);
@@ -467,7 +467,7 @@ void sound_stream::recompute_sample_rate_data()
 
 
 	// recompute the timing parameters
-	attoseconds_t update_attoseconds = m_device.machine().sound().update_attoseconds();
+	attoseconds_t update_attoseconds = m_device.machine().sound().m_update_attoseconds;
 	m_attoseconds_per_sample = ATTOSECONDS_PER_SECOND / m_sample_rate;
 	m_max_samples_per_update = (update_attoseconds + m_attoseconds_per_sample - 1) / m_attoseconds_per_sample;
 
@@ -571,7 +571,7 @@ void sound_stream::postload()
 		memset(m_output[outputnum].m_buffer, 0, m_output_bufalloc * sizeof(m_output[outputnum].m_buffer[0]));
 
 	// recompute the sample indexes to make sense
-	m_output_sampindex = m_device.machine().sound().last_update().attoseconds / m_attoseconds_per_sample;
+	m_output_sampindex = m_device.machine().sound().m_last_update.attoseconds / m_attoseconds_per_sample;
 	m_output_update_sampindex = m_output_sampindex;
 	m_output_base_sampindex = m_output_sampindex - m_max_samples_per_update;
 }
@@ -851,7 +851,7 @@ sound_stream *sound_manager::stream_alloc(device_t &device, int inputs, int outp
 void sound_manager::set_attenuation(int attenuation)
 {
 	m_attenuation = attenuation;
-	machine().osd().set_mastervolume(m_muted ? -32 : m_attenuation);
+	m_machine.osd().set_mastervolume(m_muted ? -32 : m_attenuation);
 }
 
 
@@ -864,7 +864,7 @@ void sound_manager::set_attenuation(int attenuation)
 bool sound_manager::indexed_mixer_input(int index, mixer_input &info) const
 {
 	// scan through the mixers until we find the indexed input
-	mixer_interface_iterator iter(machine().root_device());
+	mixer_interface_iterator iter(m_machine.root_device());
 	for (info.mixer = iter.first(); info.mixer != NULL; info.mixer = iter.next())
 	{
 		if (index < info.mixer->inputs())
@@ -902,7 +902,7 @@ void sound_manager::mute(bool mute, UINT8 reason)
 void sound_manager::reset()
 {
 	// reset all the sound chips
-	sound_interface_iterator iter(machine().root_device());
+	sound_interface_iterator iter(m_machine.root_device());
 	for (device_sound_interface *sound = iter.first(); sound != NULL; sound = iter.next())
 		sound->device().reset();
 }
@@ -1000,12 +1000,12 @@ void sound_manager::update(void *ptr, int param)
 {
 	// force all the speaker streams to generate the proper number of samples
 	int samples_this_update = 0;
-	speaker_device_iterator iter(machine().root_device());
+	speaker_device_iterator iter(m_machine.root_device());
 	for (speaker_device *speaker = iter.first(); speaker != NULL; speaker = iter.next())
 		speaker->mix(m_leftmix, m_rightmix, samples_this_update, (m_muted & MUTE_REASON_SYSTEM));
 
 	// now downmix the final result
-	UINT32 finalmix_step = machine().video().speed_factor();
+	UINT32 finalmix_step = m_machine.video().speed_factor();
 	UINT32 finalmix_offset = 0;
 	INT16 *finalmix = m_finalmix;
 	int sample;
@@ -1046,7 +1046,7 @@ void sound_manager::update(void *ptr, int param)
 	}
 
 	// see if we ticked over to the next second
-	attotime curtime = machine().time();
+	attotime curtime = m_machine.time();
 	bool second_tick = false;
 	if (curtime.seconds != m_last_update.seconds)
 	{

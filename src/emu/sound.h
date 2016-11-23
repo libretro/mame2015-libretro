@@ -216,13 +216,6 @@ public:
 	sound_manager(running_machine &machine);
 	~sound_manager();
 
-	// getters
-	running_machine &machine() const { return m_machine; }
-	int attenuation() const { return m_attenuation; }
-	sound_stream *first_stream() const { return m_stream_list.first(); }
-	attotime last_update() const { return m_last_update; }
-	attoseconds_t update_attoseconds() const { return m_update_attoseconds; }
-
 	// stream creation
 	sound_stream *stream_alloc(device_t &device, int inputs, int outputs, int sample_rate, stream_update_delegate callback = stream_update_delegate());
 
