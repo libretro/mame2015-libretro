@@ -157,7 +157,7 @@ READ8_MEMBER(fp6000_state::fp6000_pcg_r)
 WRITE8_MEMBER(fp6000_state::fp6000_pcg_w)
 {
 	m_char_rom[offset] = data;
-	m_gfxdecode->gfx(0)->mark_dirty(offset >> 4);
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset >> 4);
 }
 
 WRITE8_MEMBER(fp6000_state::fp6000_6845_address_w)

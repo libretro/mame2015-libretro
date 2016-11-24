@@ -228,7 +228,7 @@ void casloopy_state::video_start()
 	m_bitmap_vram = auto_alloc_array_clear(machine(), UINT8, 0x20000);
 
 	for (m_gfx_index = 0; m_gfx_index < MAX_GFX_ELEMENTS; m_gfx_index++)
-		if (m_gfxdecode->gfx(m_gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[m_gfx_index] == 0)
 			break;
 
 	for(int i=0;i<0x10000;i++)
@@ -240,7 +240,7 @@ void casloopy_state::video_start()
 
 UINT32 casloopy_state::screen_update_casloopy(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(m_gfx_index);
+	gfx_element *gfx = m_gfxdecode->m_gfx[m_gfx_index];
 	int x,y;
 	int count;
 
@@ -348,8 +348,8 @@ WRITE8_MEMBER(casloopy_state::vram_w)
 {
 	m_vram[offset] = data;
 
-	m_gfxdecode->gfx(m_gfx_index)->mark_dirty(offset/32);
-	m_gfxdecode->gfx(m_gfx_index+1)->mark_dirty(offset/64);
+	m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty(offset/32);
+	m_gfxdecode->m_gfx[m_gfx_index+1]->mark_dirty(offset/64);
 }
 
 /* TODO: all of this should be internal to the SH core, this is just to check what it enables. */

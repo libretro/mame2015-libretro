@@ -177,7 +177,7 @@ READ8_MEMBER( paso1600_state::paso1600_pcg_r )
 WRITE8_MEMBER( paso1600_state::paso1600_pcg_w )
 {
 	m_p_pcg[offset] = data;
-	m_gfxdecode->gfx(0)->mark_dirty(offset >> 3);
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset >> 3);
 }
 
 WRITE8_MEMBER( paso1600_state::paso1600_6845_address_w )

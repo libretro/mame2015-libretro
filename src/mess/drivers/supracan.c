@@ -431,8 +431,8 @@ void supracan_state::video_start()
 	m_sprite_final_bitmap.allocate(1024, 1024, BITMAP_FORMAT_IND16);
 
 	m_vram_addr_swapped.resize(0x20000); // hack for 1bpp layer at startup
-	m_gfxdecode->gfx(4)->set_source(m_vram_addr_swapped);
-	m_gfxdecode->gfx(4)->set_xormask(0);
+	m_gfxdecode->m_gfx[4]->set_source(m_vram_addr_swapped);
+	m_gfxdecode->m_gfx[4]->set_xormask(0);
 
 	m_tilemap_sizes[0][0] = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(supracan_state::get_supracan_tilemap0_tile_info),this), TILEMAP_SCAN_ROWS, 8, 8, 32, 32);
 	m_tilemap_sizes[0][1] = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(supracan_state::get_supracan_tilemap0_tile_info),this), TILEMAP_SCAN_ROWS, 8, 8, 64, 32);
@@ -532,7 +532,7 @@ void supracan_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 		int sprite_xflip = (supracan_vram[i+1] & 0x0800) >> 11;
 		int sprite_yflip = (supracan_vram[i+1] & 0x0400) >> 10;
 		//int xscale = (supracan_vram[i+2] & 0xf000) >> 12;
-		gfx_element *gfx = m_gfxdecode->gfx(region);
+		gfx_element *gfx = m_gfxdecode->m_gfx[region];
 
 
 
@@ -1106,11 +1106,11 @@ WRITE16_MEMBER( supracan_state::vram_w )
 	write_swapped_byte(offset*2+1, (data & 0x00ff));
 
 	// mark tiles of each depth as dirty
-	m_gfxdecode->gfx(0)->mark_dirty((offset*2)/(64));
-	m_gfxdecode->gfx(1)->mark_dirty((offset*2)/(32));
-	m_gfxdecode->gfx(2)->mark_dirty((offset*2)/(16));
-	m_gfxdecode->gfx(3)->mark_dirty((offset*2)/(512));
-	m_gfxdecode->gfx(4)->mark_dirty((offset*2)/(8));
+	m_gfxdecode->m_gfx[0]->mark_dirty((offset*2)/(64));
+	m_gfxdecode->m_gfx[1]->mark_dirty((offset*2)/(32));
+	m_gfxdecode->m_gfx[2]->mark_dirty((offset*2)/(16));
+	m_gfxdecode->m_gfx[3]->mark_dirty((offset*2)/(512));
+	m_gfxdecode->m_gfx[4]->mark_dirty((offset*2)/(8));
 
 }
 

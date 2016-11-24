@@ -168,7 +168,7 @@ WRITE16_MEMBER( pcd_state::vram_w )
 	else if(mem_mask & 0xff)
 	{
 		m_charram[offset & 0x1fff] = data;
-		m_gfxdecode->gfx(0)->mark_dirty(offset/16);
+		m_gfxdecode->m_gfx[0]->mark_dirty(offset/16);
 	}
 }
 

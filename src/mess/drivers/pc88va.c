@@ -644,8 +644,8 @@ WRITE16_MEMBER(pc88va_state::sys_mem_w)
 			if(knj_offset >= 0x50000/2 && knj_offset <= 0x53fff/2) // TODO: there's an area that can be write protected
 			{
 				COMBINE_DATA(&knj_ram[knj_offset]);
-				m_gfxdecode->gfx(0)->mark_dirty((knj_offset * 2) / 8);
-				m_gfxdecode->gfx(1)->mark_dirty((knj_offset * 2) / 32);
+				m_gfxdecode->m_gfx[0]->mark_dirty((knj_offset * 2) / 8);
+				m_gfxdecode->m_gfx[1]->mark_dirty((knj_offset * 2) / 32);
 			}
 		}
 		break;
