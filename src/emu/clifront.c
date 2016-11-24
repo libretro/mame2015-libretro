@@ -102,174 +102,126 @@ cli_frontend::~cli_frontend()
 
 int cli_frontend::execute(int argc, char **argv)
 {
-	// wrap the core execution in a try/catch to field all fatal errors
-	m_result = MAMERR_NONE;
-	try
-	{
-		// first parse options to be able to get software from it
-		astring option_errors;
-		m_options.parse_command_line(argc, argv, option_errors);
+   m_result = MAMERR_NONE;
 
-		if (*(m_options.software_name()) != 0)
-		{
-			const game_driver *system = m_options.system();
-			if (system == NULL && *(m_options.system_name()) != 0)
-				throw emu_fatalerror(MAMERR_NO_SUCH_GAME, "Unknown system '%s'", m_options.system_name());
+   // first parse options to be able to get software from it
+   astring option_errors;
+   m_options.parse_command_line(argc, argv, option_errors);
 
-			machine_config config(*system, m_options);
-			software_list_device_iterator iter(config.root_device());
-			if (iter.count() == 0)
-				throw emu_fatalerror(MAMERR_FATALERROR, "Error: unknown option: %s\n", m_options.software_name());
+   if (*(m_options.software_name()) != 0)
+   {
+      const game_driver *system = m_options.system();
+      if (system == NULL && *(m_options.system_name()) != 0)
+         throw emu_fatalerror(MAMERR_NO_SUCH_GAME, "Unknown system '%s'", m_options.system_name());
 
-			bool found = false;
-			for (software_list_device *swlistdev = iter.first(); swlistdev != NULL; swlistdev = iter.next())
-			{
-				software_info *swinfo = swlistdev->find(m_options.software_name());
-				if (swinfo != NULL)
-				{
-					// loop through all parts
-					for (software_part *swpart = swinfo->first_part(); swpart != NULL; swpart = swpart->next())
-					{
-						const char *mount = swpart->feature("automount");
-						if (swpart->is_compatible(*swlistdev))
-						{
-							if (mount == NULL || strcmp(mount,"no") != 0)
-							{
-								// search for an image device with the right interface
-								image_interface_iterator imgiter(config.root_device());
-								for (device_image_interface *image = imgiter.first(); image != NULL; image = imgiter.next())
-								{
-									const char *interface = image->image_interface();
-									if (interface != NULL)
-									{
-										if (swpart->matches_interface(interface))
-										{
-											const char *option = m_options.value(image->brief_instance_name());
+      machine_config config(*system, m_options);
+      software_list_device_iterator iter(config.root_device());
+      if (iter.count() == 0)
+         throw emu_fatalerror(MAMERR_FATALERROR, "Error: unknown option: %s\n", m_options.software_name());
 
-											// mount only if not already mounted
-											if (*option == 0)
-											{
-												astring val;
-												val.printf("%s:%s:%s", swlistdev->list_name(), m_options.software_name(), swpart->name());
+      bool found = false;
+      for (software_list_device *swlistdev = iter.first(); swlistdev != NULL; swlistdev = iter.next())
+      {
+         software_info *swinfo = swlistdev->find(m_options.software_name());
+         if (swinfo != NULL)
+         {
+            // loop through all parts
+            for (software_part *swpart = swinfo->first_part(); swpart != NULL; swpart = swpart->next())
+            {
+               const char *mount = swpart->feature("automount");
+               if (swpart->is_compatible(*swlistdev))
+               {
+                  if (mount == NULL || strcmp(mount,"no") != 0)
+                  {
+                     // search for an image device with the right interface
+                     image_interface_iterator imgiter(config.root_device());
+                     for (device_image_interface *image = imgiter.first(); image != NULL; image = imgiter.next())
+                     {
+                        const char *interface = image->image_interface();
+                        if (interface != NULL)
+                        {
+                           if (swpart->matches_interface(interface))
+                           {
+                              const char *option = m_options.value(image->brief_instance_name());
 
-												// call this in order to set slot devices according to mounting
-												m_options.parse_slot_devices(argc, argv, option_errors, image->instance_name(), val.cstr());
-												break;
-											}
-										}
-									}
-								}
-							}
-							found = true;
-						}
-					}
-				}
+                              // mount only if not already mounted
+                              if (*option == 0)
+                              {
+                                 astring val;
+                                 val.printf("%s:%s:%s", swlistdev->list_name(), m_options.software_name(), swpart->name());
 
-				if (found)
-					break;
-			}
-			if (!found)
-			{
-				software_list_device::display_matches(config, NULL, m_options.software_name());
-				throw emu_fatalerror(MAMERR_FATALERROR, NULL);
-			}
-		}
+                                 // call this in order to set slot devices according to mounting
+                                 m_options.parse_slot_devices(argc, argv, option_errors, image->instance_name(), val.cstr());
+                                 break;
+                              }
+                           }
+                        }
+                     }
+                  }
+                  found = true;
+               }
+            }
+         }
 
-		m_options.parse_standard_inis(option_errors);
-		// parse the command line, adding any system-specific options
-		if (!m_options.parse_command_line(argc, argv, option_errors))
-		{
-			// if we failed, check for no command and a system name first; in that case error on the name
-			if (*(m_options.command()) == 0 && m_options.system() == NULL && *(m_options.system_name()) != 0)
-				throw emu_fatalerror(MAMERR_NO_SUCH_GAME, "Unknown system '%s'", m_options.system_name());
+         if (found)
+            break;
+      }
+      if (!found)
+      {
+         software_list_device::display_matches(config, NULL, m_options.software_name());
+         throw emu_fatalerror(MAMERR_FATALERROR, NULL);
+      }
+   }
 
-			// otherwise, error on the options
-			throw emu_fatalerror(MAMERR_INVALID_CONFIG, "%s", option_errors.trimspace().cstr());
-		}
-		if (option_errors)
-			osd_printf_error("Error in command line:\n%s\n", option_errors.trimspace().cstr());
+   m_options.parse_standard_inis(option_errors);
+   // parse the command line, adding any system-specific options
+   if (!m_options.parse_command_line(argc, argv, option_errors))
+   {
+      // if we failed, check for no command and a system name first; in that case error on the name
+      if (*(m_options.command()) == 0 && m_options.system() == NULL && *(m_options.system_name()) != 0)
+         throw emu_fatalerror(MAMERR_NO_SUCH_GAME, "Unknown system '%s'", m_options.system_name());
 
-		// determine the base name of the EXE
-		astring exename;
-		core_filename_extract_base(exename, argv[0], true);
+      // otherwise, error on the options
+      throw emu_fatalerror(MAMERR_INVALID_CONFIG, "%s", option_errors.trimspace().cstr());
+   }
+   if (option_errors)
+      osd_printf_error("Error in command line:\n%s\n", option_errors.trimspace().cstr());
 
-		// if we have a command, execute that
-		if (*(m_options.command()) != 0)
-			execute_commands(exename);
+   // determine the base name of the EXE
+   astring exename;
+   core_filename_extract_base(exename, argv[0], true);
 
-		// otherwise, check for a valid system
-		else
-		{
-			// We need to preprocess the config files once to determine the web server's configuration
-			// and file locations
-			if (m_options.read_config())
-			{
-				m_options.revert(OPTION_PRIORITY_INI);
-				m_options.parse_standard_inis(option_errors);
-			}
-			if (option_errors)
-				osd_printf_error("Error in command line:\n%s\n", option_errors.trimspace().cstr());
+   // if we have a command, execute that
+   if (*(m_options.command()) != 0)
+      execute_commands(exename);
 
-			// if we can't find it, give an appropriate error
-			const game_driver *system = m_options.system();
-			if (system == NULL && *(m_options.system_name()) != 0)
-				throw emu_fatalerror(MAMERR_NO_SUCH_GAME, "Unknown system '%s'", m_options.system_name());
+   // otherwise, check for a valid system
+   else
+   {
+      // We need to preprocess the config files once to determine the web server's configuration
+      // and file locations
+      if (m_options.read_config())
+      {
+         m_options.revert(OPTION_PRIORITY_INI);
+         m_options.parse_standard_inis(option_errors);
+      }
+      if (option_errors)
+         osd_printf_error("Error in command line:\n%s\n", option_errors.trimspace().cstr());
 
-			// otherwise just run the game
-			machine_manager *manager = machine_manager::instance(m_options, m_osd);
-			m_result = manager->execute();
-			global_free(manager);
-		}
-	}
+      // if we can't find it, give an appropriate error
+      const game_driver *system = m_options.system();
+      if (system == NULL && *(m_options.system_name()) != 0)
+         throw emu_fatalerror(MAMERR_NO_SUCH_GAME, "Unknown system '%s'", m_options.system_name());
 
-	// handle exceptions of various types
-	catch (emu_fatalerror &fatal)
-	{
-		astring string(fatal.string());
-		osd_printf_error("%s\n", string.trimspace().cstr());
-		m_result = (fatal.exitcode() != 0) ? fatal.exitcode() : MAMERR_FATALERROR;
+      // otherwise just run the game
+      machine_manager *manager = machine_manager::instance(m_options, m_osd);
+      m_result = manager->execute();
+      global_free(manager);
+   }
 
-		// if a game was specified, wasn't a wildcard, and our error indicates this was the
-		// reason for failure, offer some suggestions
-		if (m_result == MAMERR_NO_SUCH_GAME && *(m_options.system_name()) != 0 && strchr(m_options.system_name(), '*') == NULL && m_options.system() == NULL)
-		{
-			// get the top 16 approximate matches
-			driver_enumerator drivlist(m_options);
-			int matches[16];
-			drivlist.find_approximate_matches(m_options.system_name(), ARRAY_LENGTH(matches), matches);
+   _7z_file_cache_clear();
 
-			// print them out
-			osd_printf_error("\n\"%s\" approximately matches the following\n"
-					"supported %s (best match first):\n\n", m_options.system_name(),emulator_info::get_gamesnoun());
-			for (int matchnum = 0; matchnum < ARRAY_LENGTH(matches); matchnum++)
-				if (matches[matchnum] != -1)
-					osd_printf_error("%-18s%s\n", drivlist.driver(matches[matchnum]).name, drivlist.driver(matches[matchnum]).description);
-		}
-	}
-	catch (emu_exception &)
-	{
-		osd_printf_error("Caught unhandled emulator exception\n");
-		m_result = MAMERR_FATALERROR;
-	}
-	catch (add_exception &aex)
-	{
-		osd_printf_error("Tag '%s' already exists in tagged_list\n", aex.tag());
-		m_result = MAMERR_FATALERROR;
-	}
-	catch (std::exception &ex)
-	{
-		osd_printf_error("Caught unhandled %s exception: %s\n", typeid(ex).name(), ex.what());
-		m_result = MAMERR_FATALERROR;
-	}
-	catch (...)
-	{
-		osd_printf_error("Caught unhandled exception\n");
-		m_result = MAMERR_FATALERROR;
-	}
-
-	_7z_file_cache_clear();
-
-	return m_result;
+   return m_result;
 }
 
 
