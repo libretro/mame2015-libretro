@@ -412,7 +412,7 @@ inline int zaxxon_state::find_minimum_x(UINT8 value, int flip)
 void zaxxon_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, UINT16 flipxmask, UINT16 flipymask)
 {
 	UINT8 *spriteram = m_spriteram;
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 	int flip = flip_screen();
 	int flipmask = flip ? 0xff : 0x00;
 	int offs;

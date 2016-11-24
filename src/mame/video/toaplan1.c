@@ -287,7 +287,7 @@ void toaplan1_state::register_common()
 VIDEO_START_MEMBER(toaplan1_rallybik_state,rallybik)
 {
 	m_spritegen->alloc_sprite_bitmap(*m_screen);
-	m_spritegen->gfx(0)->set_colorbase(64*16);
+	m_spritegen->m_gfx[0]->set_colorbase(64*16);
 
 	toaplan1_create_tilemaps();
 	toaplan1_vram_alloc();
@@ -759,7 +759,7 @@ void toaplan1_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap, c
 					if (fcu_flipscreen) sx = sx_base - dim_x;
 					else                sx = sx_base + dim_x;
 
-					toaplan1_draw_sprite_custom(screen,bitmap,cliprect,m_gfxdecode->gfx(1),
+					toaplan1_draw_sprite_custom(screen,bitmap,cliprect,m_gfxdecode->m_gfx[1],
 												sprite,color,
 												fcu_flipscreen,fcu_flipscreen,
 												sx,sy,

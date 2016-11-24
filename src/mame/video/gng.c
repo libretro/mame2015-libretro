@@ -102,7 +102,7 @@ WRITE8_MEMBER(gng_state::gng_flipscreen_w)
 void gng_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect )
 {
 	UINT8 *buffered_spriteram = m_spriteram->buffer();
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 	int offs;
 
 

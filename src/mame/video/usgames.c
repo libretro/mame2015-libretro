@@ -44,7 +44,7 @@ TILE_GET_INFO_MEMBER(usgames_state::get_usgames_tile_info)
 void usgames_state::video_start()
 {
 	m_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(usgames_state::get_usgames_tile_info),this),TILEMAP_SCAN_ROWS, 8, 8,64,32);
-	m_gfxdecode->gfx(0)->set_source(m_charram);
+	m_gfxdecode->m_gfx[0]->set_source(m_charram);
 }
 
 
@@ -57,7 +57,7 @@ WRITE8_MEMBER(usgames_state::usgames_videoram_w)
 WRITE8_MEMBER(usgames_state::usgames_charram_w)
 {
 	m_charram[offset] = data;
-	m_gfxdecode->gfx(0)->mark_dirty(offset/8);
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset/8);
 }
 
 

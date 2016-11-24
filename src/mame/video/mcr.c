@@ -255,7 +255,7 @@ WRITE8_MEMBER(mcr_state::mcr_91490_videoram_w)
 void mcr_state::render_sprites_91399(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
 	UINT8 *spriteram = m_spriteram;
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	int offs;
 
 	/* render the sprites into the bitmap, ORing together */
@@ -327,7 +327,7 @@ void mcr_state::render_sprites_91399(screen_device &screen, bitmap_ind16 &bitmap
 void mcr_state::render_sprites_91464(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect, int primask, int sprmask, int colormask)
 {
 	UINT8 *spriteram = m_spriteram;
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	int offs;
 
 	/* render the sprites into the bitmap, working from topmost to bottommost */

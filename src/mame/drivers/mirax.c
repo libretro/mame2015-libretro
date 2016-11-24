@@ -178,7 +178,7 @@ PALETTE_INIT_MEMBER(mirax_state, mirax)
 
 void mirax_state::draw_tilemap(bitmap_ind16 &bitmap, const rectangle &cliprect, UINT8 draw_flag)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	int y,x;
 	int res_x,res_y,wrapy;
 
@@ -228,7 +228,7 @@ void mirax_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect)
 		y = (m_flipscreen_y) ? spriteram[count] : 0x100 - spriteram[count] - 16;
 		x = (m_flipscreen_x) ? 240 - spriteram[count+3] : spriteram[count+3];
 
-		m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,spr_offs,color,fx,fy,x,y,0);
+		m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,spr_offs,color,fx,fy,x,y,0);
 	}
 }
 

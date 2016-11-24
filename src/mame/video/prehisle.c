@@ -168,7 +168,7 @@ void prehisle_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap, c
 			flipy = !flipy;
 		}
 
-		m_gfxdecode->gfx(3)->prio_transpen(
+		m_gfxdecode->m_gfx[3]->prio_transpen(
 			bitmap, cliprect,
 			code, color,
 			flipx, flipy,

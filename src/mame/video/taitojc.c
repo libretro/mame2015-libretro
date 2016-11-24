@@ -68,7 +68,7 @@ WRITE32_MEMBER(taitojc_state::taitojc_tile_w)
 WRITE32_MEMBER(taitojc_state::taitojc_char_w)
 {
 	COMBINE_DATA(m_char_ram + offset);
-	m_gfxdecode->gfx(m_gfx_index)->mark_dirty(offset/32);
+	m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty(offset/32);
 }
 
 // Object data format:
@@ -302,7 +302,7 @@ void taitojc_state::video_start()
 {
 	/* find first empty slot to decode gfx */
 	for (m_gfx_index = 0; m_gfx_index < MAX_GFX_ELEMENTS; m_gfx_index++)
-		if (m_gfxdecode->gfx(m_gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[m_gfx_index] == 0)
 			break;
 
 	assert(m_gfx_index != MAX_GFX_ELEMENTS);

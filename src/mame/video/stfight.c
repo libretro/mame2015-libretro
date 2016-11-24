@@ -156,7 +156,7 @@ VIDEO_START_MEMBER(stfight_state,stfight)
 	m_tx_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(stfight_state::get_tx_tile_info),this),TILEMAP_SCAN_ROWS, 8,8,32,32);
 
 	m_fg_tilemap->set_transparent_pen(0x0f);
-	m_tx_tilemap->configure_groups(*m_gfxdecode->gfx(0), 0xcf);
+	m_tx_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 0xcf);
 }
 
 VIDEO_START_MEMBER(stfight_state,cshooter)
@@ -166,7 +166,7 @@ VIDEO_START_MEMBER(stfight_state,cshooter)
 	m_tx_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(stfight_state::get_cshooter_tx_tile_info),this),TILEMAP_SCAN_ROWS, 8,8,32,32);
 
 	m_fg_tilemap->set_transparent_pen(0x0f);
-	m_tx_tilemap->configure_groups(*m_gfxdecode->gfx(0), 0xcf);
+	m_tx_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 0xcf);
 }
 
 
@@ -286,7 +286,7 @@ void stfight_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap, co
 
 			code = m_sprite_base + m_sprite_ram[offs];
 
-			m_gfxdecode->gfx(4)->prio_transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[4]->prio_transpen(bitmap,cliprect,
 						code,
 						color,
 						flipx,flip_screen(),
@@ -333,10 +333,10 @@ void stfight_state::cshooter_draw_sprites(screen_device &screen, bitmap_ind16 &b
 		tile_low += (tile_low > 0x9) ? 0x37 : 0x30;
 		tile_high += (tile_high > 0x9) ? 0x37 : 0x30;
 
-		m_gfxdecode->gfx(0)->prio_transpen(bitmap,cliprect, tile_high << 1, color, flipx, 0, m_sprite_ram[i+3],m_sprite_ram[i+2],screen.priority(),pri ? 0x02 : 0,0x00);
-		m_gfxdecode->gfx(0)->prio_transpen(bitmap,cliprect, tile_high << 1, color, flipx, 0, m_sprite_ram[i+3]+8,m_sprite_ram[i+2],screen.priority(),pri ? 0x02 : 0,0x00);
-		m_gfxdecode->gfx(0)->prio_transpen(bitmap,cliprect, tile_low << 1, color, flipx, 0, m_sprite_ram[i+3]+8,m_sprite_ram[i+2]+8,screen.priority(),pri ? 0x02 : 0,0x00);
-		m_gfxdecode->gfx(0)->prio_transpen(bitmap,cliprect, tile_low << 1, color, flipx, 0, m_sprite_ram[i+3],m_sprite_ram[i+2]+8,screen.priority(),pri ? 0x02 : 0,0x00);
+		m_gfxdecode->m_gfx[0]->prio_transpen(bitmap,cliprect, tile_high << 1, color, flipx, 0, m_sprite_ram[i+3],m_sprite_ram[i+2],screen.priority(),pri ? 0x02 : 0,0x00);
+		m_gfxdecode->m_gfx[0]->prio_transpen(bitmap,cliprect, tile_high << 1, color, flipx, 0, m_sprite_ram[i+3]+8,m_sprite_ram[i+2],screen.priority(),pri ? 0x02 : 0,0x00);
+		m_gfxdecode->m_gfx[0]->prio_transpen(bitmap,cliprect, tile_low << 1, color, flipx, 0, m_sprite_ram[i+3]+8,m_sprite_ram[i+2]+8,screen.priority(),pri ? 0x02 : 0,0x00);
+		m_gfxdecode->m_gfx[0]->prio_transpen(bitmap,cliprect, tile_low << 1, color, flipx, 0, m_sprite_ram[i+3],m_sprite_ram[i+2]+8,screen.priority(),pri ? 0x02 : 0,0x00);
 	}
 }
 

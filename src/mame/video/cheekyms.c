@@ -155,7 +155,7 @@ UINT32 cheekyms_state::screen_update_cheekyms(screen_device &screen, bitmap_ind1
 	m_bitmap_buffer->fill(0, cliprect);
 
 	/* sprites go under the playfield */
-	draw_sprites(bitmap, cliprect, m_gfxdecode->gfx(1), flip);
+	draw_sprites(bitmap, cliprect, m_gfxdecode->m_gfx[1], flip);
 
 	/* draw the tilemap to a temp bitmap */
 	m_cm_tilemap->draw(screen, *m_bitmap_buffer, cliprect, 0, 0);

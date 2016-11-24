@@ -124,8 +124,8 @@ VIDEO_START_MEMBER(bosco_state,bosco)
 	m_bg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(bosco_state::bg_get_tile_info),this),TILEMAP_SCAN_ROWS,8,8,32,32);
 	m_fg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(bosco_state::fg_get_tile_info),this),tilemap_mapper_delegate(FUNC(bosco_state::fg_tilemap_scan),this),  8,8, 8,32);
 
-	m_bg_tilemap->configure_groups(*m_gfxdecode->gfx(0), 0x1f);
-	m_fg_tilemap->configure_groups(*m_gfxdecode->gfx(0), 0x1f);
+	m_bg_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 0x1f);
+	m_fg_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 0x1f);
 
 	m_bg_tilemap->set_scrolldx(3,3);
 
@@ -194,12 +194,12 @@ void bosco_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, 
 
 		if (flip) sx += 32-2;
 
-		m_gfxdecode->gfx(1)->transmask(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect,
 				(spriteram[offs] & 0xfc) >> 2,
 				color,
 				flipx,flipy,
 				sx,sy,
-				m_palette->transpen_mask(*m_gfxdecode->gfx(1), color, 0x0f));
+				m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color, 0x0f));
 	}
 }
 
@@ -219,7 +219,7 @@ void bosco_state::draw_bullets(bitmap_ind16 &bitmap, const rectangle &cliprect, 
 			y += 2;
 		}
 
-		m_gfxdecode->gfx(2)->transmask(bitmap,cliprect,
+		m_gfxdecode->m_gfx[2]->transmask(bitmap,cliprect,
 				((m_bosco_radarattr[offs] & 0x0e) >> 1) ^ 0x07,
 				0,
 				!flip,!flip,

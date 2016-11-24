@@ -126,7 +126,7 @@ void shangkid_state::draw_sprite(const UINT8 *source, bitmap_ind16 &bitmap, cons
 		transparent_pen = 7;
 	}
 
-	gfx = m_gfxdecode->gfx(1+bank_index);
+	gfx = m_gfxdecode->m_gfx[1+bank_index];
 
 	width = (xscale+1)*2;
 	height = (yscale+1)*2;
@@ -265,7 +265,7 @@ void shangkid_state::dynamski_draw_background(bitmap_ind16 &bitmap, const rectan
 		{
 			tile += ((attr>>5)&0x3)*256;
 
-				m_gfxdecode->gfx(0)->transpen(
+				m_gfxdecode->m_gfx[0]->transpen(
 				bitmap,
 				cliprect,
 				tile,
@@ -298,7 +298,7 @@ void shangkid_state::dynamski_draw_sprites(bitmap_ind16 &bitmap, const rectangle
 		if( attr&1 ) sx += 0x100;
 
 
-				m_gfxdecode->gfx(1)->transpen(
+				m_gfxdecode->m_gfx[1]->transpen(
 				bitmap,
 				cliprect,
 				bank*0x40 + (tile&0x3f),

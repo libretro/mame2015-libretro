@@ -93,7 +93,7 @@ void polygonet_state::video_start()
 
 	/* find first empty slot to decode gfx */
 	for (m_ttl_gfx_index = 0; m_ttl_gfx_index < MAX_GFX_ELEMENTS; m_ttl_gfx_index++)
-		if (m_gfxdecode->gfx(m_ttl_gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[m_ttl_gfx_index] == 0)
 			break;
 
 	assert(m_ttl_gfx_index != MAX_GFX_ELEMENTS);

@@ -222,7 +222,7 @@ yyyyyyyy fccccccc xf??pppp xxxxxxxx
 			{
 				int objoffs = code * 0x20 + (x + y * 4) * 2;
 
-				m_gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+				m_gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 						(m_objram[objoffs + 1] << 8) + m_objram[objoffs],
 						color,
 						flipx, flipy,

@@ -107,14 +107,14 @@ void excellent_spr_device::aquarium_draw_sprites( bitmap_ind16 &bitmap, const re
 
 			for (chain_pos = chain; chain_pos >= 0; chain_pos--)
 			{
-				gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+				gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 						code,
 						col,
 						flipx, flipy,
 						curx,cury,0);
 
 				/* wrap around y */
-				gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+				gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 						code,
 						col,
 						flipx, flipy,
@@ -187,7 +187,7 @@ void excellent_spr_device::gcpinbal_draw_sprites( screen_device &screen, bitmap_
 
 			for (chain_pos = chain; chain_pos >= 0; chain_pos--)
 			{
-				gfxdecode->gfx(0)->prio_transpen(bitmap,cliprect,
+				gfxdecode->m_gfx[0]->prio_transpen(bitmap,cliprect,
 						code,
 						col,
 						flipx, flipy,

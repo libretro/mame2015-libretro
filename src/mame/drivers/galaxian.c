@@ -6048,12 +6048,12 @@ void galaxian_state::tenspot_set_game_bank(int bank, int from_game)
 	{
 		for (x=0;x<0x200;x++)
 		{
-			m_gfxdecode->gfx(0)->mark_dirty(x);
+			m_gfxdecode->m_gfx[0]->mark_dirty(x);
 		}
 
 		for (x=0;x<0x80;x++)
 		{
-			m_gfxdecode->gfx(1)->mark_dirty(x);
+			m_gfxdecode->m_gfx[1]->mark_dirty(x);
 		}
 	}
 

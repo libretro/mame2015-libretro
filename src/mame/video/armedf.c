@@ -351,7 +351,7 @@ void armedf_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect
 
 		if (((buffered_spriteram[offs + 0] & 0x3000) >> 12) == priority)
 		{
-			armedf_drawgfx(bitmap,cliprect,m_gfxdecode->gfx(3),
+			armedf_drawgfx(bitmap,cliprect,m_gfxdecode->m_gfx[3],
 				code & 0xfff,
 				color,clut,
 				flipx,flipy,

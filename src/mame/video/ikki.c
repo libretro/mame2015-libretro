@@ -88,11 +88,11 @@ void ikki_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect )
 		if (y > 240)
 			y = y - 256;
 
-		m_gfxdecode->gfx(1)->transmask(m_sprite_bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transmask(m_sprite_bitmap,cliprect,
 				code, color,
 				m_flipscreen,m_flipscreen,
 				x,y,
-				m_palette->transpen_mask(*m_gfxdecode->gfx(1), color, 0));
+				m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color, 0));
 	}
 
 	/* copy the sprite bitmap into the main bitmap, skipping the transparent pixels */
@@ -171,7 +171,7 @@ UINT32 ikki_state::screen_update_ikki(screen_device &screen, bitmap_ind16 &bitma
 		bank = (color & 0xe0) << 3;
 		color = ((color & 0x1f)<<0) | ((color & 0x80) >> 2);
 
-		m_gfxdecode->gfx(0)->opaque(bitmap,cliprect,
+		m_gfxdecode->m_gfx[0]->opaque(bitmap,cliprect,
 			m_videoram[offs * 2 + 1] + bank,
 			color,
 			m_flipscreen,m_flipscreen,
@@ -206,7 +206,7 @@ UINT32 ikki_state::screen_update_ikki(screen_device &screen, bitmap_ind16 &bitma
 			bank = (color & 0xe0) << 3;
 			color = ((color & 0x1f)<<0) | ((color & 0x80) >> 2);
 
-			m_gfxdecode->gfx(0)->opaque(bitmap,cliprect,
+			m_gfxdecode->m_gfx[0]->opaque(bitmap,cliprect,
 				m_videoram[offs * 2 + 1] + bank,
 				color,
 				m_flipscreen,m_flipscreen,

@@ -110,7 +110,7 @@ TILE_GET_INFO_MEMBER(thepit_state::solid_get_tile_info)
 
 TILE_GET_INFO_MEMBER(thepit_state::get_tile_info)
 {
-	UINT8 fore_color = m_colorram[tile_index] % m_gfxdecode->gfx(0)->m_total_colors;
+	UINT8 fore_color = m_colorram[tile_index] % m_gfxdecode->m_gfx[0]->m_total_colors;
 	UINT8 code = m_videoram[tile_index];
 	SET_TILE_INFO_MEMBER(2 * m_graphics_bank, code, fore_color, 0);
 }
@@ -261,13 +261,13 @@ void thepit_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect,
 			if (offs < 16) y++;
 
 
-					m_gfxdecode->gfx(2 * m_graphics_bank + 1)->transpen(bitmap,cliprect,
+					m_gfxdecode->m_gfx[2 * m_graphics_bank + 1]->transpen(bitmap,cliprect,
 					m_spriteram[offs + 1] & 0x3f,
 					m_spriteram[offs + 2],
 					flipx, flipy, x, y, 0);
 
 
-					m_gfxdecode->gfx(2 * m_graphics_bank + 1)->transpen(bitmap,cliprect,
+					m_gfxdecode->m_gfx[2 * m_graphics_bank + 1]->transpen(bitmap,cliprect,
 					m_spriteram[offs + 1] & 0x3f,
 					m_spriteram[offs + 2],
 					flipx, flipy, x-256, y, 0);

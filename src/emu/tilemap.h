@@ -447,7 +447,7 @@ struct tile_data
 
 	void set(int _gfxnum, int rawcode, int rawcolor, int _flags)
 	{
-		gfx_element *gfx = decoder->gfx(_gfxnum);
+		gfx_element *gfx = decoder->m_gfx[_gfxnum];
 		int code = rawcode % gfx->m_total_elements;
 		pen_data = gfx->get_data(code);
 		palette_base = gfx->m_color_base + gfx->m_color_granularity * (rawcolor % gfx->m_total_colors);

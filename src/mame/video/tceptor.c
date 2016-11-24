@@ -363,7 +363,7 @@ void tceptor_state::video_start()
 
 	/* find first empty slot to decode gfx */
 	for (gfx_index = 0; gfx_index < MAX_GFX_ELEMENTS; gfx_index++)
-		if (m_gfxdecode->gfx(gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[gfx_index] == 0)
 			break;
 	assert(gfx_index + 4 <= MAX_GFX_ELEMENTS);
 
@@ -385,7 +385,7 @@ void tceptor_state::video_start()
 
 	m_tx_tilemap->set_scrollx(0, -2*8);
 	m_tx_tilemap->set_scrolly(0, 0);
-	m_tx_tilemap->configure_groups(*m_gfxdecode->gfx(0), 7);
+	m_tx_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 7);
 
 	m_bg1_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(tceptor_state::get_bg1_tile_info),this), TILEMAP_SCAN_ROWS,  8, 8, 64, 32);
 	m_bg2_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(tceptor_state::get_bg2_tile_info),this), TILEMAP_SCAN_ROWS,  8, 8, 64, 32);
@@ -474,7 +474,7 @@ void tceptor_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect
 			y -= 78;
 
 
-						m_gfxdecode->gfx(gfx)->zoom_transmask(bitmap,
+						m_gfxdecode->m_gfx[gfx]->zoom_transmask(bitmap,
 						cliprect,
 						code,
 						color,
@@ -482,7 +482,7 @@ void tceptor_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect
 						x, y,
 						scalex,
 						scaley,
-						m_palette->transpen_mask(*m_gfxdecode->gfx(gfx), color, SPR_TRANS_COLOR));
+						m_palette->transpen_mask(*m_gfxdecode->m_gfx[gfx], color, SPR_TRANS_COLOR));
 		}
 	}
 

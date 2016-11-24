@@ -242,7 +242,7 @@ void panicr_state::video_start()
 	m_infotilemap_2 = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(panicr_state::get_infotile_info_2),this),TILEMAP_SCAN_ROWS,16,16,1024,16 );
 
 	m_txttilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(panicr_state::get_txttile_info),this),TILEMAP_SCAN_ROWS,8,8,32,32 );
-	m_txttilemap->configure_groups(*m_gfxdecode->gfx(0), 0);
+	m_txttilemap->configure_groups(*m_gfxdecode->m_gfx[0], 0);
 
 	save_item(NAME(m_scrollx));
 }
@@ -276,10 +276,10 @@ void panicr_state::draw_sprites(bitmap_ind16 &bitmap,const rectangle &cliprect )
 		color = m_spriteram[offs+1] & 0x0f;
 		sprite = m_spriteram[offs+0] | (*m_spritebank << 8);
 
-		m_gfxdecode->gfx(2)->transmask(bitmap,cliprect,
+		m_gfxdecode->m_gfx[2]->transmask(bitmap,cliprect,
 				sprite,
 				color,flipx,flipy,x,y,
-				m_palette->transpen_mask(*m_gfxdecode->gfx(2), color, 0));
+				m_palette->transpen_mask(*m_gfxdecode->m_gfx[2], color, 0));
 	}
 }
 

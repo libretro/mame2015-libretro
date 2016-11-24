@@ -7172,7 +7172,7 @@ WRITE16_MEMBER( isgsm_state::data_w )
 			if (dest == memregion("gfx1")->base())
 			{
 				// we need to re-decode the tiles if writing to this area to keep MAME happy
-				m_gfxdecode->gfx(0)->mark_dirty((m_data_addr & 0x1ffff) / 8);
+				m_gfxdecode->m_gfx[0]->mark_dirty((m_data_addr & 0x1ffff) / 8);
 			}
 		}
 	}

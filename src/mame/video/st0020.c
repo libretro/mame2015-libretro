@@ -75,12 +75,12 @@ void st0020_device::device_start()
 	m_st0020_blitram = auto_alloc_array_clear(machine(), UINT16, 0x100 / 2);
 
 	for (m_gfx_index = 0; m_gfx_index < MAX_GFX_ELEMENTS; m_gfx_index++)
-		if (m_gfxdecode->gfx(m_gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[m_gfx_index] == 0)
 			break;
 
 	m_gfxdecode->set_gfx(m_gfx_index, global_alloc(gfx_element(m_palette, layout_16x8x8_2, (UINT8 *)m_st0020_gfxram, 0, m_palette->entries() / 64, 0)));
 
-	m_gfxdecode->gfx(m_gfx_index)->set_granularity(64); /* 256 colour sprites with palette selectable on 64 colour boundaries */
+	m_gfxdecode->m_gfx[m_gfx_index]->set_granularity(64); /* 256 colour sprites with palette selectable on 64 colour boundaries */
 
 	save_pointer(NAME(m_st0020_gfxram), 4 * 0x100000/2);
 	save_pointer(NAME(m_st0020_spriteram), 0x80000/2);
@@ -112,7 +112,7 @@ WRITE16_MEMBER(st0020_device::st0020_gfxram_w)
 
 	offset += m_st0020_gfxram_bank * 0x100000/2;
 	COMBINE_DATA(&m_st0020_gfxram[offset]);
-	m_gfxdecode->gfx(m_gfx_index)->mark_dirty(offset / (16*8/2));
+	m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty(offset / (16*8/2));
 }
 
 READ16_MEMBER(st0020_device::st0020_sprram_r)
@@ -201,7 +201,7 @@ WRITE16_MEMBER(st0020_device::st0020_blit_w)
 				dst /= 16*8;
 				while (len--)
 				{
-					m_gfxdecode->gfx(m_gfx_index)->mark_dirty(dst);
+					m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty(dst);
 					dst++;
 				}
 			}
@@ -394,7 +394,7 @@ void st0020_device::st0020_draw_zooming_sprites(bitmap_ind16 &bitmap, const rect
 			{
 				for (y = ystart; y != yend; y += yinc)
 				{
-					m_gfxdecode->gfx(m_gfx_index)->zoom_transpen(bitmap,cliprect,
+					m_gfxdecode->m_gfx[m_gfx_index]->zoom_transpen(bitmap,cliprect,
 									code++,
 									color,
 									flipx, flipy,

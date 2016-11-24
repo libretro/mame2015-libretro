@@ -224,9 +224,9 @@ VIDEO_RESET_MEMBER(psychic5_state,psychic5)
 
 #define DRAW_SPRITE(code, sx, sy) \
 	if (m_blend) \
-		m_blend->drawgfx(m_palette, bitmap, cliprect, m_gfxdecode->gfx(0), code, color, flipx, flipy, sx, sy, 15); \
+		m_blend->drawgfx(m_palette, bitmap, cliprect, m_gfxdecode->m_gfx[0], code, color, flipx, flipy, sx, sy, 15); \
 	else \
-		m_gfxdecode->gfx(0)->transpen(bitmap, cliprect, code, color, flipx, flipy, sx, sy, 15);
+		m_gfxdecode->m_gfx[0]->transpen(bitmap, cliprect, code, color, flipx, flipy, sx, sy, 15);
 
 void psychic5_state::draw_sprites(bitmap_rgb32 &bitmap, const rectangle &cliprect)
 {

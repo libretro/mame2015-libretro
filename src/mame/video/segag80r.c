@@ -196,7 +196,7 @@ void segag80r_state::video_start()
 			3,  rg_resistances, m_gweights, 220, 0,
 			2,  b_resistances,  m_bweights, 220, 0);
 
-	m_gfxdecode->gfx(0)->set_source(&videoram[0x800]);
+	m_gfxdecode->m_gfx[0]->set_source(&videoram[0x800]);
 
 	/* allocate paletteram */
 	m_paletteram.resize(0x80);
@@ -272,7 +272,7 @@ WRITE8_MEMBER(segag80r_state::segag80r_videoram_w)
 
 	/* track which characters are dirty */
 	if (offset & 0x800)
-		m_gfxdecode->gfx(0)->mark_dirty((offset & 0x7ff) / 8);
+		m_gfxdecode->m_gfx[0]->mark_dirty((offset & 0x7ff) / 8);
 }
 
 
@@ -644,7 +644,7 @@ void segag80r_state::draw_videoram(bitmap_ind16 &bitmap, const rectangle &clipre
 			UINT8 tile = videoram[offs];
 
 			/* draw the tile */
-			m_gfxdecode->gfx(0)->transmask(bitmap,cliprect, tile, tile >> 4, m_video_flip, m_video_flip, x*8, y*8, transparent_pens[tile >> 4]);
+			m_gfxdecode->m_gfx[0]->transmask(bitmap,cliprect, tile, tile >> 4, m_video_flip, m_video_flip, x*8, y*8, transparent_pens[tile >> 4]);
 		}
 	}
 }

@@ -371,8 +371,8 @@ READ64_MEMBER(model3_state::model3_char_r)
 WRITE64_MEMBER(model3_state::model3_char_w)
 {
 	COMBINE_DATA(&m_m3_char_ram[offset]);
-	m_gfxdecode->gfx(0)->mark_dirty(offset / 4);
-	m_gfxdecode->gfx(1)->mark_dirty(offset / 8);
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset / 4);
+	m_gfxdecode->m_gfx[1]->mark_dirty(offset / 8);
 }
 
 READ64_MEMBER(model3_state::model3_tile_r)

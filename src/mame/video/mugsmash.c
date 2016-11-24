@@ -26,7 +26,7 @@ void mugsmash_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 
 	const UINT16 *source = m_spriteram;
 	const UINT16 *finish = source + 0x2000;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 
 	while (source < finish)
 	{

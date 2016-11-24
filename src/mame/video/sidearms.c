@@ -174,7 +174,7 @@ void sidearms_state::video_start()
 void sidearms_state::draw_sprites_region(bitmap_ind16 &bitmap, const rectangle &cliprect, int start_offset, int end_offset )
 {
 	UINT8 *buffered_spriteram = m_spriteram->buffer();
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 	int offs, attr, color, code, x, y, flipx, flipy;
 
 	flipy = flipx = m_flipon;

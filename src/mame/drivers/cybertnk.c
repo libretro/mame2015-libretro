@@ -298,7 +298,7 @@ void cybertnk_state::video_start()
 
 void cybertnk_state::draw_road(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect, int screen_shift, int pri)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(3);
+	gfx_element *gfx = m_gfxdecode->m_gfx[3];
 
 
 	for (int i = 0; i < 0x1000/4; i+=4)

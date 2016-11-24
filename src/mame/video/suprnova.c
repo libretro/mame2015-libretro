@@ -357,8 +357,8 @@ void skns_state::video_start()
 	m_tilemap_bitmap_higher.allocate(320,240);
 	m_tilemap_bitmapflags_higher.allocate(320,240);
 
-	m_gfxdecode->gfx(2)->set_granularity(256);
-	m_gfxdecode->gfx(3)->set_granularity(256);
+	m_gfxdecode->m_gfx[2]->set_granularity(256);
+	m_gfxdecode->m_gfx[3]->set_granularity(256);
 }
 
 void skns_state::video_reset()

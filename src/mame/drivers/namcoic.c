@@ -402,7 +402,7 @@ namcos2_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap, const r
 				int scaley = (sizey<<16)/((word0&0x0200)?0x20:0x10);
 				if(scalex && scaley)
 				{
-					gfx_element *gfx = m_gfxdecode->gfx(rgn);
+					gfx_element *gfx = m_gfxdecode->m_gfx[rgn];
 
 					if( (word0&0x0200)==0 )
 						gfx->set_source_clip((word1&0x0001) ? 16 : 0, 16, (word1&0x0002) ? 16 : 0, 16);
@@ -537,7 +537,7 @@ void namcos2_state::draw_sprites_metalhawk(screen_device &screen, bitmap_ind16 &
 				screen,
 				bitmap,
 				rect,
-				m_gfxdecode->gfx(0),
+				m_gfxdecode->m_gfx[0],
 				sprn, color,
 				flipx,flipy,
 				sx,sy,
@@ -777,7 +777,7 @@ void namcos2_shared_state::c355_obj_draw_sprite(screen_device &screen, _BitmapCl
 					screen,
 					bitmap,
 					clip,
-					m_gfxdecode->gfx(m_c355_obj_gfxbank),
+					m_gfxdecode->m_gfx[m_c355_obj_gfxbank],
 					m_c355_obj_code2tile(tile) + offset,
 					color,
 					flipx,flipy,

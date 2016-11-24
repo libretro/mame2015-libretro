@@ -90,7 +90,7 @@ TILE_GET_INFO_MEMBER(drtomy_state::get_tile_info_bg)
 void drtomy_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect )
 {
 	int i, x, y, ex, ey;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 
 	static const int x_offset[2] = {0x0, 0x2};
 	static const int y_offset[2] = {0x0, 0x1};

@@ -135,7 +135,7 @@ UINT32 xxmissio_state::screen_update(screen_device &screen, bitmap_ind16 &bitmap
 	m_bg_tilemap->set_scrolly(0, m_yscroll);
 
 	m_bg_tilemap->draw(screen, bitmap, cliprect, 0, 0);
-	draw_sprites(bitmap, cliprect, m_gfxdecode->gfx(1));
+	draw_sprites(bitmap, cliprect, m_gfxdecode->m_gfx[1]);
 	m_fg_tilemap->draw(screen, bitmap, cliprect, 0, 0);
 
 	return 0;

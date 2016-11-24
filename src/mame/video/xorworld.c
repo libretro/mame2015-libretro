@@ -101,7 +101,7 @@ void xorworld_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 		int code = (m_spriteram[i+1] & 0x0ffc) >> 2;
 		int color = (m_spriteram[i+1] & 0xf000) >> 12;
 
-		m_gfxdecode->gfx(1)->transpen(bitmap,cliprect, code, color, 0, 0, sx, sy, 0);
+		m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect, code, color, 0, 0, sx, sy, 0);
 	}
 }
 

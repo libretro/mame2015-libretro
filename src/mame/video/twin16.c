@@ -59,12 +59,12 @@ WRITE16_MEMBER(twin16_state::zipram_w)
 	UINT16 old = m_zipram[offset];
 	COMBINE_DATA(&m_zipram[offset]);
 	if (m_zipram[offset] != old)
-		m_gfxdecode->gfx(1)->mark_dirty(offset / 16);
+		m_gfxdecode->m_gfx[1]->mark_dirty(offset / 16);
 }
 
 void twin16_state::twin16_postload()
 {
-	m_gfxdecode->gfx(1)->mark_all_dirty();
+	m_gfxdecode->m_gfx[1]->mark_all_dirty();
 }
 
 WRITE16_MEMBER(fround_state::gfx_bank_w)

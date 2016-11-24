@@ -92,7 +92,7 @@ void ksayakyu_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &clipre
 		int flipx = (tile & 0x80) ? 1 : 0;
 		int flipy = 0;
 
-		gfx_element *gfx = m_gfxdecode->gfx(2);
+		gfx_element *gfx = m_gfxdecode->m_gfx[2];
 
 		if (m_flipscreen)
 		{

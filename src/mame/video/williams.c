@@ -342,7 +342,7 @@ READ8_MEMBER(williams_state::williams_video_counter_r)
 
 TILE_GET_INFO_MEMBER(williams2_state::get_tile_info)
 {
-	int mask = m_gfxdecode->gfx(0)->m_total_elements - 1;
+	int mask = m_gfxdecode->m_gfx[0]->m_total_elements - 1;
 	int data = m_williams2_tileram[tile_index];
 	int y = (tile_index >> 1) & 7;
 	int color = 0;

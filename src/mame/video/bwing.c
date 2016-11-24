@@ -42,7 +42,7 @@ WRITE8_MEMBER(bwing_state::gfxram_w)
 {
 	m_gfxram[offset] = data;
 	int whichgfx = (offset & 0x1000) ? 3 : 2;
-	m_gfxdecode->gfx(whichgfx)->mark_dirty((offset & 0xfff) / 32);
+	m_gfxdecode->m_gfx[whichgfx]->mark_dirty((offset & 0xfff) / 32);
 }
 
 
@@ -140,7 +140,7 @@ void bwing_state::video_start()
 void bwing_state::draw_sprites( bitmap_ind16 &bmp, const rectangle &clip, UINT8 *ram, int pri )
 {
 	int attrib, fx, fy, code, x, y, color, i;
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 
 	for (i = 0; i < 0x200; i += 4)
 	{

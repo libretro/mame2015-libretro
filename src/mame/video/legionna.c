@@ -425,7 +425,7 @@ void legionna_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap,co
 				for (ax=0; ax<dx; ax++)
 					for (ay=0; ay<dy; ay++)
 					{
-						m_gfxdecode->gfx(3)->prio_transpen(bitmap,cliprect,
+						m_gfxdecode->m_gfx[3]->prio_transpen(bitmap,cliprect,
 						sprite++,
 						color,fx,fy,(x+ax*16)+m_sprite_xoffs,y+ay*16+m_sprite_yoffs,
 						screen.priority(),pri_mask, 15);
@@ -436,7 +436,7 @@ void legionna_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap,co
 				for (ax=0; ax<dx; ax++)
 					for (ay=0; ay<dy; ay++)
 					{
-						m_gfxdecode->gfx(3)->prio_transpen(bitmap,cliprect,
+						m_gfxdecode->m_gfx[3]->prio_transpen(bitmap,cliprect,
 						sprite++,
 						color,fx,fy,(x+ax*16)+m_sprite_xoffs,y+(dy-ay-1)*16+m_sprite_yoffs,
 						screen.priority(),pri_mask,15);
@@ -450,7 +450,7 @@ void legionna_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap,co
 				for (ax=0; ax<dx; ax++)
 					for (ay=0; ay<dy; ay++)
 					{
-						m_gfxdecode->gfx(3)->prio_transpen(bitmap,cliprect,
+						m_gfxdecode->m_gfx[3]->prio_transpen(bitmap,cliprect,
 						sprite++,
 						color,fx,fy,(x+(dx-ax-1)*16)+m_sprite_xoffs,y+ay*16+m_sprite_yoffs,
 						screen.priority(),pri_mask,15);
@@ -461,7 +461,7 @@ void legionna_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap,co
 				for (ax=0; ax<dx; ax++)
 					for (ay=0; ay<dy; ay++)
 					{
-						m_gfxdecode->gfx(3)->prio_transpen(bitmap,cliprect,
+						m_gfxdecode->m_gfx[3]->prio_transpen(bitmap,cliprect,
 						sprite++,
 						color,fx,fy,(x+(dx-ax-1)*16)+m_sprite_xoffs,y+(dy-ay-1)*16+m_sprite_yoffs,
 						screen.priority(),pri_mask, 15);

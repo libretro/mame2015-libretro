@@ -149,20 +149,20 @@ void hyperspt_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &clipre
 		sy += 1;
 
 
-			m_gfxdecode->gfx(0)->transmask(bitmap,cliprect,
+			m_gfxdecode->m_gfx[0]->transmask(bitmap,cliprect,
 			code, color,
 			flipx, flipy,
 			sx, sy,
-			m_palette->transpen_mask(*m_gfxdecode->gfx(0), color, 0));
+			m_palette->transpen_mask(*m_gfxdecode->m_gfx[0], color, 0));
 
 		/* redraw with wraparound */
 
 
-			m_gfxdecode->gfx(0)->transmask(bitmap,cliprect,
+			m_gfxdecode->m_gfx[0]->transmask(bitmap,cliprect,
 			code, color,
 			flipx, flipy,
 			sx - 256, sy,
-			m_palette->transpen_mask(*m_gfxdecode->gfx(0), color, 0));
+			m_palette->transpen_mask(*m_gfxdecode->m_gfx[0], color, 0));
 	}
 }
 

@@ -119,7 +119,7 @@ void docastle_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, 
 	{
 		int sx, sy, flipx, flipy, code, color;
 
-		if (m_gfxdecode->gfx(1)->m_total_elements > 256)
+		if (m_gfxdecode->m_gfx[1]->m_total_elements > 256)
 		{
 			/* spriteram
 
@@ -181,7 +181,7 @@ void docastle_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, 
 		}
 
 		/* first draw the sprite, visible */
-		m_gfxdecode->gfx(1)->prio_transmask(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->prio_transmask(bitmap,cliprect,
 				code,
 				color,
 				flipx,flipy,
@@ -190,7 +190,7 @@ void docastle_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, 
 				0x00,0x80ff);
 
 		/* then draw the mask, behind the background but obscuring following sprites */
-		m_gfxdecode->gfx(1)->prio_transmask(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->prio_transmask(bitmap,cliprect,
 				code,
 				color,
 				flipx,flipy,

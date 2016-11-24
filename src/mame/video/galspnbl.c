@@ -84,7 +84,7 @@ UINT32 galspnbl_state::screen_update_galspnbl(screen_device &screen, bitmap_ind1
 		/* What is this? A priority/half transparency marker? */ // leftover blend flags from original spbactn game
 		if (!(attr & 0x0008))
 		{
-			m_gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 					code,
 					color,
 					0,0,

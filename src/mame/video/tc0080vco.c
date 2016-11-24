@@ -329,7 +329,7 @@ WRITE16_MEMBER( tc0080vco_device::word_w )
 
 	if (offset < 0x1000 / 2)
 	{
-		m_gfxdecode->gfx(m_txnum)->mark_dirty(offset / 8);
+		m_gfxdecode->m_gfx[m_txnum]->mark_dirty(offset / 8);
 #if 0
 		if (!m_has_fg0)
 		{
@@ -360,7 +360,7 @@ WRITE16_MEMBER( tc0080vco_device::word_w )
 
 	else if (offset < 0x11000 / 2)
 	{
-		m_gfxdecode->gfx(m_txnum)->mark_dirty((offset - 0x10000 / 2) / 8);
+		m_gfxdecode->m_gfx[m_txnum]->mark_dirty((offset - 0x10000 / 2) / 8);
 #if 0
 		if (!m_has_fg0)
 		{

@@ -122,7 +122,7 @@ UINT32 sprint2_state::screen_update_sprint2(screen_device &screen, bitmap_ind16 
 
 	for (i = 0; i < 4; i++)
 	{
-		m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 			get_sprite_code(video_ram, i),
 			i,
 			0, 0,
@@ -157,8 +157,8 @@ void sprint2_state::screen_eof_sprint2(screen_device &screen, bool state)
 
 			rect.min_x = get_sprite_x(video_ram, i);
 			rect.min_y = get_sprite_y(video_ram, i);
-			rect.max_x = get_sprite_x(video_ram, i) + m_gfxdecode->gfx(1)->m_width - 1;
-			rect.max_y = get_sprite_y(video_ram, i) + m_gfxdecode->gfx(1)->m_height - 1;
+			rect.max_x = get_sprite_x(video_ram, i) + m_gfxdecode->m_gfx[1]->m_width - 1;
+			rect.max_y = get_sprite_y(video_ram, i) + m_gfxdecode->m_gfx[1]->m_height - 1;
 
 			rect &= visarea;
 
@@ -166,7 +166,7 @@ void sprint2_state::screen_eof_sprint2(screen_device &screen, bool state)
 
 			m_bg_tilemap->draw(screen, m_helper, rect, 0, 0);
 
-			m_gfxdecode->gfx(1)->transpen(m_helper,rect,
+			m_gfxdecode->m_gfx[1]->transpen(m_helper,rect,
 				get_sprite_code(video_ram, i),
 				0,
 				0, 0,
@@ -180,7 +180,7 @@ void sprint2_state::screen_eof_sprint2(screen_device &screen, bool state)
 			for (j = 0; j < 4; j++)
 				if (j != i)
 				{
-					m_gfxdecode->gfx(1)->transpen(m_helper,rect,
+					m_gfxdecode->m_gfx[1]->transpen(m_helper,rect,
 						get_sprite_code(video_ram, j),
 						1,
 						0, 0,
@@ -188,7 +188,7 @@ void sprint2_state::screen_eof_sprint2(screen_device &screen, bool state)
 						get_sprite_y(video_ram, j), 0);
 				}
 
-			m_gfxdecode->gfx(1)->transpen(m_helper,rect,
+			m_gfxdecode->m_gfx[1]->transpen(m_helper,rect,
 				get_sprite_code(video_ram, i),
 				0,
 				0, 0,

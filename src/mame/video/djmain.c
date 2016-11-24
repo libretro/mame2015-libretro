@@ -16,7 +16,7 @@ void djmain_state::draw_sprites( bitmap_rgb32 &bitmap, const rectangle &cliprect
 	int offs, pri_code;
 	int sortedlist[NUM_SPRITES];
 
-	m_gfxdecode->gfx(0)->set_colorbase(m_k055555->K055555_read_register(K55_PALBASE_SUB2) * 0x400);
+	m_gfxdecode->m_gfx[0]->set_colorbase(m_k055555->K055555_read_register(K55_PALBASE_SUB2) * 0x400);
 
 	for (offs = 0; offs < NUM_SPRITES; offs++)
 		sortedlist[offs] = -1;
@@ -94,7 +94,7 @@ void djmain_state::draw_sprites( bitmap_rgb32 &bitmap, const rectangle &cliprect
 					int zh = oy + (((y + 1) * yscale + (1 << 11)) >> 12) - sy;
 
 
-								m_gfxdecode->gfx(0)->zoom_transpen(bitmap,
+								m_gfxdecode->m_gfx[0]->zoom_transpen(bitmap,
 								cliprect,
 								c,
 								color,
@@ -112,7 +112,7 @@ void djmain_state::draw_sprites( bitmap_rgb32 &bitmap, const rectangle &cliprect
 					int sy = oy + (y << 4);
 
 
-							m_gfxdecode->gfx(0)->transpen(bitmap,
+							m_gfxdecode->m_gfx[0]->transpen(bitmap,
 							cliprect,
 							c,
 							color,

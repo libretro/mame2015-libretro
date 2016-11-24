@@ -276,12 +276,12 @@ static void draw_sprites(screen_device &screen, bitmap_ind16 &bitmap, const rect
 	namcos86_state *state = screen.machine().driver_data<namcos86_state>();
 	const UINT8 *source = &state->m_spriteram[0x0800-0x20]; /* the last is NOT a sprite */
 	const UINT8 *finish = &state->m_spriteram[0];
-	gfx_element *gfx = state->m_gfxdecode->gfx(2);
+	gfx_element *gfx = state->m_gfxdecode->m_gfx[2];
 
 	int sprite_xoffs = state->m_spriteram[0x07f5] + ((state->m_spriteram[0x07f4] & 1) << 8);
 	int sprite_yoffs = state->m_spriteram[0x07f7];
 
-	int bank_sprites = state->m_gfxdecode->gfx(2)->m_total_elements / 8;
+	int bank_sprites = state->m_gfxdecode->m_gfx[2]->m_total_elements / 8;
 
 	while (source >= finish)
 	{
@@ -362,7 +362,7 @@ UINT32 namcos86_state::screen_update_namcos86(screen_device &screen, bitmap_ind1
 
 	screen.priority().fill(0, cliprect);
 
-	bitmap.fill(m_gfxdecode->gfx(0)->m_color_base + 8*m_backcolor+7, cliprect);
+	bitmap.fill(m_gfxdecode->m_gfx[0]->m_color_base + 8*m_backcolor+7, cliprect);
 
 	for (layer = 0;layer < 8;layer++)
 	{

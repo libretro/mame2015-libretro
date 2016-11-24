@@ -135,7 +135,7 @@ void mario_state::video_start()
 	m_bg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(mario_state::get_bg_tile_info),this), TILEMAP_SCAN_ROWS,
 			8, 8, 32, 32);
 
-	m_gfxdecode->gfx(0)->set_granularity(8);
+	m_gfxdecode->m_gfx[0]->set_granularity(8);
 
 	m_gfx_bank = 0;
 	m_palette_bank = 0;
@@ -229,7 +229,7 @@ void mario_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, 
 
 			if (m_flip)
 			{
-				m_gfxdecode->gfx(1)->transpen(bitmap, cliprect,
+				m_gfxdecode->m_gfx[1]->transpen(bitmap, cliprect,
 					code,
 					color,
 					!flipx, !flipy,
@@ -237,7 +237,7 @@ void mario_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, 
 			}
 			else
 			{
-				m_gfxdecode->gfx(1)->transpen(bitmap, cliprect,
+				m_gfxdecode->m_gfx[1]->transpen(bitmap, cliprect,
 					code,
 					color,
 					flipx, flipy,

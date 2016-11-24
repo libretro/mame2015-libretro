@@ -128,7 +128,7 @@ WRITE8_MEMBER(tryout_state::vram_w)
 		break;
 	}
 
-	m_gfxdecode->gfx(2)->mark_dirty((offset-0x400/64)&0x7f);
+	m_gfxdecode->m_gfx[2]->mark_dirty((offset-0x400/64)&0x7f);
 }
 
 WRITE8_MEMBER(tryout_state::vram_bankswitch_w)
@@ -166,7 +166,7 @@ void tryout_state::video_start()
 	m_vram=auto_alloc_array(machine(), UINT8, 8 * 0x800);
 	m_vram_gfx=auto_alloc_array(machine(), UINT8, 0x6000);
 
-	m_gfxdecode->gfx(2)->set_source(m_vram_gfx);
+	m_gfxdecode->m_gfx[2]->set_source(m_vram_gfx);
 
 	m_fg_tilemap->set_transparent_pen(0);
 
@@ -206,17 +206,17 @@ void tryout_state::draw_sprites(bitmap_ind16 &bitmap,const rectangle &cliprect)
 		/* Double Height */
 		if(m_spriteram[offs] & 0x10)
 		{
-			m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 				sprite,
 				color,fx,fy,x,y + inc,0);
 
-			m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 				sprite+1,
 				color,fx,fy,x,y,0);
 		}
 		else
 		{
-			m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 				sprite,
 				color,fx,fy,x,y,0);
 		}

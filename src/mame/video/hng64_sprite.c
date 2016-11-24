@@ -137,11 +137,11 @@ void hng64_state::draw_sprites(screen_device &screen, bitmap_rgb32 &bitmap, cons
 
 		if (m_spriteregs[0] & 0x00800000) //bpp switch
 		{
-			gfx= m_gfxdecode->gfx(4);
+			gfx= m_gfxdecode->m_gfx[4];
 		}
 		else
 		{
-			gfx= m_gfxdecode->gfx(5);
+			gfx= m_gfxdecode->m_gfx[5];
 			tileno>>=1;
 			pal&=0xf;
 		}
@@ -202,11 +202,11 @@ void hng64_state::draw_sprites(screen_device &screen, bitmap_rgb32 &bitmap, cons
 
 					if (m_spriteregs[0] & 0x00800000) //bpp switch
 					{
-						gfx= m_gfxdecode->gfx(4);
+						gfx= m_gfxdecode->m_gfx[4];
 					}
 					else
 					{
-						gfx= m_gfxdecode->gfx(5);
+						gfx= m_gfxdecode->m_gfx[5];
 						tileno>>=1;
 						pal&=0xf;
 					}

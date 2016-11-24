@@ -286,7 +286,7 @@ void realbrk_state::draw_sprites(bitmap_ind16 &bitmap,const rectangle &cliprect)
 				{
 					m_tmpbitmap0->fill(0, spritetile_clip );
 					m_tmpbitmap1->fill(0, spritetile_clip );
-					m_gfxdecode->gfx(gfx)->zoom_transpen(*m_tmpbitmap0,spritetile_clip,
+					m_gfxdecode->m_gfx[gfx]->zoom_transpen(*m_tmpbitmap0,spritetile_clip,
 									code++,
 									color,
 									flipx, flipy,
@@ -348,7 +348,7 @@ void realbrk_state::draw_sprites(bitmap_ind16 &bitmap,const rectangle &cliprect)
 						break;
 
 					default:
-						m_gfxdecode->gfx(gfx)->zoom_transpen(bitmap,cliprect,
+						m_gfxdecode->m_gfx[gfx]->zoom_transpen(bitmap,cliprect,
 										code++,
 										color,
 										flipx, flipy,
@@ -428,7 +428,7 @@ void realbrk_state::dai2kaku_draw_sprites(bitmap_ind16 &bitmap,const rectangle &
 				int scalex = (sx + (x + 1) * xdim) / 0x10000 - currx;
 				int scaley = (sy + (y + 1) * ydim) / 0x10000 - curry;
 
-				m_gfxdecode->gfx(gfx)->zoom_transpen(bitmap,cliprect,
+				m_gfxdecode->m_gfx[gfx]->zoom_transpen(bitmap,cliprect,
 								code++,
 								color,
 								flipx, flipy,

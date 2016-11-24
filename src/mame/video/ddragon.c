@@ -134,7 +134,7 @@ WRITE8_MEMBER(ddragon_state::ddragon_fgvideoram_w)
 
 void ddragon_state::draw_sprites(bitmap_ind16 &bitmap,const rectangle &cliprect)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	const UINT8 *src = m_spriteram;
 	const UINT32 bytes = m_spriteram.bytes();
 

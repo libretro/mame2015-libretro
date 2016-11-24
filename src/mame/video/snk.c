@@ -174,7 +174,7 @@ TILE_GET_INFO_MEMBER(snk_state::gwar_get_bg_tile_info)
 	// bermudat, tdfever use FFFF to blank the background.
 	// (still call SET_TILE_INFO_MEMBER, otherwise problems might occur on boot when
 	// the tile data hasn't been initialised)
-	if (code >= m_gfxdecode->gfx(1)->m_total_elements)
+	if (code >= m_gfxdecode->m_gfx[1]->m_total_elements)
 		tileinfo.pen_data = m_empty_tile;
 }
 
@@ -660,7 +660,7 @@ WRITE8_MEMBER(snk_state::tdfever_spriteram_w)
 
 void snk_state::marvins_draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, const int scrollx, const int scrolly, const int from, const int to)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(3);
+	gfx_element *gfx = m_gfxdecode->m_gfx[3];
 	const UINT8 *source, *finish;
 
 	source = m_spriteram + from*4;
@@ -704,7 +704,7 @@ void snk_state::marvins_draw_sprites(bitmap_ind16 &bitmap, const rectangle &clip
 void snk_state::tnk3_draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, const int xscroll, const int yscroll)
 {
 	UINT8 *spriteram = m_spriteram;
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 	const int size = gfx->m_width;
 	int tile_number, attributes, color, sx, sy;
 	int xflip,yflip;
@@ -767,7 +767,7 @@ void snk_state::tnk3_draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 
 void snk_state::ikari_draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, const int start, const int xscroll, const int yscroll, const UINT8 *source, const int gfxnum )
 {
-	gfx_element *gfx = m_gfxdecode->gfx(gfxnum);
+	gfx_element *gfx = m_gfxdecode->m_gfx[gfxnum];
 	const int size = gfx->m_width;
 	int tile_number, attributes, color, sx, sy;
 	int which, finish;
@@ -838,7 +838,7 @@ byte3: attributes
 void snk_state::tdfever_draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect,   const int xscroll, const int yscroll, const UINT8 *source, const int gfxnum,
 										const int hw_xflip, const int from, const int to)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(gfxnum);
+	gfx_element *gfx = m_gfxdecode->m_gfx[gfxnum];
 	const int size = gfx->m_width;
 	int tile_number, attributes, sx, sy, color;
 	int which;

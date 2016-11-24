@@ -70,11 +70,11 @@ UINT32 subs_state::screen_update_left(screen_device &screen, bitmap_ind16 &bitma
 
 		/* draw the left screen */
 		if ((left_enable || left_sonar_window) && (!right_sonar_window))
-			m_gfxdecode->gfx(0)->opaque(bitmap,cliprect,
+			m_gfxdecode->m_gfx[0]->opaque(bitmap,cliprect,
 					charcode, 1,
 					0,0,sx,sy);
 		else
-			m_gfxdecode->gfx(0)->opaque(bitmap,cliprect,
+			m_gfxdecode->m_gfx[0]->opaque(bitmap,cliprect,
 					0, 1,
 					0,0,sx,sy);
 	}
@@ -100,7 +100,7 @@ UINT32 subs_state::screen_update_left(screen_device &screen, bitmap_ind16 &bitma
 
 		/* left screen - special check for drawing right screen's sub */
 		if ((offs!=0) || (sub_enable))
-			m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 					charcode + 32 * prom_set,
 					0,
 					0,0,sx,sy,0);
@@ -146,11 +146,11 @@ UINT32 subs_state::screen_update_right(screen_device &screen, bitmap_ind16 &bitm
 
 		/* draw the right screen */
 		if ((right_enable || right_sonar_window) && (!left_sonar_window))
-			m_gfxdecode->gfx(0)->opaque(bitmap,cliprect,
+			m_gfxdecode->m_gfx[0]->opaque(bitmap,cliprect,
 					charcode, 0,
 					0,0,sx,sy);
 		else
-			m_gfxdecode->gfx(0)->opaque(bitmap,cliprect,
+			m_gfxdecode->m_gfx[0]->opaque(bitmap,cliprect,
 					0, 0,
 					0,0,sx,sy);
 	}
@@ -175,7 +175,7 @@ UINT32 subs_state::screen_update_right(screen_device &screen, bitmap_ind16 &bitm
 		charcode = (charcode >> 3) & 0x1F;
 
 		if ((offs!=1) || (sub_enable))
-			m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 					charcode + 32 * prom_set,
 					0,
 					0,0,sx,sy,0);

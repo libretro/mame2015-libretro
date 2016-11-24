@@ -117,7 +117,7 @@ TILEMAP_MAPPER_MEMBER( ygv608_device::get_tile_offset )
 	return( ( col << 6 ) | row );
 }
 
-#define layout_total(x) (m_gfxdecode->gfx(x)->m_total_elements)
+#define layout_total(x) (m_gfxdecode->m_gfx[x]->m_total_elements)
 
 TILE_GET_INFO_MEMBER( ygv608_device::get_tile_info_A_8 )
 {
@@ -617,20 +617,20 @@ void ygv608_device::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect
 		logerror( "SZ_8X8: sprite=%d\n", code );
 		code = 0;
 		}
-		m_gfxdecode->gfx(GFX_8X8_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_8X8_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x10000,
 			color,
 			flipx,flipy,
 			sx,sy,0x00);
 		// redraw with wrap-around
 		if( sx > 512-8 )
-		m_gfxdecode->gfx(GFX_8X8_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_8X8_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x10000,
 			color,
 			flipx,flipy,
 			sx-512,sy,0x00);
 		if( sy > 512-8 )
-		m_gfxdecode->gfx(GFX_8X8_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_8X8_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x10000,
 			color,
 			flipx,flipy,
@@ -647,20 +647,20 @@ void ygv608_device::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect
 		logerror( "SZ_8X8: sprite=%d\n", code );
 		code = 0;
 		}
-		m_gfxdecode->gfx(GFX_16X16_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_16X16_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x4000,
 			color,
 			flipx,flipy,
 			sx,sy,0x00);
 		// redraw with wrap-around
 		if( sx > 512-16 )
-		m_gfxdecode->gfx(GFX_16X16_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_16X16_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x4000,
 			color,
 			flipx,flipy,
 			sx-512,sy,0x00);
 		if( sy > 512-16 )
-		m_gfxdecode->gfx(GFX_16X16_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_16X16_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x4000,
 			color,
 			flipx,flipy,
@@ -677,20 +677,20 @@ void ygv608_device::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect
 		logerror( "SZ_32X32: sprite=%d\n", code );
 	code = 0;
 		}
-		m_gfxdecode->gfx(GFX_32X32_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_32X32_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x1000,
 			color,
 			flipx,flipy,
 			sx,sy,0x00);
 		// redraw with wrap-around
 		if( sx > 512-32 )
-		m_gfxdecode->gfx(GFX_32X32_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_32X32_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x1000,
 			color,
 			flipx,flipy,
 			sx-512,sy,0x00);
 		if( sy > 512-32 )
-		m_gfxdecode->gfx(GFX_32X32_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_32X32_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x1000,
 			color,
 			flipx,flipy,
@@ -707,20 +707,20 @@ void ygv608_device::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect
 		logerror( "SZ_64X64: sprite=%d\n", code );
 		code = 0;
 		}
-		m_gfxdecode->gfx(GFX_64X64_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_64X64_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x400,
 			color,
 			flipx,flipy,
 			sx,sy,0x00);
 		// redraw with wrap-around
 		if( sx > 512-64 )
-		m_gfxdecode->gfx(GFX_64X64_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_64X64_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x400,
 			color,
 			flipx,flipy,
 			sx-512,sy,0x00);
 		if( sy > 512-64 )
-		m_gfxdecode->gfx(GFX_64X64_4BIT)->transpen(bitmap,spriteClip,
+		m_gfxdecode->m_gfx[GFX_64X64_4BIT]->transpen(bitmap,spriteClip,
 			code+m_namcond1_gfxbank*0x400,
 			color,
 			flipx,flipy,

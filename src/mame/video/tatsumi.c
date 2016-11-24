@@ -43,7 +43,7 @@ WRITE16_MEMBER(tatsumi_state::roundup5_vram_w)
 
 	offset=offset%0xc000;
 
-	m_gfxdecode->gfx(1)->mark_dirty(offset/0x10);
+	m_gfxdecode->m_gfx[1]->mark_dirty(offset/0x10);
 }
 
 WRITE16_MEMBER(tatsumi_state::roundup5_text_w)
@@ -140,7 +140,7 @@ VIDEO_START_MEMBER(tatsumi_state,roundup5)
 
 	m_tx_layer->set_transparent_pen(0);
 
-	m_gfxdecode->gfx(1)->set_source((UINT8 *)m_roundup5_vram);
+	m_gfxdecode->m_gfx[1]->set_source((UINT8 *)m_roundup5_vram);
 }
 
 VIDEO_START_MEMBER(tatsumi_state,cyclwarr)
@@ -558,13 +558,13 @@ static void draw_sprites(running_machine &machine, _BitmapClass &bitmap, const r
 				for (w = 0; w < x_width; w++) {
 					if (rotate)
 						roundupt_drawgfxzoomrotate(state,
-								state->m_temp_bitmap,cliprect,state->m_gfxdecode->gfx(0),
+								state->m_temp_bitmap,cliprect,state->m_gfxdecode->m_gfx[0],
 								base,
 								color,flip_x,flip_y,x_pos,render_y,
 								scale,scale,0,write_priority_only);
 					else
 						roundupt_drawgfxzoomrotate(state,
-								bitmap,cliprect,state->m_gfxdecode->gfx(0),
+								bitmap,cliprect,state->m_gfxdecode->m_gfx[0],
 								base,
 								color,flip_x,flip_y,x_pos,render_y,
 								scale,scale,0,write_priority_only);

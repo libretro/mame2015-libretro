@@ -249,10 +249,10 @@ void decocass_state::draw_object(bitmap_ind16 &bitmap, const rectangle &cliprect
 	else
 		sx = 91 - (m_part_h_shift & 0x7f);
 
-	m_gfxdecode->gfx(3)->transpen(bitmap,cliprect, 0, color, 0, 0, sx + 64, sy, 0);
-	m_gfxdecode->gfx(3)->transpen(bitmap,cliprect, 1, color, 0, 0, sx, sy, 0);
-	m_gfxdecode->gfx(3)->transpen(bitmap,cliprect, 0, color, 0, 1, sx + 64, sy - 64, 0);
-	m_gfxdecode->gfx(3)->transpen(bitmap,cliprect, 1, color, 0, 1, sx, sy - 64, 0);
+	m_gfxdecode->m_gfx[3]->transpen(bitmap,cliprect, 0, color, 0, 0, sx + 64, sy, 0);
+	m_gfxdecode->m_gfx[3]->transpen(bitmap,cliprect, 1, color, 0, 0, sx, sy, 0);
+	m_gfxdecode->m_gfx[3]->transpen(bitmap,cliprect, 0, color, 0, 1, sx + 64, sy - 64, 0);
+	m_gfxdecode->m_gfx[3]->transpen(bitmap,cliprect, 1, color, 0, 1, sx, sy - 64, 0);
 }
 
 void decocass_state::draw_center(bitmap_ind16 &bitmap, const rectangle &cliprect)
@@ -302,9 +302,9 @@ WRITE8_MEMBER(decocass_state::decocass_charram_w )
 {
 	m_charram[offset] = data;
 	/* dirty sprite */
-	m_gfxdecode->gfx(1)->mark_dirty((offset >> 5) & 255);
+	m_gfxdecode->m_gfx[1]->mark_dirty((offset >> 5) & 255);
 	/* dirty char */
-	m_gfxdecode->gfx(0)->mark_dirty((offset >> 3) & 1023);
+	m_gfxdecode->m_gfx[0]->mark_dirty((offset >> 3) & 1023);
 }
 
 
@@ -330,7 +330,7 @@ WRITE8_MEMBER(decocass_state::decocass_tileram_w )
 {
 	m_tileram[offset] = data;
 	/* dirty tile (64 bytes per tile) */
-	m_gfxdecode->gfx(2)->mark_dirty((offset / 64) & 15);
+	m_gfxdecode->m_gfx[2]->mark_dirty((offset / 64) & 15);
 	/* first 1KB of tile RAM is shared with tilemap RAM */
 	if (offset < m_bgvideoram_size)
 		mark_bg_tile_dirty(offset);
@@ -340,8 +340,8 @@ WRITE8_MEMBER(decocass_state::decocass_objectram_w )
 {
 	m_objectram[offset] = data;
 	/* dirty the object */
-	m_gfxdecode->gfx(3)->mark_dirty(0);
-	m_gfxdecode->gfx(3)->mark_dirty(1);
+	m_gfxdecode->m_gfx[3]->mark_dirty(0);
+	m_gfxdecode->m_gfx[3]->mark_dirty(1);
 }
 
 WRITE8_MEMBER(decocass_state::decocass_bgvideoram_w )
@@ -516,7 +516,7 @@ void decocass_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 
 		sy -= sprite_y_adjust;
 
-		m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 				sprite_ram[offs + interleave],
 				color,
 				flipx,flipy,
@@ -525,7 +525,7 @@ void decocass_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 		sy += (flip_screen() ? -256 : 256);
 
 		// Wrap around
-		m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 				sprite_ram[offs + interleave],
 				color,
 				flipx,flipy,
@@ -675,10 +675,10 @@ void decocass_state::video_start()
 	m_bgvideoram = m_tileram;
 	m_bgvideoram_size = 0x0400; /* d000-d3ff */
 
-	m_gfxdecode->gfx(0)->set_source(m_charram);
-	m_gfxdecode->gfx(1)->set_source(m_charram);
-	m_gfxdecode->gfx(2)->set_source(m_tileram);
-	m_gfxdecode->gfx(3)->set_source(m_objectram);
+	m_gfxdecode->m_gfx[0]->set_source(m_charram);
+	m_gfxdecode->m_gfx[1]->set_source(m_charram);
+	m_gfxdecode->m_gfx[2]->set_source(m_tileram);
+	m_gfxdecode->m_gfx[3]->set_source(m_objectram);
 
 	/* create an empty tile */
 	memset(m_empty_tile, 0, sizeof(m_empty_tile));

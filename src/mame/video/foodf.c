@@ -112,7 +112,7 @@ WRITE16_MEMBER(foodf_state::foodf_paletteram_w)
 UINT32 foodf_state::screen_update_foodf(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
 	int offs;
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	bitmap_ind8 &priority_bitmap = screen.priority();
 	UINT16 *spriteram16 = m_spriteram;
 

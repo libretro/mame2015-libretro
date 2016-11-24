@@ -358,7 +358,7 @@ void combatsc_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &clipre
 	address_space &space = machine().driver_data()->generic_space();
 	int base_color = (circuit * 4) * 16 + (k007121->ctrlram_r(space, 6) & 0x10) * 2;
 
-	k007121->sprites_draw(bitmap, cliprect, m_gfxdecode->gfx(circuit), m_palette, source, base_color, 0, 0, priority_bitmap, pri_mask);
+	k007121->sprites_draw(bitmap, cliprect, m_gfxdecode->m_gfx[circuit], m_palette, source, base_color, 0, 0, priority_bitmap, pri_mask);
 }
 
 
@@ -475,7 +475,7 @@ byte #4:
 void combatsc_state::bootleg_draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect, const UINT8 *source, int circuit )
 {
 	address_space &space = m_maincpu->space(AS_PROGRAM);
-	gfx_element *gfx = m_gfxdecode->gfx(circuit + 2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[circuit + 2];
 
 	int limit = circuit ? (space.read_byte(0xc2) * 256 + space.read_byte(0xc3)) : (space.read_byte(0xc0) * 256 + space.read_byte(0xc1));
 	const UINT8 *finish;

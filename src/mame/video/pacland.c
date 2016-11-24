@@ -98,15 +98,15 @@ PALETTE_INIT_MEMBER(pacland_state, pacland)
 	/* color_prom now points to the beginning of the lookup table */
 
 	for (i = 0;i < 0x400;i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(0)->m_color_base + i, *color_prom++);
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[0]->m_color_base + i, *color_prom++);
 
 	/* Background */
 	for (i = 0;i < 0x400;i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + i, *color_prom++);
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[1]->m_color_base + i, *color_prom++);
 
 	/* Sprites */
 	for (i = 0;i < 0x400;i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(2)->m_color_base + i, *color_prom++);
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[2]->m_color_base + i, *color_prom++);
 
 	m_palette_bank = 0;
 	switch_palette();
@@ -125,7 +125,7 @@ PALETTE_INIT_MEMBER(pacland_state, pacland)
 		/* iterate over all palette entries except the last one */
 		for (palentry = 0; palentry < 0x100; palentry++)
 		{
-			UINT32 mask = palette.transpen_mask(*m_gfxdecode->gfx(2), i, palentry);
+			UINT32 mask = palette.transpen_mask(*m_gfxdecode->m_gfx[2], i, palentry);
 
 			/* transmask[0] is a mask that is used to draw only high priority sprite pixels; thus, pens
 			   $00-$7F are opaque, and others are transparent */
@@ -201,11 +201,11 @@ void pacland_state::video_start()
 
 	/* create one group per color code; for each group, set the transparency mask
 	   to correspond to the pens that are 0x7f or 0xff */
-	assert(m_gfxdecode->gfx(0)->m_total_colors <= TILEMAP_NUM_GROUPS);
-	for (color = 0; color < m_gfxdecode->gfx(0)->m_total_colors; color++)
+	assert(m_gfxdecode->m_gfx[0]->m_total_colors <= TILEMAP_NUM_GROUPS);
+	for (color = 0; color < m_gfxdecode->m_gfx[0]->m_total_colors; color++)
 	{
-		UINT32 mask = m_palette->transpen_mask(*m_gfxdecode->gfx(0), color, 0x7f);
-		mask |= m_palette->transpen_mask(*m_gfxdecode->gfx(0), color, 0xff);
+		UINT32 mask = m_palette->transpen_mask(*m_gfxdecode->m_gfx[0], color, 0x7f);
+		mask |= m_palette->transpen_mask(*m_gfxdecode->m_gfx[0], color, 0xff);
 		m_fg_tilemap->set_transmask(color, mask, 0);
 	}
 
@@ -311,13 +311,13 @@ void pacland_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap, co
 			for (x = 0;x <= sizex;x++)
 			{
 				if (whichmask != 0)
-					m_gfxdecode->gfx(2)->transmask(bitmap,cliprect,
+					m_gfxdecode->m_gfx[2]->transmask(bitmap,cliprect,
 						sprite + gfx_offs[y ^ (sizey * flipy)][x ^ (sizex * flipx)],
 						color,
 						flipx,flipy,
 						sx + 16*x,sy + 16*y,m_transmask[whichmask][color]);
 				else
-					m_gfxdecode->gfx(2)->prio_transmask(bitmap,cliprect,
+					m_gfxdecode->m_gfx[2]->prio_transmask(bitmap,cliprect,
 						sprite + gfx_offs[y ^ (sizey * flipy)][x ^ (sizex * flipx)],
 						color,
 						flipx,flipy,

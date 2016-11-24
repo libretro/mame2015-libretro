@@ -330,7 +330,7 @@ void seibuspi_state::drawgfx_blend(bitmap_rgb32 &bitmap, const rectangle &clipre
 
 void seibuspi_state::draw_sprites(bitmap_rgb32 &bitmap, const rectangle &cliprect, bitmap_ind8 &primap, int priority)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 	const int has_tile_high = (gfx->m_total_elements > 0x10000) ? 1 : 0;
 	const int colormask = (m_sprite_bpp == 6) ? 0x3f : 0x1f;
 

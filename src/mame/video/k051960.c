@@ -167,7 +167,7 @@ void k051960_device::device_start()
 	m_sprite_rom = region()->base();
 	m_sprite_size = region()->bytes();
 
-	decode_gfx();
+	decode_gfx(m_gfxdecodeinfo);
 	m_gfx[0]->set_colors(m_palette->entries() / m_gfx[0]->m_color_depth);
 
 	if (VERBOSE && !(m_palette->shadows_enabled()))

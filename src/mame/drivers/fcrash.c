@@ -486,7 +486,7 @@ void cps_state::fcrash_render_sprites( screen_device &screen, bitmap_ind16 &bitm
 {
 	int pos;
 	int base = m_sprite_base / 2;
-	int num_sprites = m_gfxdecode->gfx(2)->m_total_elements;
+	int num_sprites = m_gfxdecode->m_gfx[2]->m_total_elements;
 	int last_sprite_offset = 0x1ffc;
 	UINT16 *sprite_ram = m_gfxram;
 	UINT16 tileno,flipx,flipy,colour,xpos,ypos;
@@ -513,7 +513,7 @@ void cps_state::fcrash_render_sprites( screen_device &screen, bitmap_ind16 &bitm
 			ypos   = 256 - ypos - 16;
 			xpos   = xpos + m_sprite_x_offset + 49;
 
-			m_gfxdecode->gfx(2)->prio_transpen(bitmap,cliprect, tileno, colour, flipx, flipy, xpos, ypos, screen.priority(), 0x02, 15);
+			m_gfxdecode->m_gfx[2]->prio_transpen(bitmap,cliprect, tileno, colour, flipx, flipy, xpos, ypos, screen.priority(), 0x02, 15);
 		}
 	}
 }

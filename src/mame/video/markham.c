@@ -102,12 +102,12 @@ void markham_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprec
 		if (px > 248)
 			px = px - 256;
 
-		m_gfxdecode->gfx(1)->transmask(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect,
 			chr,
 			col,
 			fx,fy,
 			px,py,
-			m_palette->transpen_mask(*m_gfxdecode->gfx(1), col, 0));
+			m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], col, 0));
 	}
 }
 

@@ -138,42 +138,42 @@ READ8_MEMBER(taitol_state::taitol_control_r)
 
 void taitol_state::taitol_chardef14_m( int offset )
 {
-	m_gfxdecode->gfx(2)->mark_dirty(offset / 32 + 0);
+	m_gfxdecode->m_gfx[2]->mark_dirty(offset / 32 + 0);
 }
 
 void taitol_state::taitol_chardef15_m( int offset )
 {
-	m_gfxdecode->gfx(2)->mark_dirty(offset / 32 + 128);
+	m_gfxdecode->m_gfx[2]->mark_dirty(offset / 32 + 128);
 }
 
 void taitol_state::taitol_chardef16_m( int offset )
 {
-	m_gfxdecode->gfx(2)->mark_dirty(offset / 32 + 256);
+	m_gfxdecode->m_gfx[2]->mark_dirty(offset / 32 + 256);
 }
 
 void taitol_state::taitol_chardef17_m( int offset )
 {
-	m_gfxdecode->gfx(2)->mark_dirty(offset / 32 + 384);
+	m_gfxdecode->m_gfx[2]->mark_dirty(offset / 32 + 384);
 }
 
 void taitol_state::taitol_chardef1c_m( int offset )
 {
-	m_gfxdecode->gfx(2)->mark_dirty(offset / 32 + 512);
+	m_gfxdecode->m_gfx[2]->mark_dirty(offset / 32 + 512);
 }
 
 void taitol_state::taitol_chardef1d_m( int offset )
 {
-	m_gfxdecode->gfx(2)->mark_dirty(offset / 32 + 640);
+	m_gfxdecode->m_gfx[2]->mark_dirty(offset / 32 + 640);
 }
 
 void taitol_state::taitol_chardef1e_m( int offset )
 {
-	m_gfxdecode->gfx(2)->mark_dirty(offset / 32 + 768);
+	m_gfxdecode->m_gfx[2]->mark_dirty(offset / 32 + 768);
 }
 
 void taitol_state::taitol_chardef1f_m( int offset )
 {
-	m_gfxdecode->gfx(2)->mark_dirty(offset / 32 + 896);
+	m_gfxdecode->m_gfx[2]->mark_dirty(offset / 32 + 896);
 }
 
 void taitol_state::taitol_bg18_m( int offset )
@@ -253,7 +253,7 @@ void taitol_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, co
 			flipy = !flipy;
 		}
 
-		m_gfxdecode->gfx(1)->prio_transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->prio_transpen(bitmap,cliprect,
 				code,
 				color,
 				flipx,flipy,

@@ -146,7 +146,7 @@ void thoop2_state::thoop2_sort_sprites()
 void thoop2_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, int pri)
 {
 	int j, x, y, ex, ey;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 
 	static const int x_offset[2] = {0x0,0x2};
 	static const int y_offset[2] = {0x0,0x1};

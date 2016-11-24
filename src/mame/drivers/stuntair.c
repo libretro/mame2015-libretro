@@ -195,7 +195,7 @@ void stuntair_state::video_start()
 
 void stuntair_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 
 	/* there seem to be 2 spritelists with something else (fixed values) between them.. is that significant? */
 	for (int i=0;i<0x400;i+=16)

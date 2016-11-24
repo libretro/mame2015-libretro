@@ -290,8 +290,8 @@ void tc0100scn_device::device_start()
 	/* create the char set (gfx will then be updated dynamically from RAM) */
 	m_gfxdecode->set_gfx(m_txnum, global_alloc(gfx_element(m_palette, tc0100scn_charlayout, (UINT8 *)m_char_ram, NATIVE_ENDIAN_VALUE_LE_BE(8,0), 256, 0)));
 
-	gfx_element *gfx = m_gfxdecode->gfx(m_gfxnum);
-	gfx_element *txt = m_gfxdecode->gfx(m_txnum);
+	gfx_element *gfx = m_gfxdecode->m_gfx[m_gfxnum];
+	gfx_element *txt = m_gfxdecode->m_gfx[m_txnum];
 
 	if (gfx->m_color_granularity == 2)    /* Yuyugogo, Yesnoj */
 		gfx->set_granularity(16);
@@ -468,7 +468,7 @@ WRITE16_MEMBER( tc0100scn_device::word_w )
 		else if (offset < 0x3000)
 			m_tilemap[2][0]->mark_tile_dirty((offset & 0x0fff));
 		else if (offset < 0x3800)
-			m_gfxdecode->gfx(m_txnum)->mark_dirty((offset - 0x3000) / 8);
+			m_gfxdecode->m_gfx[m_txnum]->mark_dirty((offset - 0x3000) / 8);
 		else if (offset >= 0x4000 && offset < 0x6000)
 			m_tilemap[1][0]->mark_tile_dirty((offset & 0x1fff) / 2);
 	}
@@ -479,7 +479,7 @@ WRITE16_MEMBER( tc0100scn_device::word_w )
 		else if (offset >= 0x4000 && offset < 0x8000)
 			m_tilemap[1][1]->mark_tile_dirty((offset & 0x3fff) / 2);
 		else if (offset >= 0x8800 && offset < 0x9000)
-			m_gfxdecode->gfx(m_txnum)->mark_dirty((offset - 0x8800) / 8);
+			m_gfxdecode->m_gfx[m_txnum]->mark_dirty((offset - 0x8800) / 8);
 		else if (offset >= 0x9000)
 			m_tilemap[2][1]->mark_tile_dirty((offset & 0x0fff));
 	}
@@ -538,7 +538,7 @@ WRITE16_MEMBER( tc0100scn_device::ctrl_word_w )
 				dirty_tilemaps();
 
 				/* reset the pointer to the text characters (and dirty them all) */
-				m_gfxdecode->gfx(m_txnum)->set_source((UINT8 *)m_char_ram);
+				m_gfxdecode->m_gfx[m_txnum]->set_source((UINT8 *)m_char_ram);
 			}
 
 			break;

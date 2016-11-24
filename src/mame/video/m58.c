@@ -209,7 +209,7 @@ WRITE8_MEMBER(m58_state::flipscreen_w)
  *
  *************************************/
 
-#define DRAW_SPRITE(code, sy)  m_gfxdecode->gfx(1)->transmask(bitmap,cliprect, code, color, flipx, flipy, sx, sy, m_palette->transpen_mask(*m_gfxdecode->gfx(1), color, 512));
+#define DRAW_SPRITE(code, sy)  m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect, code, color, flipx, flipy, sx, sy, m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color, 512));
 
 void m58_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect )
 {

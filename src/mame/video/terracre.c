@@ -29,7 +29,7 @@ TILE_GET_INFO_MEMBER(terracre_state::get_fg_tile_info)
 void terracre_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect )
 {
 	const UINT8 *spritepalettebank = memregion("user1")->base();
-	gfx_element *pGfx = m_gfxdecode->gfx(2);
+	gfx_element *pGfx = m_gfxdecode->m_gfx[2];
 	const UINT16 *pSource = m_spriteram->buffer();
 	int flip = flip_screen();
 	int transparent_pen;

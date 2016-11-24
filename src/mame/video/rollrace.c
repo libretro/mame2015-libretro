@@ -123,7 +123,7 @@ UINT32 rollrace_state::screen_update(screen_device &screen, bitmap_ind16 &bitmap
 			if(m_flipy)
 				sy = 31-sy ;
 
-			m_gfxdecode->gfx(RA_BGCHAR_BASE)->transpen(bitmap,
+			m_gfxdecode->m_gfx[RA_BGCHAR_BASE]->transpen(bitmap,
 				cliprect,
 				mem[offs + ( m_bkgpage * 1024 )]
 				+ ((( mem[offs + 0x4000 + ( m_bkgpage * 1024 )] & 0xc0 ) >> 6 ) * 256 ) ,
@@ -161,7 +161,7 @@ UINT32 rollrace_state::screen_update(screen_device &screen, bitmap_ind16 &bitmap
 		if(bank)
 			bank += m_spritebank;
 
-		m_gfxdecode->gfx( RA_SP_BASE + bank )->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[ RA_SP_BASE + bank ]->transpen(bitmap,cliprect,
 			spriteram[offs+1] & 0x3f ,
 			spriteram[offs+2] & 0x1f,
 			m_flipx,!(s_flipy^m_flipy),
@@ -188,7 +188,7 @@ UINT32 rollrace_state::screen_update(screen_device &screen, bitmap_ind16 &bitmap
 
 		if (m_flipx) sx = 31 - sx;
 
-		m_gfxdecode->gfx(RA_FGCHAR_BASE + m_chrbank)  ->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[RA_FGCHAR_BASE + m_chrbank]  ->transpen(bitmap,cliprect,
 			m_videoram[ offs ]  ,
 			col,
 			m_flipx,m_flipy,

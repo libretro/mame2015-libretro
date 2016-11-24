@@ -122,7 +122,7 @@ int grchamp_state::collision_check(bitmap_ind16 &bitmap, int which )
 	{
 		/* draw the current player sprite into a work bitmap */
 
-			m_gfxdecode->gfx(4)->opaque(m_work_bitmap,
+			m_gfxdecode->m_gfx[4]->opaque(m_work_bitmap,
 			m_work_bitmap.cliprect(),
 			m_cpu0_out[4]&0xf,
 			1, /* color */
@@ -176,7 +176,7 @@ void grchamp_state::draw_fog(bitmap_ind16 &bitmap, const rectangle &cliprect, in
 
 void grchamp_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(5);
+	gfx_element *gfx = m_gfxdecode->m_gfx[5];
 	int bank = (m_cpu0_out[0] & 0x20) ? 0x40 : 0x00;
 	const UINT8 *source = m_spriteram + 0x40;
 	const UINT8 *finish = source + 0x40;
@@ -246,7 +246,7 @@ void grchamp_state::draw_objects(int y, UINT8 *objdata)
 	memset(objdata, 0, 256);
 
 	/* now draw the sprites; this is done during HBLANK */
-	gfx = m_gfxdecode->gfx(4);
+	gfx = m_gfxdecode->m_gfx[4];
 	for (num = 0; num < 16; num++)
 	{
 		/*
@@ -298,7 +298,7 @@ void grchamp_state::draw_objects(int y, UINT8 *objdata)
 	}
 
 	/* finally draw the text characters; this is done as we read out the object buffers */
-	gfx = m_gfxdecode->gfx(0);
+	gfx = m_gfxdecode->m_gfx[0];
 	for (num = 0; num < 32; num++)
 	{
 		/*

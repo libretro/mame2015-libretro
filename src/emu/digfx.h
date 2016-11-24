@@ -187,6 +187,17 @@ struct gfx_decode_entry
 class device_gfx_interface : public device_interface
 {
 public:
+	// configuration
+	const gfx_decode_entry *    m_gfxdecodeinfo;        // pointer to array of gfx decode information
+	const char *                m_palette_tag;          // configured tag for palette device
+	bool                        m_palette_is_sibling;   // is palette a sibling or a subdevice?
+
+	// internal state
+	bool                        m_decoded;                  // have we processed our decode info yet?
+
+	palette_device *            m_palette;                  // pointer to the palette device
+	auto_pointer<gfx_element>   m_gfx[MAX_GFX_ELEMENTS];    // array of pointers to graphic sets
+
 	// construction/destruction
 	device_gfx_interface(const machine_config &mconfig, device_t &device,
 						const gfx_decode_entry *gfxinfo = NULL, const char *palette_tag = NULL);
@@ -196,13 +207,8 @@ public:
 	static void static_set_info(device_t &device, const gfx_decode_entry *gfxinfo);
 	static void static_set_palette(device_t &device, const char *tag);
 
-	// getters
-	palette_device *palette() const { return m_palette; }
-	gfx_element *gfx(int index) const { assert(index < MAX_GFX_ELEMENTS); return m_gfx[index]; }
-
 	// decoding
 	void decode_gfx(const gfx_decode_entry *gfxdecodeinfo);
-	void decode_gfx() { decode_gfx(m_gfxdecodeinfo); }
 
 	void set_gfx(int index, gfx_element *element) { assert(index < MAX_GFX_ELEMENTS); m_gfx[index].reset(element); }
 
@@ -211,18 +217,6 @@ protected:
 	virtual void interface_validity_check(validity_checker &valid) const;
 	virtual void interface_pre_start();
 	virtual void interface_post_start();
-
-	palette_device *            m_palette;                  // pointer to the palette device
-	auto_pointer<gfx_element>   m_gfx[MAX_GFX_ELEMENTS];    // array of pointers to graphic sets
-
-private:
-	// configuration
-	const gfx_decode_entry *    m_gfxdecodeinfo;        // pointer to array of gfx decode information
-	const char *                m_palette_tag;          // configured tag for palette device
-	bool                        m_palette_is_sibling;   // is palette a sibling or a subdevice?
-
-	// internal state
-	bool                        m_decoded;                  // have we processed our decode info yet?
 };
 
 // iterator

@@ -289,7 +289,7 @@ void galivan_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprec
 	UINT8 *buffered_spriteram = m_spriteram->buffer();
 	int length = m_spriteram->bytes();
 	int flip = flip_screen();
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 
 	/* draw the sprites */
 	for (int offs = 0; offs < length; offs += 4)

@@ -202,7 +202,7 @@ void ms32_state::draw_sprites(bitmap_ind16 &bitmap, bitmap_ind8 &bitmap_pri, con
 	int code, attr, color, size;
 	int pri;
 	int xzoom, yzoom;
-	gfx_element *gfx = m_gfxdecode->gfx(gfxnum);
+	gfx_element *gfx = m_gfxdecode->m_gfx[gfxnum];
 
 	UINT16      *source =   sprram_top;
 	UINT16  *finish =   sprram_top + (sprram_size - 0x10) / 2;

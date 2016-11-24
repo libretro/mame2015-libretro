@@ -91,7 +91,7 @@ TILEMAP_MAPPER_MEMBER(kickgoal_state::tilemap_scan_actionhwbg2)// 32x32 tiles
 void kickgoal_state::kickgoal_draw_sprites(bitmap_ind16 &bitmap,const rectangle &cliprect)
 {
 	UINT16 *spriteram = m_spriteram;
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	int offs;
 
 	for (offs = 0; offs < m_spriteram.bytes() / 2; offs += 4)

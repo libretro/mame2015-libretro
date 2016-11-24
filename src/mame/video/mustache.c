@@ -99,7 +99,7 @@ void mustache_state::video_start()
 void mustache_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect )
 {
 	rectangle clip = cliprect;
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	const rectangle &visarea = m_screen->visible_area();
 	int offs;
 

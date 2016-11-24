@@ -82,7 +82,7 @@ void raiden_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect,
 		return;
 
 	UINT16 *sprites = m_spriteram->buffer();
-	gfx_element *gfx = m_gfxdecode->gfx(3);
+	gfx_element *gfx = m_gfxdecode->m_gfx[3];
 
 	for (int offs = 0x1000/2-4; offs >= 0; offs -= 4)
 	{

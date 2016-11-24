@@ -104,7 +104,7 @@ void targeth_state::video_start()
 void targeth_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
 	int i;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 
 	for (i = 3; i < (0x1000 - 6)/2; i += 4){
 		int sx = m_spriteram[i+2] & 0x03ff;

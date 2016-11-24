@@ -149,7 +149,7 @@ inline const UINT8 *bbusters_state::get_source_ptr(gfx_element *gfx, UINT32 spri
 
 void bbusters_state::draw_block(bitmap_ind16 &dest,int x,int y,int size,int flipx,int flipy,UINT32 sprite,int color,int bank,int block)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(bank);
+	gfx_element *gfx = m_gfxdecode->m_gfx[bank];
 	pen_t pen_base = gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors);
 	UINT32 xinc=(m_scale_line_count * 0x10000 ) / size;
 	UINT8 pixel;

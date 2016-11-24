@@ -377,7 +377,7 @@ void suna8_state::draw_normal_sprites(bitmap_ind16 &bitmap,const rectangle &clip
 					sy = max_y - sy;    tile_flipy = !tile_flipy;
 				}
 
-				m_gfxdecode->gfx(which)->transpen(bitmap,cliprect,
+				m_gfxdecode->m_gfx[which]->transpen(bitmap,cliprect,
 							tile + (attr & 0x3)*0x100 + gfxbank,
 							(((attr >> 2) & 0xf) | colorbank) + 0x10 * m_palettebank,    // hardhea2 player2
 							tile_flipx, tile_flipy,
@@ -441,7 +441,7 @@ void suna8_state::draw_text_sprites(bitmap_ind16 &bitmap,const rectangle &clipre
 					sy = max_y - sy;    flipy = !flipy;
 				}
 
-				m_gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+				m_gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 							tile + (attr & 0x3)*0x100 + bank,
 							(attr >> 2) & 0xf,
 							flipx, flipy,
@@ -479,7 +479,7 @@ UINT32 suna8_state::screen_update_suna8(screen_device &screen, bitmap_ind16 &bit
 		if (machine().input().code_pressed_once(KEYCODE_S)) { m_trombank++; machine().tilemap().mark_all_dirty();   }
 
 		m_trombank  &=  0xf;
-		m_page      &=  m_text_dim ? 3 : (m_gfxdecode->gfx(1) ? 15 : 7);
+		m_page      &=  m_text_dim ? 3 : (m_gfxdecode->m_gfx[1] ? 15 : 7);
 		m_tiles     %=  max_tiles;
 		if (m_tiles < 0) m_tiles += max_tiles;
 
@@ -500,7 +500,7 @@ UINT32 suna8_state::screen_update_suna8(screen_device &screen, bitmap_ind16 &bit
 		draw_normal_sprites(bitmap,cliprect, 0);
 
 		// More normal sprites (second sprite "chip" in sparkman)
-		if (m_gfxdecode->gfx(1))
+		if (m_gfxdecode->m_gfx[1])
 			draw_normal_sprites(bitmap,cliprect, 1);
 
 		// Text sprites (earlier games only)

@@ -51,7 +51,7 @@ VIDEO_START_MEMBER(f1gp_state,f1gp)
 	m_fg_tilemap->set_transparent_pen(0xff);
 
 	m_zoomdata = (UINT16 *)memregion("gfx4")->base();
-	m_gfxdecode->gfx(3)->set_source((UINT8 *)m_zoomdata);
+	m_gfxdecode->m_gfx[3]->set_source((UINT8 *)m_zoomdata);
 
 	save_pointer(NAME(m_zoomdata), memregion("gfx4")->bytes()/2);
 }
@@ -65,7 +65,7 @@ VIDEO_START_MEMBER(f1gp_state,f1gpb)
 	m_fg_tilemap->set_transparent_pen(0xff);
 
 	m_zoomdata = (UINT16 *)memregion("gfx4")->base();
-	m_gfxdecode->gfx(3)->set_source((UINT8 *)m_zoomdata);
+	m_gfxdecode->m_gfx[3]->set_source((UINT8 *)m_zoomdata);
 
 	save_pointer(NAME(m_zoomdata), memregion("gfx4")->bytes()/2);
 }
@@ -117,7 +117,7 @@ READ16_MEMBER(f1gp_state::f1gp_zoomdata_r)
 WRITE16_MEMBER(f1gp_state::f1gp_zoomdata_w)
 {
 	COMBINE_DATA(&m_zoomdata[offset]);
-	m_gfxdecode->gfx(3)->mark_dirty(offset / 64);
+	m_gfxdecode->m_gfx[3]->mark_dirty(offset / 64);
 }
 
 READ16_MEMBER(f1gp_state::f1gp_rozvideoram_r)
@@ -294,7 +294,7 @@ void f1gp_state::f1gpb_draw_sprites( screen_device &screen,bitmap_ind16 &bitmap,
 			gfx = 0;
 		}
 
-		m_gfxdecode->gfx(1 + gfx)->prio_transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1 + gfx]->prio_transpen(bitmap,cliprect,
 			code,
 			color,
 			flipx,flipy,
@@ -303,7 +303,7 @@ void f1gp_state::f1gpb_draw_sprites( screen_device &screen,bitmap_ind16 &bitmap,
 			pri ? 0 : 0x2,15);
 
 		// wrap around x
-		m_gfxdecode->gfx(1 + gfx)->prio_transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1 + gfx]->prio_transpen(bitmap,cliprect,
 			code,
 			color,
 			flipx,flipy,

@@ -103,7 +103,7 @@ void vball_state::spprombank_w( int bank )
 
 void vball_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	UINT8 *src = m_spriteram;
 	int i;
 

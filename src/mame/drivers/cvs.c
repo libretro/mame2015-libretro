@@ -162,7 +162,7 @@ WRITE8_MEMBER(cvs_state::cvs_s2636_0_or_character_ram_w)
 	{
 		offset |= (0 * 0x800) | 0x400 | m_character_ram_page_start;
 		m_character_ram[offset] = data;
-		m_gfxdecode->gfx(1)->mark_dirty((offset / 8) % 256);
+		m_gfxdecode->m_gfx[1]->mark_dirty((offset / 8) % 256);
 	}
 	else
 		m_s2636_0->work_ram_w(space, offset, data);
@@ -183,7 +183,7 @@ WRITE8_MEMBER(cvs_state::cvs_s2636_1_or_character_ram_w)
 	{
 		offset |= (1 * 0x800) | 0x400 | m_character_ram_page_start;
 		m_character_ram[offset] = data;
-		m_gfxdecode->gfx(1)->mark_dirty((offset / 8) % 256);
+		m_gfxdecode->m_gfx[1]->mark_dirty((offset / 8) % 256);
 	}
 	else
 		m_s2636_1->work_ram_w(space, offset, data);
@@ -204,7 +204,7 @@ WRITE8_MEMBER(cvs_state::cvs_s2636_2_or_character_ram_w)
 	{
 		offset |= (2 * 0x800) | 0x400 | m_character_ram_page_start;
 		m_character_ram[offset] = data;
-		m_gfxdecode->gfx(1)->mark_dirty((offset / 8) % 256);
+		m_gfxdecode->m_gfx[1]->mark_dirty((offset / 8) % 256);
 	}
 	else
 		m_s2636_2->work_ram_w(space, offset, data);
@@ -939,8 +939,8 @@ GFXDECODE_END
 MACHINE_START_MEMBER(cvs_state,cvs)
 {
 	/* allocate memory */
-	if (m_gfxdecode->gfx(1) != NULL)
-		m_gfxdecode->gfx(1)->set_source(m_character_ram);
+	if (m_gfxdecode->m_gfx[1] != NULL)
+		m_gfxdecode->m_gfx[1]->set_source(m_character_ram);
 
 	start_393hz_timer();
 

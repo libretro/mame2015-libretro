@@ -209,7 +209,7 @@ WRITE32_MEMBER( k037122_device::char_w )
 	UINT32 addr = offset + (bank * (0x40000/4));
 
 	COMBINE_DATA(m_char_ram + addr);
-	m_gfxdecode->gfx(m_gfx_index)->mark_dirty(addr / 32);
+	m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty(addr / 32);
 }
 
 READ32_MEMBER( k037122_device::reg_r )

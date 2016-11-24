@@ -246,7 +246,7 @@ void ssrj_state::draw_objects(bitmap_ind16 &bitmap, const rectangle &cliprect )
 					int offs = (i * 5 + k) * 64 + (31 - j) * 2;
 
 					code = m_vram3[offs] + 256 * m_vram3[offs + 1];
-					m_gfxdecode->gfx(0)->transpen(bitmap,
+					m_gfxdecode->m_gfx[0]->transpen(bitmap,
 						cliprect,
 						code&1023,
 						((code>>12)&0x3)+8,

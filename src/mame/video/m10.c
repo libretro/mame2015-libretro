@@ -79,7 +79,7 @@ WRITE8_MEMBER(m10_state::m15_chargen_w)
 	if (m_chargen[offset] != data)
 	{
 		m_chargen[offset] = data;
-		m_gfxdecode->gfx(0)->mark_dirty(offset >> 3);
+		m_gfxdecode->m_gfx[0]->mark_dirty(offset >> 3);
 	}
 }
 

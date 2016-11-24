@@ -277,16 +277,16 @@ void gaiden_state::drgnbowl_draw_sprites(screen_device &screen, bitmap_ind16 &bi
 		else
 			priority_mask = 0;
 
-		m_gfxdecode->gfx(3)->prio_transpen_raw(bitmap,cliprect,
+		m_gfxdecode->m_gfx[3]->prio_transpen_raw(bitmap,cliprect,
 				code,
-				m_gfxdecode->gfx(3)->m_color_base + color * m_gfxdecode->gfx(3)->m_color_granularity,
+				m_gfxdecode->m_gfx[3]->m_color_base + color * m_gfxdecode->m_gfx[3]->m_color_granularity,
 				flipx,flipy,x,y,
 				screen.priority(), priority_mask,15);
 
 		/* wrap x*/
-		m_gfxdecode->gfx(3)->prio_transpen_raw(bitmap,cliprect,
+		m_gfxdecode->m_gfx[3]->prio_transpen_raw(bitmap,cliprect,
 				code,
-				m_gfxdecode->gfx(3)->m_color_base + color * m_gfxdecode->gfx(3)->m_color_granularity,
+				m_gfxdecode->m_gfx[3]->m_color_base + color * m_gfxdecode->m_gfx[3]->m_color_granularity,
 				flipx,flipy,x-512,y,
 				screen.priority(), priority_mask,15);
 

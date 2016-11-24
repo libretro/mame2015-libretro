@@ -429,7 +429,7 @@ TILE_GET_INFO_MEMBER(galaga_state::get_tile_info)
 VIDEO_START_MEMBER(galaga_state,galaga)
 {
 	m_fg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(galaga_state::get_tile_info),this),tilemap_mapper_delegate(FUNC(galaga_state::tilemap_scan),this),8,8,36,28);
-	m_fg_tilemap->configure_groups(*m_gfxdecode->gfx(0), 0x1f);
+	m_fg_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 0x1f);
 
 	m_galaga_gfxbank = 0;
 
@@ -505,12 +505,12 @@ void galaga_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect 
 		{
 			for (x = 0;x <= sizex;x++)
 			{
-				m_gfxdecode->gfx(1)->transmask(bitmap,cliprect,
+				m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect,
 					sprite + gfx_offs[y ^ (sizey * flipy)][x ^ (sizex * flipx)],
 					color,
 					flipx,flipy,
 					sx + 16*x, sy + 16*y,
-					m_palette->transpen_mask(*m_gfxdecode->gfx(1), color, 0x0f));
+					m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color, 0x0f));
 			}
 		}
 	}

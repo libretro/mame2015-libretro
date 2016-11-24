@@ -143,10 +143,10 @@ VIDEO_START_MEMBER(madalien_state,madalien)
 
 	m_headlight_bitmap = auto_bitmap_ind16_alloc(machine(), 128, 128);
 
-	m_gfxdecode->gfx(0)->set_source(m_charram);
+	m_gfxdecode->m_gfx[0]->set_source(m_charram);
 
-	m_gfxdecode->gfx(2)->opaque(*m_headlight_bitmap,m_headlight_bitmap->cliprect(), 0, 0, 0, 0, 0x00, 0x00);
-	m_gfxdecode->gfx(2)->opaque(*m_headlight_bitmap,m_headlight_bitmap->cliprect(), 0, 0, 0, 1, 0x00, 0x40);
+	m_gfxdecode->m_gfx[2]->opaque(*m_headlight_bitmap,m_headlight_bitmap->cliprect(), 0, 0, 0, 0, 0x00, 0x00);
+	m_gfxdecode->m_gfx[2]->opaque(*m_headlight_bitmap,m_headlight_bitmap->cliprect(), 0, 0, 0, 1, 0x00, 0x40);
 }
 
 
@@ -233,7 +233,7 @@ void madalien_state::draw_foreground(screen_device &screen, bitmap_ind16 &bitmap
 WRITE8_MEMBER(madalien_state::madalien_charram_w)
 {
 	m_charram[offset] = data;
-	m_gfxdecode->gfx(0)->mark_dirty((offset/8) & 0xff);
+	m_gfxdecode->m_gfx[0]->mark_dirty((offset/8) & 0xff);
 }
 
 

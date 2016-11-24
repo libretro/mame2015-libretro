@@ -132,7 +132,7 @@ VIDEO_START_MEMBER(equites_state,splndrbt)
 	m_fg_tilemap->set_scrolldx(8, -8);
 
 	m_bg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(equites_state::splndrbt_bg_info),this), TILEMAP_SCAN_ROWS, 16, 16, 32, 32);
-	m_bg_tilemap->configure_groups(*m_gfxdecode->gfx(1), 0x10);
+	m_bg_tilemap->configure_groups(*m_gfxdecode->m_gfx[1], 0x10);
 }
 
 
@@ -255,7 +255,7 @@ void equites_state::equites_draw_sprites_block( bitmap_ind16 &bitmap, const rect
 			int color = (~attr & 0xf000) >> 12;
 			int sx = (m_spriteram[offs] & 0xff00) >> 8;
 			int sy = (m_spriteram[offs] & 0x00ff);
-			int transmask = m_palette->transpen_mask(*m_gfxdecode->gfx(2), color, 0);
+			int transmask = m_palette->transpen_mask(*m_gfxdecode->m_gfx[2], color, 0);
 
 			if (flip_screen())
 			{
@@ -271,7 +271,7 @@ void equites_state::equites_draw_sprites_block( bitmap_ind16 &bitmap, const rect
 			// sprites are 16x14 centered in a 16x16 square, so skip the first line
 			sy += 1;
 
-			m_gfxdecode->gfx(2)->transmask(bitmap,cliprect,
+			m_gfxdecode->m_gfx[2]->transmask(bitmap,cliprect,
 					tile,
 					color,
 					fx, fy,
@@ -317,7 +317,7 @@ void equites_state::splndrbt_draw_sprites( bitmap_ind16 &bitmap, const rectangle
 {
 	const UINT8 * const xrom = memregion("user2")->base();
 	const UINT8 * const yrom = xrom + 0x100;
-	gfx_element* gfx = m_gfxdecode->gfx(2);
+	gfx_element* gfx = m_gfxdecode->m_gfx[2];
 	int offs;
 
 	// note that sprites are actually 30x30, contained in 32x32 squares. The outer edge is not used.

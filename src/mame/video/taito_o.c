@@ -119,7 +119,7 @@ void taitoo_state::parentj_draw_sprites( bitmap_ind16 &bitmap, const rectangle &
 						}
 
 
-									m_gfxdecode->gfx(0)->zoom_transpen(bitmap,cliprect,
+									m_gfxdecode->m_gfx[0]->zoom_transpen(bitmap,cliprect,
 									tile,
 									color,
 									flipx, flipy,

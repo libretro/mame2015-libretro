@@ -889,8 +889,8 @@ WRITE16_MEMBER(ssv_state::eaglshot_gfxram_w)
 {
 	offset += (m_scroll[0x76/2] & 0xf) * 0x40000/2;
 	COMBINE_DATA(&m_eaglshot_gfxram[offset]);
-	m_gfxdecode->gfx(0)->mark_dirty(offset / (16*8/2));
-	m_gfxdecode->gfx(1)->mark_dirty(offset / (16*8/2));
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset / (16*8/2));
+	m_gfxdecode->m_gfx[1]->mark_dirty(offset / (16*8/2));
 }
 
 

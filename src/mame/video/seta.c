@@ -382,7 +382,7 @@ inline void seta_state::get_tile_info( tile_data &tileinfo, int tile_index, int 
 	UINT16 code =   vram[ tile_index ];
 	UINT16 attr =   vram[ tile_index + 0x800 ];
 
-	if(m_gfxdecode->gfx(gfx + ((vctrl[ 4/2 ] & 0x10) >> m_color_mode_shift)) != NULL)
+	if(m_gfxdecode->m_gfx[gfx + ((vctrl[ 4/2 ] & 0x10) >> m_color_mode_shift)] != NULL)
 	{
 		gfx += (vctrl[ 4/2 ] & 0x10) >> m_color_mode_shift;
 	}
@@ -658,8 +658,8 @@ PALETTE_INIT_MEMBER(seta_state,inttoote)
 
 PALETTE_INIT_MEMBER(seta_state,setaroul)
 {
-	m_gfxdecode->gfx(0)->set_granularity(16);
-	m_gfxdecode->gfx(1)->set_granularity(16);
+	m_gfxdecode->m_gfx[0]->set_granularity(16);
+	m_gfxdecode->m_gfx[1]->set_granularity(16);
 
 	PALETTE_INIT_NAME(inttoote)(palette);
 }
@@ -748,7 +748,7 @@ void seta_state::usclssic_set_pens()
 void seta_state::draw_tilemap_palette_effect(bitmap_ind16 &bitmap, const rectangle &cliprect, tilemap_t *tilemap, int scrollx, int scrolly, int gfxnum, int flipscreen)
 {
 	int y;
-	gfx_element *gfx_tilemap = m_gfxdecode->gfx(gfxnum);
+	gfx_element *gfx_tilemap = m_gfxdecode->m_gfx[gfxnum];
 	const bitmap_ind16 &src_bitmap = tilemap->pixmap();
 	int width_mask, height_mask;
 	int opaque_mask = gfx_tilemap->m_color_granularity - 1;

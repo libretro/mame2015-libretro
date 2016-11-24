@@ -223,7 +223,7 @@ void vsystem_spr_device::get_sprite_attributes(UINT16* ram)
 
 void vsystem_spr_device::common_sprite_drawgfx(bitmap_ind16 &bitmap, const rectangle &cliprect, bitmap_ind8 &priority_bitmap)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(m_gfx_region);
+	gfx_element *gfx = m_gfxdecode->m_gfx[m_gfx_region];
 	int priority_mask = 0x00;
 
 	curr_sprite.oy += m_yoffs;

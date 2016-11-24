@@ -181,7 +181,7 @@ UINT32 goldstar_state::screen_update_goldstar(screen_device &screen, bitmap_ind1
 	{
 		if (memregion("user1")->base())
 		{
-			gfx_element *gfx = m_gfxdecode->gfx(2);
+			gfx_element *gfx = m_gfxdecode->m_gfx[2];
 			int const girlyscroll = (INT8)((m_cm_girl_scroll & 0xf0));
 			int const girlxscroll = (INT8)((m_cm_girl_scroll & 0x0f) << 4);
 
@@ -396,7 +396,7 @@ UINT32 wingco_state::screen_update_bingowng(screen_device &screen, bitmap_ind16 
 	{
 		if (memregion("user1")->base())
 		{
-			gfx_element *gfx = m_gfxdecode->gfx(2);
+			gfx_element *gfx = m_gfxdecode->m_gfx[2];
 			int const girlyscroll = (INT8)((m_cm_girl_scroll & 0xf0));
 			int const girlxscroll = (INT8)((m_cm_girl_scroll & 0x0f)<<4);
 

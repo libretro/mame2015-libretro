@@ -176,7 +176,7 @@ void ddragon3_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 
 	UINT16 *buffered_spriteram16 = m_spriteram->buffer();
 	int length = m_spriteram->bytes();
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 	UINT16 *source = buffered_spriteram16;
 	UINT16 *finish = source + length/2;
 

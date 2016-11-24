@@ -60,8 +60,8 @@ void sderby_state::draw_sprites(bitmap_ind16 &bitmap,const rectangle &cliprect,i
 {
 	UINT16 *spriteram16 = m_spriteram;
 	int offs;
-	int height = m_gfxdecode->gfx(0)->m_height;
-	int colordiv = m_gfxdecode->gfx(0)->m_color_granularity / 16;
+	int height = m_gfxdecode->m_gfx[0]->m_height;
+	int colordiv = m_gfxdecode->m_gfx[0]->m_color_granularity / 16;
 
 	for (offs = 4;offs < m_spriteram.bytes()/2;offs += 4)
 	{
@@ -76,7 +76,7 @@ void sderby_state::draw_sprites(bitmap_ind16 &bitmap,const rectangle &cliprect,i
 		code = spriteram16[offs+2] >> codeshift;
 		color = (spriteram16[offs+1] & 0x3e00) >> 9;
 
-		m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 				code,
 				color/colordiv+48,
 				flipx,0,

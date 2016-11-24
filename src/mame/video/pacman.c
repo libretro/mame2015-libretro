@@ -240,20 +240,20 @@ UINT32 pacman_state::screen_update_pacman(screen_device &screen, bitmap_ind16 &b
 
 			color = ( spriteram[offs + 1] & 0x1f ) | (m_colortablebank << 5) | (m_palettebank << 6 );
 
-			m_gfxdecode->gfx(1)->transmask(bitmap,spriteclip,
+			m_gfxdecode->m_gfx[1]->transmask(bitmap,spriteclip,
 					( spriteram[offs] >> 2 ) | (m_spritebank << 6),
 					color,
 					fx,fy,
 					sx,sy,
-					m_palette->transpen_mask(*m_gfxdecode->gfx(1), color & 0x3f, 0));
+					m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color & 0x3f, 0));
 
 			/* also plot the sprite with wraparound (tunnel in Crush Roller) */
-			m_gfxdecode->gfx(1)->transmask(bitmap,spriteclip,
+			m_gfxdecode->m_gfx[1]->transmask(bitmap,spriteclip,
 					( spriteram[offs] >> 2 ) | (m_spritebank << 6),
 					color,
 					fx,fy,
 					sx - 256,sy,
-					m_palette->transpen_mask(*m_gfxdecode->gfx(1), color & 0x3f, 0));
+					m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color & 0x3f, 0));
 		}
 		/* In the Pac Man based games (NOT Pengo) the first two sprites must be offset */
 		/* one pixel to the left to get a more correct placement */
@@ -278,20 +278,20 @@ UINT32 pacman_state::screen_update_pacman(screen_device &screen, bitmap_ind16 &b
 			fx = (spriteram[offs] & 1) ^ m_inv_spr;
 			fy = (spriteram[offs] & 2) ^ ((m_inv_spr) << 1);
 
-			m_gfxdecode->gfx(1)->transmask(bitmap,spriteclip,
+			m_gfxdecode->m_gfx[1]->transmask(bitmap,spriteclip,
 					( spriteram[offs] >> 2 ) | (m_spritebank << 6),
 					color,
 					fx,fy,
 					sx,sy + m_xoffsethack,
-					m_palette->transpen_mask(*m_gfxdecode->gfx(1), color & 0x3f, 0));
+					m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color & 0x3f, 0));
 
 			/* also plot the sprite with wraparound (tunnel in Crush Roller) */
-			m_gfxdecode->gfx(1)->transmask(bitmap,spriteclip,
+			m_gfxdecode->m_gfx[1]->transmask(bitmap,spriteclip,
 					( spriteram[offs] >> 2 ) | (m_spritebank << 6),
 					color,
 					fy,fx,          //FIXME: flipping bits are really supposed to be inverted here?
 					sx - 256,sy + m_xoffsethack,
-					m_palette->transpen_mask(*m_gfxdecode->gfx(1), color & 0x3f, 0));
+					m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color & 0x3f, 0));
 		}
 	}
 
@@ -407,12 +407,12 @@ UINT32 pacman_state::screen_update_s2650games(screen_device &screen, bitmap_ind1
 		color = spriteram[offs + 1] & 0x1f;
 
 		/* TODO: ?? */
-		m_gfxdecode->gfx(1)->transmask(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect,
 				(spriteram[offs] >> 2) | ((m_s2650_spriteram[offs] & 3) << 6),
 				color,
 				spriteram[offs] & 1,spriteram[offs] & 2,
 				sx,sy,
-				m_palette->transpen_mask(*m_gfxdecode->gfx(1), color & 0x3f, 0));
+				m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color & 0x3f, 0));
 	}
 	/* In the Pac Man based games (NOT Pengo) the first two sprites must be offset */
 	/* one pixel to the left to get a more correct placement */
@@ -427,12 +427,12 @@ UINT32 pacman_state::screen_update_s2650games(screen_device &screen, bitmap_ind1
 		color = spriteram[offs + 1] & 0x1f;
 
 		/* TODO: ?? */
-		m_gfxdecode->gfx(1)->transmask(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect,
 				(spriteram[offs] >> 2) | ((m_s2650_spriteram[offs] & 3)<<6),
 				color,
 				spriteram[offs] & 1,spriteram[offs] & 2,
 				sx,sy + m_xoffsethack,
-				m_palette->transpen_mask(*m_gfxdecode->gfx(1), color & 0x3f, 0));
+				m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color & 0x3f, 0));
 	}
 	return 0;
 }

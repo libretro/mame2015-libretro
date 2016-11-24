@@ -253,7 +253,7 @@ UINT32 mystston_state::screen_update_mystston(screen_device &screen, bitmap_ind1
 	machine().tilemap().set_flip_all(flip ? (TILEMAP_FLIPY | TILEMAP_FLIPX) : 0);
 
 	m_bg_tilemap->draw(screen, bitmap, cliprect, 0, 0);
-	draw_sprites(bitmap, cliprect, m_gfxdecode->gfx(2), flip);
+	draw_sprites(bitmap, cliprect, m_gfxdecode->m_gfx[2], flip);
 	m_fg_tilemap->draw(screen, bitmap, cliprect, 0, 0);
 
 	return 0;

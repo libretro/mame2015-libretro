@@ -28,7 +28,7 @@ PALETTE_INIT_MEMBER(xevious_state,xevious)
 {
 	const UINT8 *color_prom = memregion("proms")->base();
 	int i;
-	#define TOTAL_COLORS(gfxn) (m_gfxdecode->gfx(gfxn)->m_total_colors *m_gfxdecode->gfx(gfxn)->m_color_granularity)
+	#define TOTAL_COLORS(gfxn) (m_gfxdecode->m_gfx[gfxn]->m_total_colors *m_gfxdecode->m_gfx[gfxn]->m_color_granularity)
 
 	for (i = 0;i < 128;i++)
 	{
@@ -67,7 +67,7 @@ PALETTE_INIT_MEMBER(xevious_state,xevious)
 	/* background tiles */
 	for (i = 0;i < TOTAL_COLORS(1);i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + i,
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[1]->m_color_base + i,
 				(color_prom[0] & 0x0f) | ((color_prom[TOTAL_COLORS(1)] & 0x0f) << 4));
 
 		color_prom++;
@@ -79,7 +79,7 @@ PALETTE_INIT_MEMBER(xevious_state,xevious)
 	{
 		int c = (color_prom[0] & 0x0f) | ((color_prom[TOTAL_COLORS(2)] & 0x0f) << 4);
 
-		palette.set_pen_indirect(m_gfxdecode->gfx(2)->m_color_base + i,
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[2]->m_color_base + i,
 				(c & 0x80) ? (c & 0x7f) : 0x80);
 
 		color_prom++;
@@ -89,7 +89,7 @@ PALETTE_INIT_MEMBER(xevious_state,xevious)
 	/* foreground characters */
 	for (i = 0;i < TOTAL_COLORS(0);i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(0)->m_color_base + i,
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[0]->m_color_base + i,
 				(i % 2 != 0) ? (i / 2) : 0x80);
 	}
 }
@@ -138,7 +138,7 @@ PALETTE_INIT_MEMBER(xevious_state,battles)
 	/* background tiles */
 	for (i = 0;i < TOTAL_COLORS(1);i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + i,
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[1]->m_color_base + i,
 				(color_prom[0] & 0x0f) | ((color_prom[0x400] & 0x0f) << 4));
 
 		color_prom++;
@@ -150,7 +150,7 @@ PALETTE_INIT_MEMBER(xevious_state,battles)
 	{
 		int c = (color_prom[0] & 0x0f) | ((color_prom[0x400] & 0x0f) << 4);
 
-		palette.set_pen_indirect(m_gfxdecode->gfx(2)->m_color_base + i,
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[2]->m_color_base + i,
 				(c & 0x80) ? (c & 0x7f) : 0x80);
 
 		color_prom++;
@@ -159,7 +159,7 @@ PALETTE_INIT_MEMBER(xevious_state,battles)
 	/* foreground characters */
 	for (i = 0;i < TOTAL_COLORS(0);i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(0)->m_color_base + i,
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[0]->m_color_base + i,
 				(i % 2 != 0) ? (i / 2) : 0x80);
 	}
 }
@@ -428,41 +428,41 @@ void xevious_state::draw_sprites(bitmap_ind16 &bitmap,const rectangle &cliprect)
 				flipy = !flipy;
 			}
 
-			transmask = m_palette->transpen_mask(*m_gfxdecode->gfx(bank), color, 0x80);
+			transmask = m_palette->transpen_mask(*m_gfxdecode->m_gfx[bank], color, 0x80);
 
 			if (spriteram_3[offs] & 2)  /* double height (?) */
 			{
 				if (spriteram_3[offs] & 1)  /* double width, double height */
 				{
 					code &= ~3;
-					m_gfxdecode->gfx(bank)->transmask(bitmap,cliprect,
+					m_gfxdecode->m_gfx[bank]->transmask(bitmap,cliprect,
 							code+3,color,flipx,flipy,
 							flipx ? sx : sx+16,flipy ? sy-16 : sy,transmask);
-					m_gfxdecode->gfx(bank)->transmask(bitmap,cliprect,
+					m_gfxdecode->m_gfx[bank]->transmask(bitmap,cliprect,
 							code+1,color,flipx,flipy,
 							flipx ? sx : sx+16,flipy ? sy : sy-16,transmask);
 				}
 				code &= ~2;
-				m_gfxdecode->gfx(bank)->transmask(bitmap,cliprect,
+				m_gfxdecode->m_gfx[bank]->transmask(bitmap,cliprect,
 						code+2,color,flipx,flipy,
 						flipx ? sx+16 : sx,flipy ? sy-16 : sy,transmask);
-				m_gfxdecode->gfx(bank)->transmask(bitmap,cliprect,
+				m_gfxdecode->m_gfx[bank]->transmask(bitmap,cliprect,
 						code,color,flipx,flipy,
 						flipx ? sx+16 : sx,flipy ? sy : sy-16,transmask);
 			}
 			else if (spriteram_3[offs] & 1) /* double width */
 			{
 				code &= ~1;
-				m_gfxdecode->gfx(bank)->transmask(bitmap,cliprect,
+				m_gfxdecode->m_gfx[bank]->transmask(bitmap,cliprect,
 						code,color,flipx,flipy,
 						flipx ? sx+16 : sx,flipy ? sy-16 : sy,transmask);
-				m_gfxdecode->gfx(bank)->transmask(bitmap,cliprect,
+				m_gfxdecode->m_gfx[bank]->transmask(bitmap,cliprect,
 						code+1,color,flipx,flipy,
 						flipx ? sx : sx+16,flipy ? sy-16 : sy,transmask);
 			}
 			else    /* normal */
 			{
-				m_gfxdecode->gfx(bank)->transmask(bitmap,cliprect,
+				m_gfxdecode->m_gfx[bank]->transmask(bitmap,cliprect,
 						code,color,flipx,flipy,sx,sy,transmask);
 			}
 		}

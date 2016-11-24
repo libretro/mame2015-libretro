@@ -18,7 +18,7 @@ TILE_GET_INFO_MEMBER(darius_state::get_fg_tile_info)
 
 void darius_state::video_start()
 {
-	m_gfxdecode->gfx(2)->set_granularity(16);
+	m_gfxdecode->m_gfx[2]->set_granularity(16);
 	m_fg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(darius_state::get_fg_tile_info),this),TILEMAP_SCAN_ROWS,8,8,128,64);
 
 	m_fg_tilemap->set_transparent_pen(0);
@@ -70,7 +70,7 @@ void darius_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect
 			if (curx > 900) curx -= 1024;
 			if (cury > 400) cury -= 512;
 
-			m_gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 					code, color,
 					flipx, flipy,
 					curx, cury, 0);

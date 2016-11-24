@@ -144,7 +144,7 @@ void srumbler_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 			flipy = !flipy;
 		}
 
-		m_gfxdecode->gfx(2)->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[2]->transpen(bitmap,cliprect,
 				code,
 				colour,
 				flip_screen(),flipy,

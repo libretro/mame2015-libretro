@@ -318,7 +318,7 @@ void deco32_state::mixDualAlphaSprites(screen_device &screen, bitmap_rgb32 &bitm
 	const pen_t *pens = m_palette->pens();
 	const pen_t *pal0 = &pens[gfx0->m_color_base];
 	const pen_t *pal1 = &pens[gfx1->m_color_base];
-	const pen_t *pal2 = &pens[m_gfxdecode->gfx((m_pri&1) ? 1 : 2)->m_color_base];
+	const pen_t *pal2 = &pens[m_gfxdecode->m_gfx[(m_pri&1) ? 1 : 2]->m_color_base];
 	int x,y;
 	bitmap_ind16& sprite0_mix_bitmap = machine().device<decospr_device>("spritegen1")->get_sprite_temp_bitmap();
 	bitmap_ind16& sprite1_mix_bitmap = machine().device<decospr_device>("spritegen2")->get_sprite_temp_bitmap();
@@ -499,7 +499,7 @@ UINT32 deco32_state::screen_update_nslasher(screen_device &screen, bitmap_rgb32 
 		}
 	}
 
-	mixDualAlphaSprites(screen, bitmap, cliprect, m_gfxdecode->gfx(3), m_gfxdecode->gfx(4), alphaTilemap);
+	mixDualAlphaSprites(screen, bitmap, cliprect, m_gfxdecode->m_gfx[3], m_gfxdecode->m_gfx[4], alphaTilemap);
 
 	m_deco_tilegen1->tilemap_1_draw(screen, bitmap, cliprect, 0, 0);
 	return 0;
