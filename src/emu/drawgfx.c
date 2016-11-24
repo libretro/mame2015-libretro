@@ -27,7 +27,8 @@ UINT8 no_priority_size_is_wrong[2 * (sizeof(NO_PRIORITY) == 3) - 1];
 
 bitmap_ind8 drawgfx_dummy_priority_bitmap;
 
-
+#define GFX_LAYOUT_XOFFS(ptr, x) (((ptr).extxoffs != NULL) ? (ptr).extxoffs[(x)] : (ptr).xoffset[(x)])
+#define GFX_LAYOUT_YOFFS(ptr, y) (((ptr).extyoffs != NULL) ? (ptr).extyoffs[(y)] : (ptr).yoffset[(y)])
 
 /***************************************************************************
     INLINE FUNCTIONS
@@ -201,7 +202,7 @@ void gfx_element::set_layout(const gfx_layout &gl, const UINT8 *srcdata)
 		m_gfxdata_allocated.reset();
 
 		// modulos are determined for us by the layout
-		m_line_modulo = gl.yoffs(0) / 8;
+		m_line_modulo = GFX_LAYOUT_YOFFS(gl, 0) / 8;
 		m_char_modulo = gl.charincrement / 8;
 
 		// RAW graphics must have a pointer up front
@@ -220,9 +221,9 @@ void gfx_element::set_layout(const gfx_layout &gl, const UINT8 *srcdata)
 		for (int p = 0; p < m_layout_planes; p++)
 			m_layout_planeoffset[p] = gl.planeoffset[p];
 		for (int y = 0; y < m_height; y++)
-			m_layout_yoffset[y] = gl.yoffs(y);
+			m_layout_yoffset[y] = GFX_LAYOUT_YOFFS(gl, y);
 		for (int x = 0; x < m_width; x++)
-			m_layout_xoffset[x] = gl.xoffs(x);
+			m_layout_xoffset[x] = GFX_LAYOUT_XOFFS(gl, x);
 
 		// we get to pick our own modulos
 		m_line_modulo = m_origwidth;

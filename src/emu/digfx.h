@@ -157,9 +157,6 @@ class palette_device;
 
 struct gfx_layout
 {
-	UINT32 xoffs(int x) const { return (extxoffs != NULL) ? extxoffs[x] : xoffset[x]; }
-	UINT32 yoffs(int y) const { return (extyoffs != NULL) ? extyoffs[y] : yoffset[y]; }
-
 	UINT16          width;              // pixel width of each element
 	UINT16          height;             // pixel height of each element
 	UINT32          total;              // total number of elements, or RGN_FRAC()
