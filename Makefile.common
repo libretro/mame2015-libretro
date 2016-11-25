@@ -12,12 +12,9 @@ DEFS += -DOSD_RETRO
 MINISRC = $(SRC)/osd/retro
 MINIOBJ = $(OBJ)/osd/retro
 
-LIBCOOBJ = $(OBJ)/osd/retro/libretro-common/libco
-
 OSDOBJ = $(OBJ)/osd
 
 OBJDIRS += $(MINIOBJ) \
-			  $(LIBCOOBJ) \
 			  $(OSDOBJ)/modules/sync \
 			  $(OSDOBJ)/modules/font \
 			  $(OSDOBJ)/modules/lib \
@@ -56,8 +53,6 @@ OSDOBJS = \
 DEFS    += -DNO_USE_MIDI
 OSDOBJS += $(OSDOBJ)/modules/midi/none.o
 
-OSDOBJS += $(LIBCOOBJ)/libco.o
-
 ifeq ($(VRENDER),opengl)
 OSDOBJS += $(GLOBJ)/rglgen.o
 ifeq ($(GLES), 1)
@@ -78,25 +73,13 @@ endif
 
 $(LIBOCORE): $(OSDCOREOBJS)
 
-$(LIBOSD): $(OSDOBJS)
-
-# Override to force libco to build as C
-$(LIBCOOBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
-	@echo Compiling $< FOR C ONLY...
-	$(REALCC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) $(INCPATH) -c $< -o $@
-
-ifeq ($(armplatform), 1)
-$(LIBCOOBJ)/armeabi_asm.o:
-	$(REALCC) -I$(SRC)/osd/retro/libretro-common/include -c $(SRC)/osd/retro/libretro-common/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
-endif
-
 # In order to keep dependencies reasonable, we exclude objects in the base of
 # $(SRC)/emu, as well as all the OSD objects and anything in the $(OBJ) tree
-depend: maketree $(MAKEDEP_TARGET)
-	@echo Rebuilding depend_emu.mak...
-	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/emu > depend_emu.mak
-	@echo Rebuilding depend_$(TARGET).mak...
-	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/$(TARGET) > depend_$(TARGET).mak
+#depend: maketree $(MAKEDEP_TARGET)
+#	@echo Rebuilding depend_emu.mak...
+#	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/emu > depend_emu.mak
+#	@echo Rebuilding depend_$(TARGET).mak...
+#	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/$(TARGET) > depend_$(TARGET).mak
 
 #-------------------------------------------------
 # specify available CPU cores
@@ -222,6 +205,10 @@ endif
 
 ifeq ($(TARGET),mess)
 include $(SRC)/mess/mess.mak
+endif
+
+ifeq ($(TARGET),ume)
+include $(SRC)/ume/ume.mak
 endif
 
 include $(SRC)/emu/emu.mak

@@ -80,6 +80,9 @@ CPPONLYFLAGS += $(CORE_DEFINE)
 LDFLAGS =
 LDFLAGSEMULATOR =
 
+PLATCFLAGS += -D__LIBRETRO__
+CCOMFLAGS  += -D__LIBRETRO__
+
 $(info CFLAGS = $(CONLYFLAGS))
 $(info CPPFLAGS = $(CPPONLYFLAGS))
 
@@ -637,13 +640,14 @@ OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(TARGET)
 # define standard libarires for CPU and sounds
 #-------------------------------------------------
 
-LIBEMU = $(OBJ)/libemu.a
-LIBOPTIONAL = $(OBJ)/$(TARGET)/$(TARGET)/liboptional.a
+LIBEMU = $(LIBEMUOBJS)
+LIBOPTIONAL = $(CPUOBJS) $(SOUNDOBJS) $(VIDEOOBJS) $(MACHINEOBJS) $(NETLISTOBJS)
+
 LIBDASM = $(OBJ)/$(TARGET)/$(TARGET)/libdasm.a
-LIBBUS = $(OBJ)/$(TARGET)/$(TARGET)/libbus.a
+LIBBUS = $(BUSOBJS)
 LIBUTIL = $(OBJ)/libutil.a
 LIBOCORE = $(OBJ)/libocore.a
-LIBOSD = $(OBJ)/libosd.a
+LIBOSD =  $(OBJ)/osd/retro/libretro.o $(OSDOBJS)
 
 VERSIONOBJ = $(OBJ)/version.o
 EMUINFOOBJ = $(OBJ)/$(TARGET)/$(TARGET).o

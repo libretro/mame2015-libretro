@@ -890,8 +890,8 @@ void process_mouse_state(void)
    mouse_y = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
    mouse_l = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
    mouse_r = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
-   mouseLX = mouse_x*INPUT_RELATIVE_PER_PIXEL;;
-   mouseLY = mouse_y*INPUT_RELATIVE_PER_PIXEL;;
+   mouseLX = mouse_x*INPUT_RELATIVE_PER_PIXEL;
+   mouseLY = mouse_y*INPUT_RELATIVE_PER_PIXEL;
 
    if(mbL==0 && mouse_l)
    {
@@ -1946,17 +1946,21 @@ static int execute_game_cmd(char* path)
 
    return 0;
 }
-
+/*
 #ifdef __cplusplus
 extern "C"
 #endif
+*/
+retro_osd_interface *retro_global_osd;
 
 int mmain(int argc, const char *argv)
 {
    unsigned i;
-   osd_options options;
-   cli_options MRoptions;
+   //osd_options options;
+   //cli_options MRoptions;
    int result = 0;
+
+   static osd_options retro_global_options;
 
    strcpy(gameName,argv);
 
@@ -1988,9 +1992,15 @@ int mmain(int argc, const char *argv)
          log_cb(RETRO_LOG_DEBUG, " %s\n",XARGV[i]);
    }
 
+/*
    retro_osd_interface osd(options);
    osd.register_options();
    cli_frontend frontend(options, osd);
+*/
+   retro_global_osd= global_alloc(retro_osd_interface(retro_global_options));
+
+   retro_global_osd->register_options();
+   cli_frontend frontend(retro_global_options, *retro_global_osd);
 
    result = frontend.execute(PARAMCOUNT, ( char **)xargv_cmd);
 
@@ -2034,6 +2044,8 @@ void retro_osd_interface::osd_exit()
 
    osd_common_t::osd_exit();
 }
+
+extern int RLOOP;
 
 void retro_osd_interface::init(running_machine &machine)
 {
@@ -2085,7 +2097,9 @@ void retro_osd_interface::init(running_machine &machine)
 	if (log_cb)
 		log_cb(RETRO_LOG_INFO, "OSD initialization complete\n");
 
-   retro_switch_to_main_thread();
+//   retro_switch_to_main_thread();
+
+
 }
 
 void retro_osd_interface::update(bool skip_redraw, UINT32 flags)
@@ -2171,6 +2185,16 @@ void retro_osd_interface::update(bool skip_redraw, UINT32 flags)
    }
 	else
       retro_frame_draw_enable(false);
+
+
+   if(ui_ipt_pushchar!=-1)
+   {
+		ui_input_push_char_event(machine(), our_target, (unicode_char)ui_ipt_pushchar);
+		ui_ipt_pushchar=-1;
+   }
+
+RLOOP=0;
+
 }
 
 //============================================================

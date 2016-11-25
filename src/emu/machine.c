@@ -371,6 +371,11 @@ int running_machine::run(bool firstrun)
    m_hard_reset_pending = false;
    while ((!m_hard_reset_pending && !m_exit_pending) || m_saveload_schedule != SLS_NONE)
    {
+
+#ifdef __LIBRETRO__
+			//break out to LIBRETRO LOOP
+			return 0;
+#endif
       // execute CPUs if not paused
       if (!m_paused)
          m_scheduler.timeslice();
@@ -405,6 +410,72 @@ int running_machine::run(bool firstrun)
    return error;
 }
 
+#ifdef __LIBRETRO__
+
+extern void retro_finish();
+extern int RLOOP;
+extern int ENDEXEC;
+extern int retro_pause;
+
+void running_machine::retro_machineexit(){
+
+	// and out via the exit phase
+	m_current_phase = MACHINE_PHASE_EXIT;
+
+	// save the NVRAM and configuration
+	sound().ui_mute(true);
+	nvram_save();
+	config_save_settings(*this);
+	call_notifiers(MACHINE_NOTIFY_EXIT);
+	printf("retro exit machine\n");
+	zip_file_cache_clear();
+
+	m_logfile.reset();
+}
+
+void running_machine::retro_loop(){
+
+	while (RLOOP==1) {
+
+		//manager().web()->serve();
+
+		// execute CPUs if not paused
+		if (!m_paused)
+			m_scheduler.timeslice();
+
+		// otherwise, just pump video updates through
+		else
+			m_video->frame_update();
+
+		// handle save/load
+		if (m_saveload_schedule != SLS_NONE)
+			handle_saveload();
+
+	}
+
+	if( (m_hard_reset_pending || m_exit_pending) && m_saveload_schedule == SLS_NONE){
+
+	 	// and out via the exit phase
+		m_current_phase = MACHINE_PHASE_EXIT;
+
+		// save the NVRAM and configuration
+		sound().ui_mute(true);
+		nvram_save();
+		config_save_settings(*this);
+
+		// call all exit callbacks registered
+		call_notifiers(MACHINE_NOTIFY_EXIT);
+	
+		zip_file_cache_clear();
+
+		m_logfile.reset();		
+
+		ENDEXEC=1;
+	}
+
+}
+
+#endif
 
 //-------------------------------------------------
 //  schedule_exit - schedule a clean exit
