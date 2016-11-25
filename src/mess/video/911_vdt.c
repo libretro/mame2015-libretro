@@ -467,7 +467,7 @@ WRITE8_MEMBER( vdt911_device::cru_w )
 */
 void vdt911_device::refresh(bitmap_ind16 &bitmap, const rectangle &cliprect, int x, int y)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(m_model);
+	gfx_element *gfx = m_gfxdecode->m_gfx[m_model];
 	int height = (m_screen_size == char_960) ? 12 : /*25*/24;
 
 	int use_8bit_charcodes = USES_8BIT_CHARCODES();
