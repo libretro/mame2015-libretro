@@ -120,7 +120,7 @@ void k05324x_device::device_start()
 	m_sprite_size = region()->bytes();
 
 	/* decode the graphics */
-	decode_gfx();
+	decode_gfx(m_gfxdecodeinfo);
 	m_gfx[0]->set_colors(m_palette->entries() / m_gfx[0]->m_color_depth);
 
 	if (VERBOSE && !(m_palette->shadows_enabled()))

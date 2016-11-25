@@ -58,13 +58,13 @@ PALETTE_INIT_MEMBER(gaplus_state, gaplus)
 	/* color_prom now points to the beginning of the lookup table */
 
 	/* characters use colors 0xf0-0xff */
-	for (i = 0;i < m_gfxdecode->gfx(0)->m_total_colors * m_gfxdecode->gfx(0)->m_color_granularity;i++)
-		palette.set_pen_indirect(m_gfxdecode->gfx(0)->m_color_base + i, 0xf0 + (*color_prom++ & 0x0f));
+	for (i = 0;i < m_gfxdecode->m_gfx[0]->m_total_colors * m_gfxdecode->m_gfx[0]->m_color_granularity;i++)
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[0]->m_color_base + i, 0xf0 + (*color_prom++ & 0x0f));
 
 	/* sprites */
-	for (i = 0;i < m_gfxdecode->gfx(1)->m_total_colors * m_gfxdecode->gfx(1)->m_color_granularity;i++)
+	for (i = 0;i < m_gfxdecode->m_gfx[1]->m_total_colors * m_gfxdecode->m_gfx[1]->m_color_granularity;i++)
 	{
-		palette.set_pen_indirect(m_gfxdecode->gfx(1)->m_color_base + i, (color_prom[0] & 0x0f) + ((color_prom[0x200] & 0x0f) << 4));
+		palette.set_pen_indirect(m_gfxdecode->m_gfx[1]->m_color_base + i, (color_prom[0] & 0x0f) + ((color_prom[0x200] & 0x0f) << 4));
 		color_prom++;
 	}
 }
@@ -178,7 +178,7 @@ void gaplus_state::video_start()
 {
 	m_bg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(gaplus_state::get_tile_info),this),tilemap_mapper_delegate(FUNC(gaplus_state::tilemap_scan),this),8,8,36,28);
 
-	m_bg_tilemap->configure_groups(*m_gfxdecode->gfx(0), 0xff);
+	m_bg_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 0xff);
 
 	starfield_init();
 }
@@ -284,12 +284,12 @@ void gaplus_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect 
 			{
 				for (x = 0;x <= sizex;x++)
 				{
-					m_gfxdecode->gfx(1)->transmask(bitmap,cliprect,
+					m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect,
 						sprite + (duplicate ? 0 : (gfx_offs[y ^ (sizey * flipy)][x ^ (sizex * flipx)])),
 						color,
 						flipx,flipy,
 						sx + 16*x,sy + 16*y,
-						m_palette->transpen_mask(*m_gfxdecode->gfx(1), color, 0xff));
+						m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color, 0xff));
 				}
 			}
 		}

@@ -916,7 +916,7 @@ void cps3_state::video_start()
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
 	m_gfxdecode->set_gfx(1, global_alloc(gfx_element(m_palette, cps3_tiles16x16_layout, (UINT8 *)m_char_ram, 0, m_palette->entries() / 64, 0)));
-	m_gfxdecode->gfx(1)->set_granularity(64);
+	m_gfxdecode->m_gfx[1]->set_granularity(64);
 
 	//decode_charram();
 
@@ -1007,10 +1007,10 @@ void cps3_state::cps3_draw_tilemapsprite_line(int tmnum, int drawline, bitmap_rg
 			yflip  = (dat & 0x00000800)>>11;
 			xflip  = (dat & 0x00001000)>>12;
 
-			if (!bpp) m_gfxdecode->gfx(1)->set_granularity(256);
-			else m_gfxdecode->gfx(1)->set_granularity(64);
+			if (!bpp) m_gfxdecode->m_gfx[1]->set_granularity(256);
+			else m_gfxdecode->m_gfx[1]->set_granularity(64);
 
-			cps3_drawgfxzoom(bitmap,clip,m_gfxdecode->gfx(1),tileno,colour,xflip,yflip,(x*16)-scrollx%16,drawline-tilesubline,CPS3_TRANSPARENCY_PEN_INDEX,0, 0x10000, 0x10000, NULL, 0);
+			cps3_drawgfxzoom(bitmap,clip,m_gfxdecode->m_gfx[1],tileno,colour,xflip,yflip,(x*16)-scrollx%16,drawline-tilesubline,CPS3_TRANSPARENCY_PEN_INDEX,0, 0x10000, 0x10000, NULL, 0);
 		}
 	}
 }
@@ -1236,13 +1236,13 @@ UINT32 cps3_state::screen_update_cps3(screen_device &screen, bitmap_rgb32 &bitma
 								/* use the bpp value from the main list or the sublists? */
 								if (whichbpp)
 								{
-									if (!global_bpp) m_gfxdecode->gfx(1)->set_granularity(256);
-									else m_gfxdecode->gfx(1)->set_granularity(64);
+									if (!global_bpp) m_gfxdecode->m_gfx[1]->set_granularity(256);
+									else m_gfxdecode->m_gfx[1]->set_granularity(64);
 								}
 								else
 								{
-									if (!bpp) m_gfxdecode->gfx(1)->set_granularity(256);
-									else m_gfxdecode->gfx(1)->set_granularity(64);
+									if (!bpp) m_gfxdecode->m_gfx[1]->set_granularity(256);
+									else m_gfxdecode->m_gfx[1]->set_granularity(64);
 								}
 
 								{
@@ -1250,11 +1250,11 @@ UINT32 cps3_state::screen_update_cps3(screen_device &screen, bitmap_rgb32 &bitma
 
 									if (global_alpha || alpha)
 									{
-										cps3_drawgfxzoom(m_renderbuffer_bitmap,m_renderbuffer_clip,m_gfxdecode->gfx(1),realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX_BLEND,0,xinc,yinc, NULL, 0);
+										cps3_drawgfxzoom(m_renderbuffer_bitmap,m_renderbuffer_clip,m_gfxdecode->m_gfx[1],realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX_BLEND,0,xinc,yinc, NULL, 0);
 									}
 									else
 									{
-										cps3_drawgfxzoom(m_renderbuffer_bitmap,m_renderbuffer_clip,m_gfxdecode->gfx(1),realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX,0,xinc,yinc, NULL, 0);
+										cps3_drawgfxzoom(m_renderbuffer_bitmap,m_renderbuffer_clip,m_gfxdecode->m_gfx[1],realtileno,actualpal,0^flipx,0^flipy,current_xpos,current_ypos,CPS3_TRANSPARENCY_PEN_INDEX,0,xinc,yinc, NULL, 0);
 									}
 									count++;
 								}
@@ -1320,7 +1320,7 @@ UINT32 cps3_state::screen_update_cps3(screen_device &screen, bitmap_rgb32 &bitma
 				pal += m_ss_pal_base << 5;
 				tile+=0x200;
 
-				cps3_drawgfxzoom(bitmap, cliprect, m_gfxdecode->gfx(0),tile,pal,flipx,flipy,x*8,y*8,CPS3_TRANSPARENCY_PEN,0,0x10000,0x10000,NULL,0);
+				cps3_drawgfxzoom(bitmap, cliprect, m_gfxdecode->m_gfx[0],tile,pal,flipx,flipy,x*8,y*8,CPS3_TRANSPARENCY_PEN,0,0x10000,0x10000,NULL,0);
 				count++;
 			}
 		}
@@ -1343,7 +1343,7 @@ WRITE32_MEMBER(cps3_state::cps3_ssram_w)
 		// we only want to endian-flip the character data, the tilemap info is fine
 		data = LITTLE_ENDIANIZE_INT32(data);
 		mem_mask = LITTLE_ENDIANIZE_INT32(mem_mask);
-		m_gfxdecode->gfx(0)->mark_dirty(offset/16);
+		m_gfxdecode->m_gfx[0]->mark_dirty(offset/16);
 	}
 
 	COMBINE_DATA(&m_ss_ram[offset]);
@@ -1435,7 +1435,7 @@ WRITE32_MEMBER(cps3_state::cram_data_w)
 	mem_mask = LITTLE_ENDIANIZE_INT32(mem_mask);
 	data = LITTLE_ENDIANIZE_INT32(data);
 	COMBINE_DATA(&m_char_ram[fulloffset]);
-	m_gfxdecode->gfx(1)->mark_dirty(fulloffset/0x40);
+	m_gfxdecode->m_gfx[1]->mark_dirty(fulloffset/0x40);
 }
 
 /* FLASH ROM ACCESS */
@@ -1897,7 +1897,7 @@ UINT32 cps3_state::process_byte( UINT8 real_byte, UINT32 destination, int max_le
 		while (m_rle_length)
 		{
 			dest[((destination+tranfercount)&0x7fffff)^3] = (m_last_normal_byte&0x3f);
-			m_gfxdecode->gfx(1)->mark_dirty(((destination+tranfercount)&0x7fffff)/0x100);
+			m_gfxdecode->m_gfx[1]->mark_dirty(((destination+tranfercount)&0x7fffff)/0x100);
 			//printf("RLE WRite Byte %08x, %02x\n", destination+tranfercount, real_byte);
 
 			tranfercount++;
@@ -1916,7 +1916,7 @@ UINT32 cps3_state::process_byte( UINT8 real_byte, UINT32 destination, int max_le
 		//printf("Write Normal Data\n");
 		dest[(destination&0x7fffff)^3] = real_byte;
 		m_last_normal_byte = real_byte;
-		m_gfxdecode->gfx(1)->mark_dirty((destination&0x7fffff)/0x100);
+		m_gfxdecode->m_gfx[1]->mark_dirty((destination&0x7fffff)/0x100);
 		return 1;
 	}
 }
@@ -1985,7 +1985,7 @@ UINT32 cps3_state::ProcessByte8(UINT8 b,UINT32 dst_offset)
 		for(i=0;i<rle;++i)
 		{
 			destRAM[(dst_offset&0x7fffff)^3] = m_lastb;
-			m_gfxdecode->gfx(1)->mark_dirty((dst_offset&0x7fffff)/0x100);
+			m_gfxdecode->m_gfx[1]->mark_dirty((dst_offset&0x7fffff)/0x100);
 
 			dst_offset++;
 			++l;
@@ -1999,7 +1999,7 @@ UINT32 cps3_state::ProcessByte8(UINT8 b,UINT32 dst_offset)
 		m_lastb2=m_lastb;
 		m_lastb=b;
 		destRAM[(dst_offset&0x7fffff)^3] = b;
-		m_gfxdecode->gfx(1)->mark_dirty((dst_offset&0x7fffff)/0x100);
+		m_gfxdecode->m_gfx[1]->mark_dirty((dst_offset&0x7fffff)/0x100);
 		return 1;
 	}
 }

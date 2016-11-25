@@ -157,7 +157,7 @@ void mikie_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect)
 		}
 
 
-			m_gfxdecode->gfx(gfxbank)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[gfxbank]->transpen(bitmap,cliprect,
 			code, color,
 			flipx,flipy,
 			sx,sy, 0);

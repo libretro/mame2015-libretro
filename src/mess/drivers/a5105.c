@@ -167,7 +167,7 @@ WRITE8_MEMBER( a5105_state::pcg_val_w )
 {
 	m_char_ram[m_pcg_addr | m_pcg_internal_addr] = data;
 
-	m_gfxdecode->gfx(0)->mark_dirty(m_pcg_addr >> 3);
+	m_gfxdecode->m_gfx[0]->mark_dirty(m_pcg_addr >> 3);
 
 	m_pcg_internal_addr++;
 	m_pcg_internal_addr&=7;

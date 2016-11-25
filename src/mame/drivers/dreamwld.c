@@ -152,7 +152,7 @@ public:
 
 void dreamwld_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect )
 {
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	UINT32 *source = m_spritebuf1;
 	UINT32 *finish = m_spritebuf1 + 0x1000 / 4;
 	UINT16 *redirect = (UINT16 *)memregion("spritelut")->base();

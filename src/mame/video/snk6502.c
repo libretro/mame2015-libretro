@@ -10,8 +10,8 @@
 #include "includes/snk6502.h"
 
 
-#define TOTAL_COLORS(gfxn) (m_gfxdecode->gfx(gfxn)->m_total_colors * m_gfxdecode->gfx(gfxn)->m_color_granularity)
-#define COLOR(gfxn,offs) (m_gfxdecode->gfx(gfxn)->m_color_base + offs)
+#define TOTAL_COLORS(gfxn) (m_gfxdecode->m_gfx[gfxn]->m_total_colors * m_gfxdecode->m_gfx[gfxn]->m_color_granularity)
+#define COLOR(gfxn,offs) (m_gfxdecode->m_gfx[gfxn]->m_color_base + offs)
 
 
 
@@ -98,7 +98,7 @@ WRITE8_MEMBER(snk6502_state::snk6502_charram_w)
 	if (m_charram[offset] != data)
 	{
 		m_charram[offset] = data;
-		m_gfxdecode->gfx(0)->mark_dirty((offset/8) % 256);
+		m_gfxdecode->m_gfx[0]->mark_dirty((offset/8) % 256);
 	}
 }
 
@@ -172,7 +172,7 @@ VIDEO_START_MEMBER(snk6502_state,snk6502)
 
 	m_fg_tilemap->set_transparent_pen(0);
 
-	m_gfxdecode->gfx(0)->set_source(m_charram);
+	m_gfxdecode->m_gfx[0]->set_source(m_charram);
 }
 
 VIDEO_START_MEMBER(snk6502_state,pballoon)
@@ -299,5 +299,5 @@ VIDEO_START_MEMBER(snk6502_state,satansat)
 
 	m_fg_tilemap->set_transparent_pen(0);
 
-	m_gfxdecode->gfx(0)->set_source(m_charram);
+	m_gfxdecode->m_gfx[0]->set_source(m_charram);
 }

@@ -168,7 +168,7 @@ void exedexes_state::video_start()
 	m_tx_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(exedexes_state::get_tx_tile_info),this), TILEMAP_SCAN_ROWS, 8, 8, 32, 32);
 
 	m_fg_tilemap->set_transparent_pen(0);
-	m_tx_tilemap->configure_groups(*m_gfxdecode->gfx(0), 0xcf);
+	m_tx_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 0xcf);
 }
 
 void exedexes_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect, int priority )
@@ -194,7 +194,7 @@ void exedexes_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &clipre
 			sx = buffered_spriteram[offs + 3] - ((buffered_spriteram[offs + 1] & 0x80) << 1);
 			sy = buffered_spriteram[offs + 2];
 
-			m_gfxdecode->gfx(3)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[3]->transpen(bitmap,cliprect,
 					code,
 					color,
 					flipx,flipy,

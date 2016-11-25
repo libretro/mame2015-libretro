@@ -965,7 +965,7 @@ void k055673_device::device_start()
 
 	/* find first empty slot to decode gfx */
 	for (gfx_index = 0; gfx_index < MAX_GFX_ELEMENTS; gfx_index++)
-		if (m_gfxdecode->gfx(gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[gfx_index] == 0)
 			break;
 	assert(gfx_index != MAX_GFX_ELEMENTS);
 
@@ -1019,7 +1019,7 @@ void k055673_device::device_start()
 		popmessage("driver should use VIDEO_HAS_SHADOWS");
 
 	m_z_rejection = -1;
-	m_gfx = m_gfxdecode->gfx(gfx_index);
+	m_gfx = m_gfxdecode->m_gfx[gfx_index];
 	m_objcha_line = CLEAR_LINE;
 	m_ram = auto_alloc_array(machine(), UINT16, 0x1000/2);
 
@@ -1129,7 +1129,7 @@ void k053247_device::device_start()
 		}
 	}
 
-	m_gfx = m_gfxdecode->gfx(m_gfx_num);
+	m_gfx = m_gfxdecode->m_gfx[m_gfx_num];
 
 	m_ram = auto_alloc_array_clear(machine(), UINT16, 0x1000 / 2);
 

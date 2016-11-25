@@ -373,9 +373,9 @@ static const UINT8 cashcade_p[] ={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0
 void aristmk4_state::video_start()
 {
 	int tile;
-	for (tile = 0; tile < m_gfxdecode->gfx(0)->m_total_elements; tile++)
+	for (tile = 0; tile < m_gfxdecode->m_gfx[0]->m_total_elements; tile++)
 	{
-		m_gfxdecode->gfx(0)->get_data(tile);
+		m_gfxdecode->m_gfx[0]->get_data(tile);
 	}
 }
 
@@ -414,7 +414,7 @@ void aristmk4_state::uBackgroundColour()
 
 UINT32 aristmk4_state::screen_update_aristmk4(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	int x,y;
 	int count = 0;
 	int color;

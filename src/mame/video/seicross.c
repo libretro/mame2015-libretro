@@ -99,13 +99,13 @@ void seicross_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 	for (offs = m_spriteram.bytes() - 4; offs >= 0; offs -= 4)
 	{
 		int x = m_spriteram[offs + 3];
-		m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 				(m_spriteram[offs] & 0x3f) + ((m_spriteram[offs + 1] & 0x10) << 2) + 128,
 				m_spriteram[offs + 1] & 0x0f,
 				m_spriteram[offs] & 0x40,m_spriteram[offs] & 0x80,
 				x,240-m_spriteram[offs + 2],0);
 		if(x>0xf0)
-			m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 					(m_spriteram[offs] & 0x3f) + ((m_spriteram[offs + 1] & 0x10) << 2) + 128,
 					m_spriteram[offs + 1] & 0x0f,
 					m_spriteram[offs] & 0x40,m_spriteram[offs] & 0x80,
@@ -115,13 +115,13 @@ void seicross_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 	for (offs = m_spriteram2.bytes() - 4; offs >= 0; offs -= 4)
 	{
 		int x = m_spriteram2[offs + 3];
-		m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 				(m_spriteram2[offs] & 0x3f) + ((m_spriteram2[offs + 1] & 0x10) << 2),
 				m_spriteram2[offs + 1] & 0x0f,
 				m_spriteram2[offs] & 0x40,m_spriteram2[offs] & 0x80,
 				x,240-m_spriteram2[offs + 2],0);
 		if(x>0xf0)
-			m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 					(m_spriteram2[offs] & 0x3f) + ((m_spriteram2[offs + 1] & 0x10) << 2),
 					m_spriteram2[offs + 1] & 0x0f,
 					m_spriteram2[offs] & 0x40,m_spriteram2[offs] & 0x80,

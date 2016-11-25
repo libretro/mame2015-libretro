@@ -92,8 +92,8 @@ void tugboat_state::machine_start()
 
 void tugboat_state::video_start()
 {
-	m_gfxdecode->gfx(0)->set_granularity(8);
-	m_gfxdecode->gfx(2)->set_granularity(8);
+	m_gfxdecode->m_gfx[0]->set_granularity(8);
+	m_gfxdecode->m_gfx[2]->set_granularity(8);
 }
 
 /*  there isn't the usual resistor array anywhere near the color prom,
@@ -164,7 +164,7 @@ void tugboat_state::draw_tilemap(bitmap_ind16 &bitmap,const rectangle &cliprect,
 				transpen = 1;
 			}
 
-			m_gfxdecode->gfx(rgn)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[rgn]->transpen(bitmap,cliprect,
 					code,
 					color,
 					0,0,

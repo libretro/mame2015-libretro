@@ -197,7 +197,7 @@ WRITE8_MEMBER(trvmadns_state::trvmadns_banking_w)
 WRITE8_MEMBER(trvmadns_state::trvmadns_gfxram_w)
 {
 	m_gfxram[offset] = data;
-	m_gfxdecode->gfx(0)->mark_dirty(offset/16);
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset/16);
 }
 
 WRITE8_MEMBER(trvmadns_state::trvmadns_palette_w)
@@ -321,13 +321,13 @@ void trvmadns_state::video_start()
 
 //  fg_tilemap->set_transparent_pen(1);
 
-	m_gfxdecode->gfx(0)->set_source(m_gfxram);
+	m_gfxdecode->m_gfx[0]->set_source(m_gfxram);
 }
 
 UINT32 trvmadns_state::screen_update_trvmadns(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
 	int x,y,count;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 
 	bitmap.fill(0xd, cliprect);
 

@@ -228,7 +228,7 @@ READ8_MEMBER(st0016_cpu_device::st0016_character_ram_r)
 WRITE8_MEMBER(st0016_cpu_device::st0016_character_ram_w)
 {
 	m_charram[ST0016_CHAR_BANK_SIZE*st0016_char_bank+offset]=data;
-	m_gfxdecode->gfx(st0016_ramgfx)->mark_dirty(st0016_char_bank);
+	m_gfxdecode->m_gfx[st0016_ramgfx]->mark_dirty(st0016_char_bank);
 }
 
 READ8_MEMBER(st0016_cpu_device::st0016_vregs_r)
@@ -381,7 +381,7 @@ void st0016_cpu_device::draw_sprites(bitmap_ind16 &bitmap, const rectangle &clip
 
 	*/
 
-	gfx_element *gfx = m_gfxdecode->gfx(st0016_ramgfx);
+	gfx_element *gfx = m_gfxdecode->m_gfx[st0016_ramgfx];
 	int i, j, lx, ly, x, y, code, offset, length, sx, sy, color, flipx, flipy, scrollx, scrolly/*,plx,ply*/;
 
 
@@ -585,7 +585,7 @@ void st0016_cpu_device::startup()
 
 	/* find first empty slot to decode gfx */
 	for (gfx_index = 0; gfx_index < MAX_GFX_ELEMENTS; gfx_index++)
-		if (m_gfxdecode->gfx(gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[gfx_index] == 0)
 			break;
 
 	assert(gfx_index != MAX_GFX_ELEMENTS);
@@ -605,7 +605,7 @@ void st0016_cpu_device::startup()
 
 void st0016_cpu_device::draw_bgmap(bitmap_ind16 &bitmap, const rectangle &cliprect, int priority)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(st0016_ramgfx);
+	gfx_element *gfx = m_gfxdecode->m_gfx[st0016_ramgfx];
 	int j;
 	//for(j=0x40-8;j>=0;j-=8)
 	for (j = 0; j < 0x40; j += 8)

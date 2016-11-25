@@ -153,7 +153,7 @@ void pinkiri8_state::video_start() {}
 
 void pinkiri8_state::draw_background(bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 
 	/* FIXME: color is a bit of a mystery */
 	{
@@ -181,7 +181,7 @@ void pinkiri8_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 {
 	int game_type_hack = 0;
 	int col_bank;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 
 	if (!strcmp(machine().system().name,"janshi")) game_type_hack = 1;
 

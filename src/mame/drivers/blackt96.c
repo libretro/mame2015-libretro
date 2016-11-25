@@ -209,8 +209,8 @@ void blackt96_state::video_start()
 void blackt96_state::draw_strip(bitmap_ind16 &bitmap, const rectangle &cliprect, int page, int column)
 {
 	/* the very first 'page' in the spriteram contains the x/y positions for each tile strip */
-	gfx_element *gfxbg = m_gfxdecode->gfx(0);
-	gfx_element *gfxspr = m_gfxdecode->gfx(1);
+	gfx_element *gfxbg = m_gfxdecode->m_gfx[0];
+	gfx_element *gfxspr = m_gfxdecode->m_gfx[1];
 
 	int base = column * (0x80/2);
 	base += page * 2;
@@ -269,7 +269,7 @@ UINT32 blackt96_state::screen_update_blackt96(screen_device &screen, bitmap_ind1
 	/* Text Layer */
 	int count = 0;
 	int x,y;
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 
 	for (x=0;x<64;x++)
 	{

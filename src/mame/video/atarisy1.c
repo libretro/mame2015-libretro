@@ -608,7 +608,7 @@ int atarisy1_state::get_bank(UINT8 prom1, UINT8 prom2, int bpp)
 
 	/* don't have one? let's make it ... first find any empty slot */
 	for (gfx_index = 0; gfx_index < MAX_GFX_ELEMENTS; gfx_index++)
-		if (m_gfxdecode->gfx(gfx_index) == NULL)
+		if (m_gfxdecode->m_gfx[gfx_index] == NULL)
 			break;
 	assert(gfx_index != MAX_GFX_ELEMENTS);
 
@@ -633,7 +633,7 @@ int atarisy1_state::get_bank(UINT8 prom1, UINT8 prom2, int bpp)
 	}
 
 	/* set the color information */
-	m_gfxdecode->gfx(gfx_index)->set_granularity(8);
+	m_gfxdecode->m_gfx[gfx_index]->set_granularity(8);
 	m_bank_color_shift[gfx_index] = bpp - 3;
 
 	/* set the entry and return it */

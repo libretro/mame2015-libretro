@@ -85,7 +85,7 @@ READ8_MEMBER(tc0091lvc_device::tc0091lvc_pcg1_r)
 WRITE8_MEMBER(tc0091lvc_device::tc0091lvc_pcg1_w)
 {
 	m_pcg1_ram[offset] = data;
-	m_gfxdecode->gfx(m_gfx_index)->mark_dirty((offset+0x4000) / 32);
+	m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty((offset+0x4000) / 32);
 	tx_tilemap->mark_all_dirty();
 }
 
@@ -97,7 +97,7 @@ READ8_MEMBER(tc0091lvc_device::tc0091lvc_pcg2_r)
 WRITE8_MEMBER(tc0091lvc_device::tc0091lvc_pcg2_w)
 {
 	m_pcg2_ram[offset] = data;
-	m_gfxdecode->gfx(m_gfx_index)->mark_dirty((offset+0xc000) / 32);
+	m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty((offset+0xc000) / 32);
 	tx_tilemap->mark_all_dirty();
 }
 
@@ -110,7 +110,7 @@ WRITE8_MEMBER(tc0091lvc_device::tc0091lvc_vram0_w)
 {
 	m_vram0[offset] = data;
 	bg0_tilemap->mark_tile_dirty(offset/2);
-	m_gfxdecode->gfx(m_gfx_index)->mark_dirty((offset+0x8000) / 32);
+	m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty((offset+0x8000) / 32);
 	tx_tilemap->mark_all_dirty();
 
 }
@@ -124,7 +124,7 @@ WRITE8_MEMBER(tc0091lvc_device::tc0091lvc_vram1_w)
 {
 	m_vram1[offset] = data;
 	bg1_tilemap->mark_tile_dirty(offset/2);
-	m_gfxdecode->gfx(m_gfx_index)->mark_dirty((offset+0x9000) / 32);
+	m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty((offset+0x9000) / 32);
 	tx_tilemap->mark_all_dirty();
 }
 
@@ -137,7 +137,7 @@ WRITE8_MEMBER(tc0091lvc_device::tc0091lvc_tvram_w)
 {
 	m_tvram[offset] = data;
 	tx_tilemap->mark_tile_dirty(offset/2);
-	m_gfxdecode->gfx(m_gfx_index)->mark_dirty((offset+0xa000) / 32);
+	m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty((offset+0xa000) / 32);
 	tx_tilemap->mark_all_dirty();
 }
 
@@ -149,7 +149,7 @@ READ8_MEMBER(tc0091lvc_device::tc0091lvc_spr_r)
 WRITE8_MEMBER(tc0091lvc_device::tc0091lvc_spr_w)
 {
 	m_sprram[offset] = data;
-	m_gfxdecode->gfx(m_gfx_index)->mark_dirty((offset+0xb000) / 32);
+	m_gfxdecode->m_gfx[m_gfx_index]->mark_dirty((offset+0xb000) / 32);
 	tx_tilemap->mark_all_dirty();
 }
 
@@ -292,7 +292,7 @@ void tc0091lvc_device::device_start()
 	bg1_tilemap->set_scrolldx(38, -21);
 
 	for (m_gfx_index = 0; m_gfx_index < MAX_GFX_ELEMENTS; m_gfx_index++)
-		if (m_gfxdecode->gfx(m_gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[m_gfx_index] == 0)
 			break;
 
 	//printf("m_gfx_index %d\n", m_gfx_index);
@@ -312,7 +312,7 @@ const address_space_config *tc0091lvc_device::memory_space_config(address_spacen
 
 void tc0091lvc_device::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect, UINT8 global_flip )
 {
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	int count;
 
 	for(count=0;count<0x3e7;count+=8)

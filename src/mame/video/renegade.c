@@ -99,7 +99,7 @@ void renegade_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 			if (attributes & 0x80) /* big sprite */
 			{
 				sprite_number &= ~1;
-				m_gfxdecode->gfx(sprite_bank)->transpen(bitmap,cliprect,
+				m_gfxdecode->m_gfx[sprite_bank]->transpen(bitmap,cliprect,
 					sprite_number + 1,
 					color,
 					xflip, flip_screen(),
@@ -109,7 +109,7 @@ void renegade_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 			{
 				sy += (flip_screen() ? -16 : 16);
 			}
-			m_gfxdecode->gfx(sprite_bank)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[sprite_bank]->transpen(bitmap,cliprect,
 				sprite_number,
 				color,
 				xflip, flip_screen(),

@@ -242,7 +242,7 @@ WRITE16_MEMBER(nemesis_state::nemesis_charram_word_w)
 		{
 			int w = sprite_data[i].width;
 			int h = sprite_data[i].height;
-			m_gfxdecode->gfx(sprite_data[i].char_type)->mark_dirty(offset * 4 / (w * h));
+			m_gfxdecode->m_gfx[sprite_data[i].char_type]->mark_dirty(offset * 4 / (w * h));
 		}
 	}
 }
@@ -252,7 +252,7 @@ void nemesis_state::nemesis_postload()
 {
 	for (int i = 0; i < 8; i++)
 	{
-		m_gfxdecode->gfx(i)->mark_all_dirty();
+		m_gfxdecode->m_gfx[i]->mark_all_dirty();
 	}
 }
 
@@ -354,7 +354,7 @@ void nemesis_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, c
 						flipy = !flipy;
 					}
 
-					m_gfxdecode->gfx(char_type)->prio_zoom_transpen(bitmap,cliprect,
+					m_gfxdecode->m_gfx[char_type]->prio_zoom_transpen(bitmap,cliprect,
 						code,
 						color,
 						flipx,flipy,

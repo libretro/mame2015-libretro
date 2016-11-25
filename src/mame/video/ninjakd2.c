@@ -333,7 +333,7 @@ WRITE8_MEMBER(ninjakd2_state::ninjakd2_sprite_overdraw_w)
 
 void ninjakd2_state::draw_sprites( bitmap_ind16 &bitmap)
 {
-	gfx_element* const gfx = m_gfxdecode->gfx(1);
+	gfx_element* const gfx = m_gfxdecode->m_gfx[1];
 	int const big_xshift = m_robokid_sprites ? 1 : 0;
 	int const big_yshift = m_robokid_sprites ? 0 : 1;
 

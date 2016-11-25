@@ -81,7 +81,7 @@ static const UINT8 layout[8][8] =
 
 void tecmo_spr_device::gaiden_draw_sprites(screen_device &screen, gfxdecode_device *gfxdecode, const rectangle &cliprect, UINT16* spriteram, int sprite_sizey, int spr_offset_y, int flip_screen, bitmap_ind16 &sprite_bitmap)
 {
-	gfx_element *gfx = gfxdecode->gfx(m_gfxregion);
+	gfx_element *gfx = gfxdecode->m_gfx[m_gfxregion];
 	UINT16 *source;
 	int sourceinc;
 
@@ -284,7 +284,7 @@ void tecmo_spr_device::draw_sprites_8bit(screen_device &screen, bitmap_ind16 &bi
 				{
 					int sx = xpos + 8*(flipx?(size-1-x):x);
 					int sy = ypos + 8*(flipy?(size-1-y):y);
-					gfxdecode->gfx(1)->prio_transpen(bitmap,cliprect,
+					gfxdecode->m_gfx[1]->prio_transpen(bitmap,cliprect,
 							code + layout[y][x],
 							flags & 0xf,
 							flipx,flipy,
@@ -340,7 +340,7 @@ void tecmo_spr_device::draw_wc90_sprites(bitmap_ind16 &bitmap, const rectangle &
 					{
 						int sx = xpos + 8*(flipx?(sizex-1-x):x);
 						int sy = ypos + 8*(flipy?(sizey-1-y):y);
-						gfxdecode->gfx(3)->transpen(bitmap,cliprect,
+						gfxdecode->m_gfx[3]->transpen(bitmap,cliprect,
 								code + layout[y][x],
 								(flags>>4) & 0xf,
 								flipx,flipy,
@@ -391,28 +391,28 @@ void tecmo_spr_device::tbowl_draw_sprites(bitmap_ind16 &bitmap,const rectangle &
 
 					sx -= xscroll;
 
-					gfxdecode->gfx(3)->transpen(bitmap,cliprect,
+					gfxdecode->m_gfx[3]->transpen(bitmap,cliprect,
 							code + layout[y][x],
 							color,
 							flipx,flipy,
 							sx,sy,0 );
 
 					/* wraparound */
-					gfxdecode->gfx(3)->transpen(bitmap,cliprect,
+					gfxdecode->m_gfx[3]->transpen(bitmap,cliprect,
 							code + layout[y][x],
 							color,
 							flipx,flipy,
 							sx,sy-0x200,0 );
 
 					/* wraparound */
-					gfxdecode->gfx(3)->transpen(bitmap,cliprect,
+					gfxdecode->m_gfx[3]->transpen(bitmap,cliprect,
 							code + layout[y][x],
 							color,
 							flipx,flipy,
 							sx-0x400,sy,0 );
 
 					/* wraparound */
-					gfxdecode->gfx(3)->transpen(bitmap,cliprect,
+					gfxdecode->m_gfx[3]->transpen(bitmap,cliprect,
 							code + layout[y][x],
 							color,
 							flipx,flipy,

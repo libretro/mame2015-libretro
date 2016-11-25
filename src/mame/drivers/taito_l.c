@@ -166,7 +166,7 @@ void taitol_state::taito_machine_reset()
 	m_cur_rombank = m_cur_rombank2 = 0;
 	membank("bank1")->set_base(memregion("maincpu")->base());
 
-	m_gfxdecode->gfx(2)->set_source(m_rambanks);
+	m_gfxdecode->m_gfx[2]->set_source(m_rambanks);
 
 	m_adpcm_pos = 0;
 	m_adpcm_data = -1;

@@ -251,12 +251,12 @@ void toypop_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect,
 			{
 				for (int x = 0;x <= sizex;x++)
 				{
-					m_gfxdecode->gfx(1)->transmask(bitmap,cliprect,
+					m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect,
 						sprite + gfx_offs[y ^ (sizey & flipy)][x ^ (sizex & flipx)],
 						color,
 						flipx,flipy,
 						sx + 16*x,sy + 16*y,
-						m_palette->transpen_mask(*m_gfxdecode->gfx(1), color, 0xff));
+						m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color, 0xff));
 				}
 			}
 		}

@@ -182,7 +182,7 @@ void battlane_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &clipre
 			}
 
 
-				m_gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+				m_gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 				code,
 				color,
 				flipx, flipy,
@@ -193,7 +193,7 @@ void battlane_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &clipre
 				dy = flipy ? 16 : -16;
 
 
-					m_gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+					m_gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 					code + 1,
 					color,
 					flipx, flipy,

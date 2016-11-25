@@ -185,7 +185,7 @@ WRITE8_MEMBER(champbas_state::champbas_flipscreen_w)
 void champbas_state::champbas_draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect )
 {
 	int offs;
-	gfx_element* const gfx = m_gfxdecode->gfx(1);
+	gfx_element* const gfx = m_gfxdecode->m_gfx[1];
 
 	for (offs = m_spriteram.bytes() - 2; offs >= 0; offs -= 2)
 	{
@@ -235,7 +235,7 @@ void champbas_state::exctsccr_draw_sprites( bitmap_ind16 &bitmap, const rectangl
 		bank = ((obj1[offs + 1] >> 4) & 1);
 
 
-				m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+				m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 				code + (bank << 6),
 				color,
 				flipx, flipy,
@@ -258,12 +258,12 @@ void champbas_state::exctsccr_draw_sprites( bitmap_ind16 &bitmap, const rectangl
 		color = (obj1[offs + 1]) & 0x0f;
 
 
-				m_gfxdecode->gfx(2)->transmask(bitmap,cliprect,
+				m_gfxdecode->m_gfx[2]->transmask(bitmap,cliprect,
 				code,
 				color,
 				flipx, flipy,
 				sx,sy,
-				m_palette->transpen_mask(*m_gfxdecode->gfx(2), color, 0x10));
+				m_palette->transpen_mask(*m_gfxdecode->m_gfx[2], color, 0x10));
 	}
 }
 

@@ -704,7 +704,7 @@ void cischeat_state::cischeat_draw_road(bitmap_ind16 &bitmap, const rectangle &c
 	int min_priority, max_priority;
 
 	rectangle rect      =   cliprect;
-	gfx_element *gfx        =   m_gfxdecode->gfx((road_num & 1)?5:4);
+	gfx_element *gfx        =   m_gfxdecode->m_gfx[(road_num & 1)?5:4];
 
 	UINT16 *roadram         =   m_roadram[road_num & 1];
 
@@ -794,7 +794,7 @@ void cischeat_state::f1gpstar_draw_road(bitmap_ind16 &bitmap, const rectangle &c
 	int min_priority, max_priority;
 
 	rectangle rect      =   cliprect;
-	gfx_element *gfx        =   m_gfxdecode->gfx((road_num & 1)?5:4);
+	gfx_element *gfx        =   m_gfxdecode->m_gfx[(road_num & 1)?5:4];
 
 	UINT16 *roadram         =   m_roadram[road_num & 1];
 
@@ -1003,7 +1003,7 @@ if ( (m_debugsprites) && ( ((attr & 0x0300)>>8) != (m_debugsprites-1) ) ) { cont
 		{
 			for (x = xstart; x != xend; x += xinc)
 			{
-				m_gfxdecode->gfx(3)->zoom_transtable(bitmap,cliprect,code++,color,flipx,flipy,
+				m_gfxdecode->m_gfx[3]->zoom_transtable(bitmap,cliprect,code++,color,flipx,flipy,
 							(sx + x * xdim) / 0x10000, (sy + y * ydim) / 0x10000,
 							xscale, yscale, m_drawmode_table);
 			}
@@ -1154,7 +1154,7 @@ if ( (m_debugsprites) && ( ((attr & 0x0300)>>8) != (m_debugsprites-1) ) ) { cont
 		{
 			for (x = xstart; x != xend; x += xinc)
 			{
-				m_gfxdecode->gfx(3)->zoom_transtable(bitmap,cliprect,code++,color,flipx,flipy,
+				m_gfxdecode->m_gfx[3]->zoom_transtable(bitmap,cliprect,code++,color,flipx,flipy,
 							(sx + x * xdim) / 0x10000, (sy + y * ydim) / 0x10000,
 							xscale, yscale, m_drawmode_table);
 			}

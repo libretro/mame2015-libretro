@@ -163,12 +163,12 @@ void msisaac_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprec
 		int flipx = (attributes & 0x1);
 		int flipy = (attributes & 0x2);
 
-		gfx_element *gfx = m_gfxdecode->gfx(2);
+		gfx_element *gfx = m_gfxdecode->m_gfx[2];
 
 		if (attributes & 4)
 		{
 			//color = rand() & 15;
-			gfx = m_gfxdecode->gfx(3);
+			gfx = m_gfxdecode->m_gfx[3];
 		}
 
 		if (attributes & 8) /* double size sprite */

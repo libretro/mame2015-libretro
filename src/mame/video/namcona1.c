@@ -159,7 +159,7 @@ WRITE16_MEMBER(namcona1_state::namcona1_gfxram_w)
 				m_shaperam[offset] = data >> 8;
 			if (ACCESSING_BITS_0_7)
 				m_shaperam[offset+1] = data;
-			m_gfxdecode->gfx(2)->mark_dirty(offset/8);
+			m_gfxdecode->m_gfx[2]->mark_dirty(offset/8);
 		}
 	}
 	else if( type == 0x02 )
@@ -168,8 +168,8 @@ WRITE16_MEMBER(namcona1_state::namcona1_gfxram_w)
 		COMBINE_DATA( &m_cgram[offset] );
 		if( m_cgram[offset]!=old_word )
 		{
-			m_gfxdecode->gfx(0)->mark_dirty(offset/0x20);
-			m_gfxdecode->gfx(1)->mark_dirty(offset/0x20);
+			m_gfxdecode->m_gfx[0]->mark_dirty(offset/0x20);
+			m_gfxdecode->m_gfx[1]->mark_dirty(offset/0x20);
 		}
 	}
 } /* namcona1_gfxram_w */
@@ -187,7 +187,7 @@ void namcona1_state::video_start()
 
 	m_shaperam.resize(0x8000);
 
-	m_gfxdecode->gfx(2)->set_source(m_shaperam);
+	m_gfxdecode->m_gfx[2]->set_source(m_shaperam);
 } /* namcona1_vh_start */
 
 /*************************************************************************/
@@ -205,8 +205,8 @@ void namcona1_state::pdraw_tile(
 		int bOpaque,
 		int gfx_region )
 {
-	gfx_element *gfx = m_gfxdecode->gfx(gfx_region);
-	gfx_element *mask = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[gfx_region];
+	gfx_element *mask = m_gfxdecode->m_gfx[2];
 
 	int pal_base = gfx->m_color_base + gfx->m_color_granularity * (color % gfx->m_total_colors);
 	const UINT8 *source_base = gfx->get_data((code % gfx->m_total_elements));

@@ -394,8 +394,8 @@ WRITE32_MEMBER( k001604_device::char_w )
 
 	COMBINE_DATA(m_char_ram + addr);
 
-	m_gfxdecode->gfx(m_gfx_index[0])->mark_dirty(addr / 32);
-	m_gfxdecode->gfx(m_gfx_index[1])->mark_dirty(addr / 128);
+	m_gfxdecode->m_gfx[m_gfx_index[0]]->mark_dirty(addr / 32);
+	m_gfxdecode->m_gfx[m_gfx_index[1]]->mark_dirty(addr / 128);
 }
 
 WRITE32_MEMBER( k001604_device::reg_w )

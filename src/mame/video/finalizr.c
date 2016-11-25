@@ -123,8 +123,8 @@ void finalizr_state::video_start()
 
 void finalizr_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
-	gfx_element *gfx1 = m_gfxdecode->gfx(1);
-	gfx_element *gfx2 = m_gfxdecode->gfx(2);
+	gfx_element *gfx1 = m_gfxdecode->m_gfx[1];
+	gfx_element *gfx2 = m_gfxdecode->m_gfx[2];
 
 	UINT8 *sr = m_spriterambank ? m_spriteram_2 : m_spriteram;
 

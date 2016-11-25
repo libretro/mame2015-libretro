@@ -296,7 +296,7 @@ void tc0480scp_device::device_start()
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
 	m_gfxdecode->set_gfx(m_txnum, global_alloc(gfx_element(m_palette, tc0480scp_charlayout, (UINT8 *)m_char_ram, NATIVE_ENDIAN_VALUE_LE_BE(8,0), 64, m_col_base)));
-	m_gfxdecode->gfx(m_gfxnum)->set_colorbase(m_col_base);
+	m_gfxdecode->m_gfx[m_gfxnum]->set_colorbase(m_col_base);
 
 	save_item(NAME(m_ram));
 	save_item(NAME(m_ctrl));
@@ -441,7 +441,7 @@ WRITE16_MEMBER( tc0480scp_device::word_w )
 		}
 		else if (offset <= 0x7fff)
 		{
-			m_gfxdecode->gfx(m_txnum)->mark_dirty((offset - 0x7000) / 16);
+			m_gfxdecode->m_gfx[m_txnum]->mark_dirty((offset - 0x7000) / 16);
 		}
 	}
 	else
@@ -459,7 +459,7 @@ WRITE16_MEMBER( tc0480scp_device::word_w )
 		}
 		else if (offset <= 0x7fff)
 		{
-			m_gfxdecode->gfx(m_txnum)->mark_dirty((offset - 0x7000) / 16);
+			m_gfxdecode->m_gfx[m_txnum]->mark_dirty((offset - 0x7000) / 16);
 		}
 	}
 }

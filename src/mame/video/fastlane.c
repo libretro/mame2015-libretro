@@ -145,7 +145,7 @@ UINT32 fastlane_state::screen_update_fastlane(screen_device &screen, bitmap_ind1
 	m_layer0->set_scrolly(0, m_k007121->ctrlram_r(space, 2));
 
 	m_layer0->draw(screen, bitmap, finalclip0, 0, 0);
-	m_k007121->sprites_draw(bitmap, cliprect, m_gfxdecode->gfx(0), m_palette, m_spriteram, 0, 40, 0, screen.priority(), (UINT32)-1);
+	m_k007121->sprites_draw(bitmap, cliprect, m_gfxdecode->m_gfx[0], m_palette, m_spriteram, 0, 40, 0, screen.priority(), (UINT32)-1);
 	m_layer1->draw(screen, bitmap, finalclip1, 0, 0);
 	return 0;
 }

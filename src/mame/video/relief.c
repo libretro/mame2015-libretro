@@ -82,7 +82,7 @@ const atari_motion_objects_config relief_state::s_mob_config =
 VIDEO_START_MEMBER(relief_state,relief)
 {
 	/* MOs are 5bpp but with a 4-bit color granularity */
-	m_gfxdecode->gfx(1)->set_granularity(16);
+	m_gfxdecode->m_gfx[1]->set_granularity(16);
 }
 
 

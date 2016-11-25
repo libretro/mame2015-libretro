@@ -197,7 +197,7 @@ inline void dooyong_state::get_tile_info(tile_data &tileinfo, int tile_index,
 		int codemask = 0x03;
 		int palmask  = 0x3c;
 
-		if (m_gfxdecode->gfx(1)->m_color_depth == 256) // pop bingo has an 8bpp layer and uses what would be the low palette bit to address more tiles (girls 4,5,6 in bonus game)
+		if (m_gfxdecode->m_gfx[1]->m_color_depth == 256) // pop bingo has an 8bpp layer and uses what would be the low palette bit to address more tiles (girls 4,5,6 in bonus game)
 		{
 			codemask = 0x07;
 			palmask = 0x00;
@@ -328,7 +328,7 @@ void dooyong_z80_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap
 
 		for (int y = 0; y <= height; y++)
 		{
-			m_gfxdecode->gfx(1)->prio_transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[1]->prio_transpen(bitmap,cliprect,
 					code + y,
 					color,
 					flipx, flipy,
@@ -748,7 +748,7 @@ void dooyong_68k_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap
 				for (int x = 0; x <= width; x++)
 				{
 					int const _x = sx + (16 * (flip ? (width - x) : x));
-					m_gfxdecode->gfx(0)->prio_transpen(bitmap,cliprect,
+					m_gfxdecode->m_gfx[0]->prio_transpen(bitmap,cliprect,
 							code,
 							color,
 							flip, flip,

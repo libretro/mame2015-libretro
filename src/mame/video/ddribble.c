@@ -151,7 +151,7 @@ byte #4:    attributes
 
 void ddribble_state::draw_sprites(  bitmap_ind16 &bitmap, const rectangle &cliprect, UINT8* source, int lenght, int gfxset, int flipscreen )
 {
-	gfx_element *gfx = m_gfxdecode->gfx(gfxset);
+	gfx_element *gfx = m_gfxdecode->m_gfx[gfxset];
 	const UINT8 *finish = source + lenght;
 
 	while (source < finish)

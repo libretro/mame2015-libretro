@@ -6,7 +6,7 @@
 
 void fitfight_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect, int layer )
 {
-	gfx_element *gfx = m_gfxdecode->gfx(3);
+	gfx_element *gfx = m_gfxdecode->m_gfx[3];
 	UINT16 *source = m_spriteram;
 	UINT16 *finish = source + 0x800 / 2;
 

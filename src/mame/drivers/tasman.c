@@ -61,7 +61,7 @@ VIDEO_START_MEMBER(kongambl_state,kongambl)
 UINT32 kongambl_state::screen_update_kongambl(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
 	#if CUSTOM_DRAW
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	UINT32 count;
 
 	count = 0;

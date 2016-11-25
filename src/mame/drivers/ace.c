@@ -89,22 +89,22 @@ WRITE8_MEMBER(aceal_state::ace_objpos_w)
 
 void aceal_state::video_start()
 {
-	m_gfxdecode->gfx(1)->set_source(m_characterram);
-	m_gfxdecode->gfx(2)->set_source(m_characterram);
-	m_gfxdecode->gfx(3)->set_source(m_characterram);
-	m_gfxdecode->gfx(4)->set_source(m_scoreram);
+	m_gfxdecode->m_gfx[1]->set_source(m_characterram);
+	m_gfxdecode->m_gfx[2]->set_source(m_characterram);
+	m_gfxdecode->m_gfx[3]->set_source(m_characterram);
+	m_gfxdecode->m_gfx[4]->set_source(m_scoreram);
 }
 
 UINT32 aceal_state::screen_update_ace(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
 	bitmap.fill(0, cliprect);
 
-	m_gfxdecode->gfx(1)->opaque(bitmap, cliprect, 0, 0, 0, 0, m_objpos[0], m_objpos[1]);
-	m_gfxdecode->gfx(2)->opaque(bitmap, cliprect, 0, 0, 0, 0, m_objpos[2], m_objpos[3]);
-	m_gfxdecode->gfx(3)->opaque(bitmap, cliprect, 0, 0, 0, 0, m_objpos[4], m_objpos[5]);
+	m_gfxdecode->m_gfx[1]->opaque(bitmap, cliprect, 0, 0, 0, 0, m_objpos[0], m_objpos[1]);
+	m_gfxdecode->m_gfx[2]->opaque(bitmap, cliprect, 0, 0, 0, 0, m_objpos[2], m_objpos[3]);
+	m_gfxdecode->m_gfx[3]->opaque(bitmap, cliprect, 0, 0, 0, 0, m_objpos[4], m_objpos[5]);
 
 	for (int offs = 0; offs < 8; offs++)
-		m_gfxdecode->gfx(4)->opaque(bitmap, cliprect, offs, 0, 0, 0, 10 * 8 + offs * 16, 256 - 16);
+		m_gfxdecode->m_gfx[4]->opaque(bitmap, cliprect, offs, 0, 0, 0, 10 * 8 + offs * 16, 256 - 16);
 
 	return 0;
 }
@@ -118,16 +118,16 @@ WRITE8_MEMBER(aceal_state::ace_characterram_w)
 			logerror("write to %04x data = %02x\n", 0x8000 + offset, data);
 
 		m_characterram[offset] = data;
-		m_gfxdecode->gfx(1)->mark_dirty(0);
-		m_gfxdecode->gfx(2)->mark_dirty(0);
-		m_gfxdecode->gfx(3)->mark_dirty(0);
+		m_gfxdecode->m_gfx[1]->mark_dirty(0);
+		m_gfxdecode->m_gfx[2]->mark_dirty(0);
+		m_gfxdecode->m_gfx[3]->mark_dirty(0);
 	}
 }
 
 WRITE8_MEMBER(aceal_state::ace_scoreram_w)
 {
 	m_scoreram[offset] = data;
-	m_gfxdecode->gfx(4)->mark_dirty(offset / 32);
+	m_gfxdecode->m_gfx[4]->mark_dirty(offset / 32);
 }
 
 READ8_MEMBER(aceal_state::unk_r)
@@ -295,10 +295,10 @@ GFXDECODE_END
 
 void aceal_state::ace_postload()
 {
-	m_gfxdecode->gfx(1)->mark_dirty(0);
-	m_gfxdecode->gfx(2)->mark_dirty(0);
-	m_gfxdecode->gfx(3)->mark_dirty(0);
-	m_gfxdecode->gfx(4)->mark_dirty(0);
+	m_gfxdecode->m_gfx[1]->mark_dirty(0);
+	m_gfxdecode->m_gfx[2]->mark_dirty(0);
+	m_gfxdecode->m_gfx[3]->mark_dirty(0);
+	m_gfxdecode->m_gfx[4]->mark_dirty(0);
 }
 
 void aceal_state::machine_start()

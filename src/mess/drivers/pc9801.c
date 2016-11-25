@@ -1182,7 +1182,7 @@ WRITE8_MEMBER(pc9801_state::pc9801_a0_w)
 				if((m_font_addr & 0xff00) == 0x5600 || (m_font_addr & 0xff00) == 0x5700)
 				{
 					m_kanji_rom[pcg_offset] = data;
-					m_gfxdecode->gfx(2)->mark_dirty(pcg_offset >> 5);
+					m_gfxdecode->m_gfx[2]->mark_dirty(pcg_offset >> 5);
 				}
 				return;
 			}
@@ -1806,7 +1806,7 @@ WRITE8_MEMBER(pc9801_state::pc9801rs_knjram_w)
 	if((m_font_addr & 0xff00) == 0x5600 || (m_font_addr & 0xff00) == 0x5700)
 	{
 		m_kanji_rom[pcg_offset] = data;
-		m_gfxdecode->gfx(2)->mark_dirty(pcg_offset >> 5);
+		m_gfxdecode->m_gfx[2]->mark_dirty(pcg_offset >> 5);
 	}
 }
 

@@ -1429,8 +1429,8 @@ void atarigen_state::halt_until_hblank_0(device_t &device, screen_device &screen
 
 void atarigen_state::blend_gfx(int gfx0, int gfx1, int mask0, int mask1)
 {
-	gfx_element *gx0 = m_gfxdecode->gfx(gfx0);
-	gfx_element *gx1 = m_gfxdecode->gfx(gfx1);
+	gfx_element *gx0 = m_gfxdecode->m_gfx[gfx0];
+	gfx_element *gx1 = m_gfxdecode->m_gfx[gfx1];
 	UINT8 *srcdata, *dest;
 	int c, x, y;
 

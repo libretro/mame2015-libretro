@@ -154,7 +154,7 @@ UINT32 darkmist_state::screen_update(screen_device &screen, bitmap_ind16 &bitmap
 			palette+=32;
 
 
-				m_gfxdecode->gfx(2)->transpen(
+				m_gfxdecode->m_gfx[2]->transpen(
 				bitmap,cliprect,
 				tile,
 				palette,

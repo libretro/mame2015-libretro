@@ -629,9 +629,9 @@ VIDEO_START_MEMBER(taito_f3_state,f3)
 	m_pf_line_inf = auto_alloc_array(machine(), struct f3_playfield_line_inf, 5);
 	m_sa_line_inf = auto_alloc_array(machine(), struct f3_spritealpha_line_inf, 1);
 	m_screen->register_screen_bitmap(m_pri_alp_bitmap);
-	m_tile_opaque_sp = auto_alloc_array(machine(), UINT8, m_gfxdecode->gfx(2)->m_total_elements);
+	m_tile_opaque_sp = auto_alloc_array(machine(), UINT8, m_gfxdecode->m_gfx[2]->m_total_elements);
 	for (i=0; i<8; i++)
-		m_tile_opaque_pf[i] = auto_alloc_array(machine(), UINT8, m_gfxdecode->gfx(1)->m_total_elements);
+		m_tile_opaque_pf[i] = auto_alloc_array(machine(), UINT8, m_gfxdecode->m_gfx[1]->m_total_elements);
 
 
 	m_vram_layer->set_transparent_pen(0);
@@ -639,8 +639,8 @@ VIDEO_START_MEMBER(taito_f3_state,f3)
 
 	/* Palettes have 4 bpp indexes despite up to 6 bpp data. The unused */
 	/* top bits in the gfx data are cleared later.                      */
-	m_gfxdecode->gfx(1)->set_granularity(16);
-	m_gfxdecode->gfx(2)->set_granularity(16);
+	m_gfxdecode->m_gfx[1]->set_granularity(16);
+	m_gfxdecode->m_gfx[2]->set_granularity(16);
 
 	m_flipscreen = 0;
 	memset(m_spriteram16_buffered,0,0x10000);
@@ -649,8 +649,8 @@ VIDEO_START_MEMBER(taito_f3_state,f3)
 	save_item(NAME(m_f3_control_0));
 	save_item(NAME(m_f3_control_1));
 
-	m_gfxdecode->gfx(0)->set_source((UINT8 *)m_f3_vram);
-	m_gfxdecode->gfx(3)->set_source((UINT8 *)m_f3_pivot_ram);
+	m_gfxdecode->m_gfx[0]->set_source((UINT8 *)m_f3_vram);
+	m_gfxdecode->m_gfx[3]->set_source((UINT8 *)m_f3_pivot_ram);
 
 	m_f3_skip_this_frame=0;
 
@@ -659,7 +659,7 @@ VIDEO_START_MEMBER(taito_f3_state,f3)
 	init_alpha_blend_func();
 
 	{
-		gfx_element *sprite_gfx = m_gfxdecode->gfx(2);
+		gfx_element *sprite_gfx = m_gfxdecode->m_gfx[2];
 		int c;
 
 		for (c = 0;c < sprite_gfx->m_total_elements;c++)
@@ -683,7 +683,7 @@ VIDEO_START_MEMBER(taito_f3_state,f3)
 
 
 	{
-		gfx_element *pf_gfx = m_gfxdecode->gfx(1);
+		gfx_element *pf_gfx = m_gfxdecode->m_gfx[1];
 		int c;
 
 		for (c = 0;c < pf_gfx->m_total_elements;c++)
@@ -793,7 +793,7 @@ READ16_MEMBER(taito_f3_state::f3_vram_r)
 WRITE16_MEMBER(taito_f3_state::f3_vram_w)
 {
 	COMBINE_DATA(&m_f3_vram[offset]);
-	m_gfxdecode->gfx(0)->mark_dirty(offset/16);
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset/16);
 }
 
 READ16_MEMBER(taito_f3_state::f3_pivot_r)
@@ -804,7 +804,7 @@ READ16_MEMBER(taito_f3_state::f3_pivot_r)
 WRITE16_MEMBER(taito_f3_state::f3_pivot_w)
 {
 	COMBINE_DATA(&m_f3_pivot_ram[offset]);
-	m_gfxdecode->gfx(3)->mark_dirty(offset/16);
+	m_gfxdecode->m_gfx[3]->mark_dirty(offset/16);
 }
 
 READ16_MEMBER(taito_f3_state::f3_lineram_r)
@@ -1541,7 +1541,7 @@ void taito_f3_state::visible_tile_check(
 	alpha_mode=line_t->alpha_mode[line];
 	if(!alpha_mode) return;
 
-	total_elements=m_gfxdecode->gfx(1)->m_total_elements;
+	total_elements=m_gfxdecode->m_gfx[1]->m_total_elements;
 
 	tile_index=x_index_fx>>16;
 	tile_num=(((line_t->x_zoom[line]*320+(x_index_fx & 0xffff)+0xffff)>>16)+(tile_index%16)+15)/16;
@@ -3089,7 +3089,7 @@ void taito_f3_state::get_sprite_info(const UINT16 *spriteram16_ptr)
 void taito_f3_state::draw_sprites(bitmap_rgb32 &bitmap, const rectangle &cliprect)
 {
 	const struct tempsprite *sprite_ptr;
-	gfx_element *sprite_gfx = m_gfxdecode->gfx(2);
+	gfx_element *sprite_gfx = m_gfxdecode->m_gfx[2];
 
 	sprite_ptr = m_sprite_end;
 	m_sprite_pri_usage=0;

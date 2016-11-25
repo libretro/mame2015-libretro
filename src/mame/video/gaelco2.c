@@ -336,7 +336,7 @@ void gaelco2_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap, co
 {
 	UINT16 *buffered_spriteram16 = m_spriteram->buffer();
 	int j, x, y, ex, ey, px, py;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 
 	/* get sprite ram start and end offsets */
 	int start_offset = (m_vregs[1] & 0x10)*0x100;

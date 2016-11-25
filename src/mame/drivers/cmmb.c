@@ -88,7 +88,7 @@ void cmmb_state::video_start()
 UINT32 cmmb_state::screen_update_cmmb(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
 	UINT8 *videoram = m_videoram;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	int count = 0x00000;
 
 	int y,x;
@@ -124,8 +124,8 @@ WRITE8_MEMBER(cmmb_state::cmmb_charram_w)
 	offset&=0xfff;
 
 	/* dirty char */
-	m_gfxdecode->gfx(0)->mark_dirty(offset >> 4);
-	m_gfxdecode->gfx(1)->mark_dirty(offset >> 5);
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset >> 4);
+	m_gfxdecode->m_gfx[1]->mark_dirty(offset >> 5);
 }
 
 

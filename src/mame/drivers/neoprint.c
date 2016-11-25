@@ -97,7 +97,7 @@ xxxx xxxx xxxx xxxx [2] scroll Y, signed
 void neoprint_state::draw_layer(bitmap_ind16 &bitmap,const rectangle &cliprect,int layer,int data_shift)
 {
 	int i, y, x;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	INT16 scrollx, scrolly;
 
 	i = (m_npvidregs[((layer*8)+0x06)/2] & 7) * 0x1000/4;

@@ -217,7 +217,7 @@ VIDEO_START_MEMBER(clshroad_state,firebatl)
 	m_tilemap_0b->set_scrolldx(-0x30, -0xb5);
 
 	m_tilemap_0b->set_transparent_pen(0 );
-	m_tilemap_1->configure_groups(*m_gfxdecode->gfx(2), 0x0f);
+	m_tilemap_1->configure_groups(*m_gfxdecode->m_gfx[2], 0x0f);
 }
 
 VIDEO_START_MEMBER(clshroad_state,clshroad)
@@ -296,7 +296,7 @@ void clshroad_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 			flipy = !flipy;
 		}
 
-		m_gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 				code,
 				attr & 0x0f,
 				flipx,flipy,

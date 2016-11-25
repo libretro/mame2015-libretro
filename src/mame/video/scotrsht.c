@@ -108,9 +108,9 @@ void scotrsht_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 			flipy = !flipy;
 		}
 
-		m_gfxdecode->gfx(1)->transmask(bitmap,cliprect, code, color, flipx, flipy,
+		m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect, code, color, flipx, flipy,
 			sx, sy,
-			m_palette->transpen_mask(*m_gfxdecode->gfx(1), color, m_palette_bank * 16));
+			m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color, m_palette_bank * 16));
 	}
 }
 

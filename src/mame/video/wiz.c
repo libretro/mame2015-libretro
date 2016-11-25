@@ -119,7 +119,7 @@ void wiz_state::draw_tiles(bitmap_ind16 &bitmap, const rectangle &cliprect, int 
 	UINT8 *vram = layer ? m_videoram2 : m_videoram;
 	UINT8 *aram = layer ? m_attrram2 : m_attrram;
 	UINT8 *cram = layer ? m_colorram2 : m_colorram;
-	gfx_element *gfx = m_gfxdecode->gfx(charbank);
+	gfx_element *gfx = m_gfxdecode->m_gfx[charbank];
 	int palbank = m_palbank[1] << 4 | m_palbank[0] << 3;
 
 	/* draw the tiles. They are characters, but draw them as sprites. */
@@ -152,7 +152,7 @@ void wiz_state::draw_tiles(bitmap_ind16 &bitmap, const rectangle &cliprect, int 
 void wiz_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, int set, int charbank)
 {
 	UINT8 *sram = set ? m_spriteram2 : m_spriteram;
-	gfx_element *gfx = m_gfxdecode->gfx(charbank);
+	gfx_element *gfx = m_gfxdecode->m_gfx[charbank];
 	int palbank = m_palbank[1] << 4 | m_palbank[0] << 3;
 
 	for (int offs = 0x20-4; offs >= 0; offs -= 4)

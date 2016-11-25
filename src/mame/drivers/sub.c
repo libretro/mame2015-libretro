@@ -159,8 +159,8 @@ void sub_state::machine_start()
 
 UINT32 sub_state::screen_update(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(0);
-	gfx_element *gfx_1 = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
+	gfx_element *gfx_1 = m_gfxdecode->m_gfx[1];
 	int y,x;
 	int count = 0;
 

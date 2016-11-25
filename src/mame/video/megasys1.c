@@ -639,7 +639,7 @@ void megasys1_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap,co
 				code  = spritedata[0x0E/2] + objectdata[0x06/2];
 				color = (attr & color_mask);
 
-				m_gfxdecode->gfx(3)->prio_transpen(bitmap,cliprect,
+				m_gfxdecode->m_gfx[3]->prio_transpen(bitmap,cliprect,
 						(code & 0xfff ) + ((m_sprite_bank & 1) << 12),
 						color,
 						flipx, flipy,
@@ -679,7 +679,7 @@ void megasys1_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap,co
 				sx = 240-sx;        sy = 240-sy;
 			}
 
-			m_gfxdecode->gfx(2)->prio_transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[2]->prio_transpen(bitmap,cliprect,
 					code,
 					color,
 					flipx, flipy,

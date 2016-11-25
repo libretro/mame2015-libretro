@@ -240,7 +240,7 @@ void gladiatr_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 
 				int t = tile_offset[ey][ex] + tile_number;
 
-				m_gfxdecode->gfx(2)->transpen(bitmap,cliprect,
+				m_gfxdecode->m_gfx[2]->transpen(bitmap,cliprect,
 						t,
 						color,
 						xflip, yflip,

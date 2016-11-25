@@ -281,7 +281,7 @@ void atari_motion_objects_device::device_start()
 	sprite16_device_ind16::device_start();
 
 	// verify configuration
-	gfx_element *gfx = m_gfxdecode->gfx(m_gfxindex);
+	gfx_element *gfx = m_gfxdecode->m_gfx[m_gfxindex];
 	if (gfx == NULL)
 		throw emu_fatalerror("No gfxelement #%d!", m_gfxindex);
 
@@ -443,7 +443,7 @@ void atari_motion_objects_device::render_object(bitmap_ind16 &bitmap, const rect
 {
 	// select the gfx element and save off key information
 	int rawcode = m_codemask.extract(entry);
-	gfx_element *gfx = m_gfxdecode->gfx(m_gfxlookup[rawcode >> 8]);
+	gfx_element *gfx = m_gfxdecode->m_gfx[m_gfxlookup[rawcode >> 8]];
 	int save_granularity = gfx->m_color_granularity;
 	int save_colorbase = gfx->m_color_base;
 	int save_colors = gfx->m_total_colors;

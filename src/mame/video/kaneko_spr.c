@@ -456,7 +456,7 @@ void kaneko16_sprite_device::kaneko16_draw_sprites(_BitmapClass &bitmap, const r
 		UINT32 primask = m_priority.sprite[curr_pri];
 
 		kaneko16_draw_sprites_custom(
-										bitmap,cliprect,m_gfxdecode->gfx(0),
+										bitmap,cliprect,m_gfxdecode->m_gfx[0],
 										s->code,
 										s->color,
 										s->flipx, s->flipy,
@@ -574,7 +574,7 @@ void kaneko16_sprite_device::kaneko16_copybitmap(bitmap_ind16 &bitmap, const rec
 
 void kaneko16_sprite_device::kaneko16_copybitmap(bitmap_rgb32 &bitmap, const rectangle &cliprect)
 {
-	const pen_t *pal = m_gfxdecode->gfx(0)->m_palette->pens();
+	const pen_t *pal = m_gfxdecode->m_gfx[0]->m_palette->pens();
 	UINT16* srcbitmap;
 	UINT32* dstbitmap;
 
@@ -656,7 +656,7 @@ void kaneko16_sprite_device::bootleg_draw_sprites(bitmap_ind16 &bitmap, const re
 		sx = (sx&0x1ff) - (sx&0x200);
 		sy = (sy&0x1ff) - (sy&0x200);
 
-		m_gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 				code,
 				color,
 				flipx,flipy,

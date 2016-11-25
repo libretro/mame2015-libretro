@@ -193,7 +193,7 @@ static void ui_gfx_count_devices(running_machine &machine, ui_gfx_state &state)
 				i < tempcount && state.gfxset.devcount < MAX_GFX_DECODERS;
 				i++, interface = gfx_iter.next())
 		{
-			for (count = 0; count < MAX_GFX_ELEMENTS && interface->gfx(count) != NULL; count++);
+			for (count = 0; count < MAX_GFX_ELEMENTS && interface->m_gfx[count] != NULL; count++);
 
 			// count = index of first NULL
 			if (count > 0)
@@ -565,7 +565,7 @@ static void gfxset_handler(running_machine &machine, render_container *container
 	int set = state.gfxset.set;
 	ui_gfx_info &info = state.gfxdev[dev];
 	device_gfx_interface &interface = *info.interface;
-	gfx_element &gfx = *interface.gfx(set);
+	gfx_element &gfx = *interface.m_gfx[set];
 	float fullwidth, fullheight;
 	float cellwidth, cellheight;
 	float chwidth, chheight;
@@ -759,7 +759,7 @@ static void gfxset_handle_keys(running_machine &machine, ui_gfx_state &state, in
 	int dev = state.gfxset.devindex;
 	int set = state.gfxset.set;
 	ui_gfx_info &info = state.gfxdev[dev];
-	gfx_element &gfx = *info.interface->gfx(set);
+	gfx_element &gfx = *info.interface->m_gfx[set];
 
 	// handle cells per line (minus,plus)
 	if (ui_input_pressed(machine, IPT_UI_ZOOM_OUT))

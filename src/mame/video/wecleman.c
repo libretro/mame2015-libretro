@@ -603,14 +603,14 @@ void wecleman_state::wecleman_draw_road(bitmap_rgb32 &bitmap, const rectangle &c
 			if ((road>>8) != 0x04) continue;
 			road &= YMASK;
 
-			src_ptr = m_gfxdecode->gfx(1)->get_data((road << 3));
-			m_gfxdecode->gfx(1)->get_data((road << 3) + 1);
-			m_gfxdecode->gfx(1)->get_data((road << 3) + 2);
-			m_gfxdecode->gfx(1)->get_data((road << 3) + 3);
-			m_gfxdecode->gfx(1)->get_data((road << 3) + 4);
-			m_gfxdecode->gfx(1)->get_data((road << 3) + 5);
-			m_gfxdecode->gfx(1)->get_data((road << 3) + 6);
-			m_gfxdecode->gfx(1)->get_data((road << 3) + 7);
+			src_ptr = m_gfxdecode->m_gfx[1]->get_data((road << 3));
+			m_gfxdecode->m_gfx[1]->get_data((road << 3) + 1);
+			m_gfxdecode->m_gfx[1]->get_data((road << 3) + 2);
+			m_gfxdecode->m_gfx[1]->get_data((road << 3) + 3);
+			m_gfxdecode->m_gfx[1]->get_data((road << 3) + 4);
+			m_gfxdecode->m_gfx[1]->get_data((road << 3) + 5);
+			m_gfxdecode->m_gfx[1]->get_data((road << 3) + 6);
+			m_gfxdecode->m_gfx[1]->get_data((road << 3) + 7);
 			mdy = ((road * MIDCURB_DY) >> 8) * bitmap.rowpixels();
 			tdy = ((road * TOPCURB_DY) >> 8) * bitmap.rowpixels();
 
@@ -805,7 +805,7 @@ void wecleman_state::hotchase_draw_road(bitmap_ind16 &bitmap, const rectangle &c
 
 		for (sx=0; sx<2*XSIZE; sx+=64)
 		{
-			m_gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 					code++,
 					color,
 					0,0,
@@ -957,7 +957,7 @@ VIDEO_START_MEMBER(wecleman_state,wecleman)
 	m_txt_tilemap->set_scrolly(0, -BMP_PAD );
 
 	// patches out a mysterious pixel floating in the sky (tile decoding bug?)
-	*const_cast<UINT8 *>(m_gfxdecode->gfx(0)->get_data(0xaca)+7) = 0;
+	*const_cast<UINT8 *>(m_gfxdecode->m_gfx[0]->get_data(0xaca)+7) = 0;
 }
 
 //  Callbacks for the K051316
@@ -1066,7 +1066,7 @@ UINT32 wecleman_state::screen_update_wecleman(screen_device &screen, bitmap_rgb3
 
 		if (video_on)
 			draw_cloud(bitmap,
-			m_gfxdecode->gfx(0),
+			m_gfxdecode->m_gfx[0],
 			m_pageram+0x1800,
 			BMP_PAD, BMP_PAD,
 			41, 20,

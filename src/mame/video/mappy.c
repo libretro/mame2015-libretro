@@ -311,21 +311,21 @@ VIDEO_START_MEMBER(mappy_state,superpac)
 	m_bg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(mappy_state::superpac_get_tile_info),this),tilemap_mapper_delegate(FUNC(mappy_state::superpac_tilemap_scan),this),8,8,36,28);
 	m_screen->register_screen_bitmap(m_sprite_bitmap);
 
-	m_bg_tilemap->configure_groups(*m_gfxdecode->gfx(0), 31);
+	m_bg_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 31);
 }
 
 VIDEO_START_MEMBER(mappy_state,phozon)
 {
 	m_bg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(mappy_state::phozon_get_tile_info),this),tilemap_mapper_delegate(FUNC(mappy_state::superpac_tilemap_scan),this),8,8,36,28);
 
-	m_bg_tilemap->configure_groups(*m_gfxdecode->gfx(0), 15);
+	m_bg_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 15);
 }
 
 VIDEO_START_MEMBER(mappy_state,mappy)
 {
 	m_bg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(mappy_state::mappy_get_tile_info),this),tilemap_mapper_delegate(FUNC(mappy_state::mappy_tilemap_scan),this),8,8,36,60);
 
-	m_bg_tilemap->configure_groups(*m_gfxdecode->gfx(0), 31);
+	m_bg_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 31);
 	m_bg_tilemap->set_scroll_cols(36);
 
 	save_item(NAME(m_scroll));
@@ -418,12 +418,12 @@ void mappy_state::mappy_draw_sprites(bitmap_ind16 &bitmap, const rectangle &clip
 			{
 				for (x = 0;x <= sizex;x++)
 				{
-					m_gfxdecode->gfx(1)->transmask(bitmap,cliprect,
+					m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect,
 						sprite + gfx_offs[y ^ (sizey * flipy)][x ^ (sizex * flipx)],
 						color,
 						flipx,flipy,
 						sx + 16*x,sy + 16*y,
-						m_palette->transpen_mask(*m_gfxdecode->gfx(1), color, 15));
+						m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color, 15));
 				}
 			}
 		}
@@ -495,12 +495,12 @@ void mappy_state::phozon_draw_sprites(bitmap_ind16 &bitmap, const rectangle &cli
 			{
 				for (x = 0;x <= sizex;x++)
 				{
-					m_gfxdecode->gfx(1)->transmask(bitmap,cliprect,
+					m_gfxdecode->m_gfx[1]->transmask(bitmap,cliprect,
 						sprite + gfx_offs[y ^ (sizey * flipy)][x ^ (sizex * flipx)],
 						color,
 						flipx,flipy,
 						sx + 8*x,sy + 8*y,
-						m_palette->transpen_mask(*m_gfxdecode->gfx(1), color, 31));
+						m_palette->transpen_mask(*m_gfxdecode->m_gfx[1], color, 31));
 				}
 			}
 		}

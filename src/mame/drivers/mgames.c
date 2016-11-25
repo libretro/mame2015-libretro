@@ -277,7 +277,7 @@ UINT32 mgames_state::screen_update_mgames(screen_device &screen, bitmap_ind16 &b
 {
 	int y,x;
 	int count;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 
 	count = 0;
 	for (y=0;y<32;y++)

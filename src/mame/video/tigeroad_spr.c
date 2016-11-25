@@ -83,7 +83,7 @@ void tigeroad_spr_device::draw_sprites( bitmap_ind16 &bitmap, const rectangle &c
 			sy = 240 - sy;
 
 
-		gfxdecode->gfx(region)->transpen(bitmap,cliprect,
+		gfxdecode->m_gfx[region]->transpen(bitmap,cliprect,
 		tile_number,
 		color,
 		flipx, flipy,

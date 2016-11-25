@@ -54,7 +54,7 @@ K051960_CB_MEMBER(gradius3_state::sprite_callback)
 
 void gradius3_state::gradius3_postload()
 {
-	m_k052109->gfx(0)->mark_all_dirty();
+	m_k052109->m_gfx[0]->mark_all_dirty();
 }
 
 void gradius3_state::video_start()
@@ -87,7 +87,7 @@ WRITE16_MEMBER(gradius3_state::gradius3_gfxram_w)
 	COMBINE_DATA(&m_gfxram[offset]);
 
 	if (oldword != m_gfxram[offset])
-		m_k052109->gfx(0)->mark_dirty(offset / 16);
+		m_k052109->m_gfx[0]->mark_dirty(offset / 16);
 }
 
 /***************************************************************************

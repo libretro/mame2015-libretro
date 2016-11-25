@@ -98,7 +98,7 @@ void segas24_tile::device_start()
 		throw device_missing_dependencies();
 
 	for(char_gfx_index = 0; char_gfx_index < MAX_GFX_ELEMENTS; char_gfx_index++)
-		if (m_gfxdecode->gfx(char_gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[char_gfx_index] == 0)
 			break;
 	assert(char_gfx_index != MAX_GFX_ELEMENTS);
 
@@ -574,7 +574,7 @@ WRITE16_MEMBER(segas24_tile::char_w)
 	UINT16 old = char_ram[offset];
 	COMBINE_DATA(char_ram + offset);
 	if(old != char_ram[offset])
-		m_gfxdecode->gfx(char_gfx_index)->mark_dirty(offset / 16);
+		m_gfxdecode->m_gfx[char_gfx_index]->mark_dirty(offset / 16);
 }
 
 READ32_MEMBER(segas24_tile::tile32_r)

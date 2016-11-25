@@ -166,7 +166,7 @@ void metlclsh_state::video_start()
 void metlclsh_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprect )
 {
 	UINT8 *spriteram = m_spriteram;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	int offs;
 
 	for (offs = 0; offs < m_spriteram.bytes(); offs += 4)

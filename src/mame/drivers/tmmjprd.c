@@ -118,7 +118,7 @@ WRITE32_MEMBER(tmmjprd_state::tilemap3_w)
 void tmmjprd_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, int screen)
 {
 	int xpos,ypos,tileno,xflip,yflip, colr;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	int xoffs;
 	//  int todraw = (m_spriteregs[5]&0x0fff0000)>>16; // how many sprites to draw (start/end reg..) what is the other half?
 

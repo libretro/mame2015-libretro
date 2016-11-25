@@ -171,7 +171,7 @@ void srmp6_state::video_start()
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
 	m_gfxdecode->set_gfx(0, global_alloc(gfx_element(m_palette, tiles8x8_layout, (UINT8*)m_tileram, 0, m_palette->entries() / 256, 0)));
-	m_gfxdecode->gfx(0)->set_granularity(256);
+	m_gfxdecode->m_gfx[0]->set_granularity(256);
 
 	m_brightness = 0x60;
 }
@@ -278,7 +278,7 @@ UINT32 srmp6_state::screen_update_srmp6(screen_device &screen, bitmap_rgb32 &bit
 						else
 							yb=y+(height-yw-1)*8+global_y;
 
-						m_gfxdecode->gfx(0)->alpha(bitmap,cliprect,tileno,global_pal,flip_x,flip_y,xb,yb,0,alpha);
+						m_gfxdecode->m_gfx[0]->alpha(bitmap,cliprect,tileno,global_pal,flip_x,flip_y,xb,yb,0,alpha);
 						tileno++;
 					}
 				}
@@ -394,7 +394,7 @@ UINT32 srmp6_state::process(UINT8 b,UINT32 dst_offset)
 		for(i=0;i<rle;++i)
 		{
 			tram[dst_offset + m_destl] = m_lastb;
-			m_gfxdecode->gfx(0)->mark_dirty((dst_offset + m_destl)/0x40);
+			m_gfxdecode->m_gfx[0]->mark_dirty((dst_offset + m_destl)/0x40);
 
 			dst_offset++;
 			++l;
@@ -408,7 +408,7 @@ UINT32 srmp6_state::process(UINT8 b,UINT32 dst_offset)
 		m_lastb2 = m_lastb;
 		m_lastb = b;
 		tram[dst_offset + m_destl] = b;
-		m_gfxdecode->gfx(0)->mark_dirty((dst_offset + m_destl)/0x40);
+		m_gfxdecode->m_gfx[0]->mark_dirty((dst_offset + m_destl)/0x40);
 
 		return 1;
 	}

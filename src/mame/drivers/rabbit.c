@@ -298,7 +298,7 @@ sprites invisible at the end of a round in rabbit, why?
 void rabbit_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect )
 {
 	int xpos,ypos,tileno,xflip,yflip, colr;
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	int todraw = (m_spriteregs[5]&0x0fff0000)>>16; // how many sprites to draw (start/end reg..) what is the other half?
 
 	UINT32 *source = (m_spriteram+ (todraw*2))-2;

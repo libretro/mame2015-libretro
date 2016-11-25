@@ -502,7 +502,7 @@ public:
 
 void mastboy_state::video_start()
 {
-	m_gfxdecode->gfx(0)->set_source(m_vram);
+	m_gfxdecode->m_gfx[0]->set_source(m_vram);
 
 	save_pointer(NAME(m_vram), 0x10000);
 }
@@ -530,12 +530,12 @@ UINT32 mastboy_state::screen_update(screen_device &screen, bitmap_ind16 &bitmap,
 
 			if (tileno&0x800)
 			{
-				gfx = m_gfxdecode->gfx(1);
+				gfx = m_gfxdecode->m_gfx[1];
 				tileno &=0x7ff;
 			}
 			else
 			{
-				gfx = m_gfxdecode->gfx(0);
+				gfx = m_gfxdecode->m_gfx[0];
 			}
 
 
@@ -608,7 +608,7 @@ WRITE8_MEMBER(mastboy_state::banked_ram_w)
 			m_vram[offs] = data^0xff;
 
 			/* Decode the new tile */
-			m_gfxdecode->gfx(0)->mark_dirty(offs/32);
+			m_gfxdecode->m_gfx[0]->mark_dirty(offs/32);
 		}
 	}
 	else

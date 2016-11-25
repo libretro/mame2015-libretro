@@ -148,10 +148,10 @@ void macrossp_state::video_start()
 	m_scrb_tilemap->set_transparent_pen(0);
 	m_scrc_tilemap->set_transparent_pen(0);
 
-	m_gfxdecode->gfx(0)->set_granularity(64);
-	m_gfxdecode->gfx(1)->set_granularity(64);
-	m_gfxdecode->gfx(2)->set_granularity(64);
-	m_gfxdecode->gfx(3)->set_granularity(64);
+	m_gfxdecode->m_gfx[0]->set_granularity(64);
+	m_gfxdecode->m_gfx[1]->set_granularity(64);
+	m_gfxdecode->m_gfx[2]->set_granularity(64);
+	m_gfxdecode->m_gfx[3]->set_granularity(64);
 
 	save_pointer(NAME(m_spriteram_old), m_spriteram.bytes() / 4);
 	save_pointer(NAME(m_spriteram_old2), m_spriteram.bytes() / 4);
@@ -161,7 +161,7 @@ void macrossp_state::video_start()
 
 void macrossp_state::draw_sprites(bitmap_rgb32 &bitmap, const rectangle &cliprect, int priority )
 {
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	//  UINT32 *source = m_spriteram;
 	UINT32 *source = m_spriteram_old2; /* buffers by two frames */
 	UINT32 *finish = source + m_spriteram.bytes() / 4;

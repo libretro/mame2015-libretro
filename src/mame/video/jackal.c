@@ -94,7 +94,7 @@ void jackal_state::draw_background( screen_device &screen, bitmap_ind16 &bitmap,
 	m_bg_tilemap->draw(screen, bitmap, cliprect, 0, 0);
 }
 
-#define DRAW_SPRITE(bank, code, sx, sy)  m_gfxdecode->gfx(bank)->transpen(bitmap,cliprect, code, color, flipx, flipy, sx, sy, 0);
+#define DRAW_SPRITE(bank, code, sx, sy)  m_gfxdecode->m_gfx[bank]->transpen(bitmap,cliprect, code, color, flipx, flipy, sx, sy, 0);
 
 void jackal_state::draw_sprites_region( bitmap_ind16 &bitmap, const rectangle &cliprect, const UINT8 *sram, int length, int bank )
 {

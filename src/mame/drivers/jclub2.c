@@ -229,7 +229,7 @@ void darkhors_state::draw_sprites_darkhors(bitmap_ind16 &bitmap, const rectangle
 		sy  =   -sy;
 		sy  +=  0xf8;
 
-		m_gfxdecode->gfx(0)->transpen(bitmap,cliprect,
+		m_gfxdecode->m_gfx[0]->transpen(bitmap,cliprect,
 					code/2, color,
 					flipx,  flipy,  sx, sy, 0);
 	}
@@ -242,7 +242,7 @@ VIDEO_START_MEMBER(darkhors_state,darkhors)
 	m_tmap->set_transparent_pen(0);
 	m_tmap2->set_transparent_pen(0);
 
-	m_gfxdecode->gfx(0)->set_granularity(64); /* 256 colour sprites with palette selectable on 64 colour boundaries */
+	m_gfxdecode->m_gfx[0]->set_granularity(64); /* 256 colour sprites with palette selectable on 64 colour boundaries */
 }
 
 UINT32 darkhors_state::screen_update_darkhors(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)

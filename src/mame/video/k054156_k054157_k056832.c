@@ -2099,7 +2099,7 @@ void k056832_device::create_gfx(const char *gfx_memory_region, int bpp, int big)
 	/* find first empty slot to decode gfx */
 	for (gfx_index = 0; gfx_index < MAX_GFX_ELEMENTS; gfx_index++)
 	{
-		if (m_gfxdecode->gfx(gfx_index) == 0) break;
+		if (m_gfxdecode->m_gfx[gfx_index] == 0) break;
 	}
 	assert(gfx_index != MAX_GFX_ELEMENTS);
 
@@ -2148,8 +2148,8 @@ void k056832_device::create_gfx(const char *gfx_memory_region, int bpp, int big)
 			fatalerror("Unsupported bpp\n");
 	}
 
-	m_gfxdecode->gfx(gfx_index)->set_granularity(16); /* override */
-	m_gfxdecode->gfx(gfx_index)->set_colors(m_palette->entries() / 16);
+	m_gfxdecode->m_gfx[gfx_index]->set_granularity(16); /* override */
+	m_gfxdecode->m_gfx[gfx_index]->set_colors(m_palette->entries() / 16);
 
 	m_gfx_memory_region = gfx_memory_region;
 	m_gfx_num = gfx_index;
@@ -2229,7 +2229,7 @@ int k056832_device::altK056832_update_linemap(screen_device &screen, bitmap_rgb3
 
 			pixmap  = m_pixmap[page];
 			pal_ptr    = machine().pens;
-			src_gfx    = m_gfxdecode->gfx(m_gfx_num];
+			src_gfx    = m_gfxdecode->m_gfx[m_gfx_num];
 			src_pitch  = src_gfx->rowbytes();
 			src_modulo = src_gfx->char_modulo;
 			dst_pitch  = pixmap->rowpixels;

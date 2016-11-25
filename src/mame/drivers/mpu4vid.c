@@ -403,8 +403,8 @@ SCN2674_DRAW_CHARACTER_MEMBER(mpu4vid_state::display_pixels)
 	if(!lg)
 	{
 		UINT16 tile = m_vid_mainram[address & 0x7fff];
-		const UINT8 *line = m_gfxdecode->gfx(m_gfx_index+0)->get_data(tile & 0xfff);
-		int offset = m_gfxdecode->gfx(m_gfx_index+0)->m_line_modulo * linecount;
+		const UINT8 *line = m_gfxdecode->m_gfx[m_gfx_index+0]->get_data(tile & 0xfff);
+		int offset = m_gfxdecode->m_gfx[m_gfx_index+0]->m_line_modulo * linecount;
 		for(int i = 0; i < 8; i++)
 			bitmap.pix32(y, x + i) = (tile >> 12) ? m_palette->pen(line[offset + i]) : m_palette->black_pen();
 	}
@@ -421,7 +421,7 @@ WRITE16_MEMBER(mpu4vid_state::mpu4_vid_vidram_w )
 {
 	COMBINE_DATA(&m_vid_vidram[offset]);
 	offset <<= 1;
-	m_gfxdecode->gfx(m_gfx_index+0)->mark_dirty(offset/0x20);
+	m_gfxdecode->m_gfx[m_gfx_index+0]->mark_dirty(offset/0x20);
 }
 
 
@@ -433,7 +433,7 @@ VIDEO_START_MEMBER(mpu4vid_state,mpu4_vid)
 
 	/* find first empty slot to decode gfx */
 	for (m_gfx_index = 0; m_gfx_index < MAX_GFX_ELEMENTS; m_gfx_index++)
-		if (m_gfxdecode->gfx(m_gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[m_gfx_index] == 0)
 			break;
 
 	assert(m_gfx_index != MAX_GFX_ELEMENTS);

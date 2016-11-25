@@ -190,7 +190,7 @@ VIDEO_START_MEMBER(polepos_state,polepos)
 	m_bg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(polepos_state::bg_get_tile_info),this),TILEMAP_SCAN_COLS,8,8,64,16);
 	m_tx_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(polepos_state::tx_get_tile_info),this),TILEMAP_SCAN_ROWS,8,8,32,32);
 
-	m_tx_tilemap->configure_groups(*m_gfxdecode->gfx(0), 0x2f);
+	m_tx_tilemap->configure_groups(*m_gfxdecode->m_gfx[0], 0x2f);
 }
 
 
@@ -414,7 +414,7 @@ void polepos_state::zoom_sprite(bitmap_ind16 &bitmap,int big,
 		UINT32 code,UINT32 color,int flipx,int sx,int sy,
 		int sizex,int sizey)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(big ? 3 : 2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[big ? 3 : 2];
 	const UINT8 *gfxdata = gfx->get_data(code % gfx->m_total_elements);
 	UINT8 *scaling_rom = memregion("gfx6")->base();
 	UINT32 transmask = m_palette->transpen_mask(*gfx, color, 0x1f);

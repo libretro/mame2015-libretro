@@ -224,7 +224,7 @@ void raiden2_state::draw_sprites(const rectangle &cliprect)
 	UINT16 *source = sprites + (0x1000/2)-4;
 	sprite_buffer.fill(0xf, cliprect);
 
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 
 	/*
 	  00 fhhh Fwww ppcc cccc   h = height f=flipy w = width F = flipx p = priority c = color

@@ -60,7 +60,7 @@ WRITE8_MEMBER(speedspn_state::display_disable_w)
 
 void speedspn_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect )
 {
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	UINT8 *source = m_vidram+ 0x1000;
 	UINT8 *finish = source + 0x1000;
 

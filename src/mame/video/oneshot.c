@@ -94,7 +94,7 @@ void oneshot_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprec
 {
 	const UINT16 *source = m_sprites;
 	const UINT16 *finish = source + (0x1000 / 2);
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 
 	int xpos, ypos;
 

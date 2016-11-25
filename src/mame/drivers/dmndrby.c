@@ -361,9 +361,9 @@ UINT32 dmndrby_state::screen_update_dderby(screen_device &screen, bitmap_ind16 &
 {
 	int x,y,count;
 	int off,scrolly;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
-	gfx_element *sprites = m_gfxdecode->gfx(1);
-	gfx_element *track = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
+	gfx_element *sprites = m_gfxdecode->m_gfx[1];
+	gfx_element *track = m_gfxdecode->m_gfx[2];
 
 	bitmap.fill(m_palette->black_pen(), cliprect);
 

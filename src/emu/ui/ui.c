@@ -309,9 +309,8 @@ UINT32 ui_manager::set_handler(ui_callback callback, UINT32 param)
 void ui_manager::display_startup_screens(bool first_time, bool show_disclaimer)
 {
 	const int maxstate = 4;
-	int str = machine().options().seconds_to_run();
-	bool show_gameinfo = !machine().options().skip_gameinfo();
-	bool show_warnings = !machine().options().skip_warnings();
+	bool show_gameinfo;
+	bool show_warnings;
 	bool show_mandatory_fileman = true;
 	int state;
 

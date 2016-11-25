@@ -133,7 +133,7 @@ READ8_MEMBER(fastfred_state::boggy84_custom_io_r)
 MACHINE_START_MEMBER(fastfred_state,imago)
 {
 	machine_start();
-	m_gfxdecode->gfx(1)->set_source(m_imago_sprites);
+	m_gfxdecode->m_gfx[1]->set_source(m_imago_sprites);
 }
 
 WRITE8_MEMBER(fastfred_state::imago_dma_irq_w)
@@ -160,7 +160,7 @@ WRITE8_MEMBER(fastfred_state::imago_sprites_dma_w)
 	sprites_data = rom[m_imago_sprites_address + 0x2000*2 + m_imago_sprites_bank * 0x1000];
 	m_imago_sprites[offset + 0x800*2] = sprites_data;
 
-	m_gfxdecode->gfx(1)->mark_dirty(offset/32);
+	m_gfxdecode->m_gfx[1]->mark_dirty(offset/32);
 }
 
 READ8_MEMBER(fastfred_state::imago_sprites_offset_r)

@@ -503,7 +503,7 @@ void namcos22_renderer::poly3d_drawsprite(
 	int alpha
 )
 {
-	gfx_element *gfx = m_state.m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_state.m_gfxdecode->m_gfx[2];
 	int sprite_screen_height = (scaley * gfx->m_height + 0x8000) >> 16;
 	int sprite_screen_width = (scalex * gfx->m_width + 0x8000) >> 16;
 	if (sprite_screen_width && sprite_screen_height)
@@ -1739,7 +1739,7 @@ WRITE32_MEMBER(namcos22_state::namcos22_textram_w)
 WRITE32_MEMBER(namcos22_state::namcos22_cgram_w)
 {
 	COMBINE_DATA(&m_cgram[offset]);
-	m_gfxdecode->gfx(0)->mark_dirty(offset/32);
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset/32);
 }
 
 READ32_MEMBER(namcos22_state::namcos22_tilemapattr_r)
@@ -2390,11 +2390,11 @@ void namcos22_state::init_tables()
 	m_pointram = auto_alloc_array_clear(machine(), UINT32, 0x20000);
 
 	// force all texture tiles to be decoded now
-	for (int i = 0; i < m_gfxdecode->gfx(1)->m_total_elements; i++)
-		m_gfxdecode->gfx(1)->get_data(i);
+	for (int i = 0; i < m_gfxdecode->m_gfx[1]->m_total_elements; i++)
+		m_gfxdecode->m_gfx[1]->get_data(i);
 
 	m_texture_tilemap = (UINT16 *)memregion("textilemap")->base();
-	m_texture_tiledata = (UINT8 *)m_gfxdecode->gfx(1)->get_data(0);
+	m_texture_tiledata = (UINT8 *)m_gfxdecode->m_gfx[1]->get_data(0);
 	m_texture_tileattr = auto_alloc_array(machine(), UINT8, 0x080000*2);
 
 	// unpack textures
@@ -2471,7 +2471,7 @@ void namcos22_state::video_start()
 	m_bgtilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(namcos22_state::get_text_tile_info), this), TILEMAP_SCAN_ROWS, 16, 16, 64, 64);
 	m_bgtilemap->set_transparent_pen(0xf);
 
-	m_gfxdecode->gfx(0)->set_source((UINT8 *)m_cgram.target());
+	m_gfxdecode->m_gfx[0]->set_source((UINT8 *)m_cgram.target());
 
 	m_poly = auto_alloc(machine(), namcos22_renderer(*this));
 }

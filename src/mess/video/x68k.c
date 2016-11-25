@@ -1009,7 +1009,7 @@ void x68k_state::x68k_draw_sprites(bitmap_ind16 &bitmap, int priority, rectangle
 			sx += m_crtc.bg_hshift;
 			sx += m_sprite_shift;
 
-			m_gfxdecode->gfx(1)->zoom_transpen(bitmap,cliprect,code,colour,xflip,yflip,m_crtc.hbegin+sx,m_crtc.vbegin+(sy*m_crtc.bg_double),0x10000,0x10000*m_crtc.bg_double,0x00);
+			m_gfxdecode->m_gfx[1]->zoom_transpen(bitmap,cliprect,code,colour,xflip,yflip,m_crtc.hbegin+sx,m_crtc.vbegin+(sy*m_crtc.bg_double),0x10000,0x10000*m_crtc.bg_double,0x00);
 		}
 	}
 }
@@ -1074,7 +1074,7 @@ VIDEO_START_MEMBER(x68k_state,x68000)
 	int gfx_index;
 
 	for (gfx_index = 0; gfx_index < MAX_GFX_ELEMENTS; gfx_index++)
-		if (m_gfxdecode->gfx(gfx_index) == 0)
+		if (m_gfxdecode->m_gfx[gfx_index] == 0)
 			break;
 
 	/* create the char set (gfx will then be updated dynamically from RAM) */
@@ -1083,7 +1083,7 @@ VIDEO_START_MEMBER(x68k_state,x68000)
 	gfx_index++;
 
 	m_gfxdecode->set_gfx(gfx_index, global_alloc(gfx_element(m_pcgpalette, x68k_pcg_16, memregion("user1")->base(), 0, 32, 0)));
-	m_gfxdecode->gfx(gfx_index)->set_colors(32);
+	m_gfxdecode->m_gfx[gfx_index]->set_colors(32);
 
 	/* Tilemaps */
 	m_bg0_8 = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(x68k_state::x68k_get_bg0_tile),this),TILEMAP_SCAN_ROWS,8,8,64,64);
@@ -1151,12 +1151,12 @@ UINT32 x68k_state::screen_update_x68000(screen_device &screen, bitmap_rgb32 &bit
 	{
 		if(m_video.tile16_dirty[x] != 0)
 		{
-			m_gfxdecode->gfx(1)->mark_dirty(x);
+			m_gfxdecode->m_gfx[1]->mark_dirty(x);
 			m_video.tile16_dirty[x] = 0;
 		}
 		if(m_video.tile8_dirty[x] != 0)
 		{
-			m_gfxdecode->gfx(0)->mark_dirty(x);
+			m_gfxdecode->m_gfx[0]->mark_dirty(x);
 			m_video.tile8_dirty[x] = 0;
 		}
 	}

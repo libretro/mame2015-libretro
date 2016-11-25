@@ -126,7 +126,7 @@ void wwfsstar_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 
 	**- End of Comments -*/
 
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	UINT16 *source = m_spriteram;
 	UINT16 *finish = source + 0x3ff/2;
 

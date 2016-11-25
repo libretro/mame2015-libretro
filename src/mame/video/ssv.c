@@ -193,7 +193,7 @@ void ssv_state::drawgfx(bitmap_ind16 &bitmap, const rectangle &cliprect, gfx_ele
 
 void ssv_state::video_start()
 {
-	m_gfxdecode->gfx(0)->set_granularity(64); /* 256 colour sprites with palette selectable on 64 colour boundaries */
+	m_gfxdecode->m_gfx[0]->set_granularity(64); /* 256 colour sprites with palette selectable on 64 colour boundaries */
 	
 	save_item(NAME(m_enable_video));
 	save_item(NAME(m_shadow_pen_mask));
@@ -206,8 +206,8 @@ VIDEO_START_MEMBER(ssv_state,eaglshot)
 
 	m_eaglshot_gfxram       =   auto_alloc_array(machine(), UINT16, 16 * 0x40000 / 2);
 
-	m_gfxdecode->gfx(0)->set_source((UINT8 *)m_eaglshot_gfxram);
-	m_gfxdecode->gfx(1)->set_source((UINT8 *)m_eaglshot_gfxram);
+	m_gfxdecode->m_gfx[0]->set_source((UINT8 *)m_eaglshot_gfxram);
+	m_gfxdecode->m_gfx[1]->set_source((UINT8 *)m_eaglshot_gfxram);
 	
 	save_pointer(NAME(m_eaglshot_gfxram), 16 * 0x40000 / 2);
 }
@@ -694,7 +694,7 @@ void ssv_state::draw_row(bitmap_ind16 &bitmap, const rectangle &cliprect, int sx
 			{
 				for (ty = ystart; ty != yend; ty += yinc)
 				{
-					drawgfx( bitmap, clip, m_gfxdecode->gfx(gfx),
+					drawgfx( bitmap, clip, m_gfxdecode->m_gfx[gfx],
 											code++,
 											color,
 											flipx, flipy,
@@ -919,7 +919,7 @@ void ssv_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect)
 				{
 					for (y = ystart; y != yend; y += yinc)
 					{
-						drawgfx( bitmap, cliprect, m_gfxdecode->gfx(gfx),
+						drawgfx( bitmap, cliprect, m_gfxdecode->m_gfx[gfx],
 												code++,
 												color,
 												flipx, flipy,

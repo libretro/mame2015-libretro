@@ -123,7 +123,7 @@ void angelkds_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 {
 	const UINT8 *source = m_spriteram + 0x100 - 4;
 	const UINT8 *finish = m_spriteram;
-	gfx_element *gfx = m_gfxdecode->gfx(3);
+	gfx_element *gfx = m_gfxdecode->m_gfx[3];
 
 	while (source >= finish)
 	{

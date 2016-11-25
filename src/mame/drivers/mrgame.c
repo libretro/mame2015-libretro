@@ -423,7 +423,7 @@ UINT32 mrgame_state::screen_update_mrgame(screen_device &screen, bitmap_ind16 &b
 		{
 			chr = m_p_videoram[x+y*32] | (m_gfx_bank << 8);
 
-			m_gfxdecode->gfx(0)->opaque(*m_tile_bitmap, m_tile_bitmap->cliprect(),
+			m_gfxdecode->m_gfx[0]->opaque(*m_tile_bitmap, m_tile_bitmap->cliprect(),
 				chr,
 				col,
 				m_flip,0,
@@ -446,7 +446,7 @@ UINT32 mrgame_state::screen_update_mrgame(screen_device &screen, bitmap_ind16 &b
 		col = m_p_objectram[ptr + 2];
 
 		if ((y > 16) && (x > 24))
-			m_gfxdecode->gfx(1)->transpen(bitmap,cliprect,
+			m_gfxdecode->m_gfx[1]->transpen(bitmap,cliprect,
 				chr,
 				col,
 				flipx,flipy,

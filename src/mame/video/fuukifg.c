@@ -82,7 +82,7 @@ void fuukivid_device::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap,
 	rectangle spriteclip = m_screen->visible_area();
 
 	int offs;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	bitmap_ind8 &priority_bitmap = screen.priority();
 	const rectangle &visarea = screen.visible_area();
 

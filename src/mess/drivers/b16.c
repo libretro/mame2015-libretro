@@ -115,7 +115,7 @@ WRITE8_MEMBER( b16_state::b16_pcg_w )
 {
 	m_char_rom[offset] = data;
 
-	m_gfxdecode->gfx(0)->mark_dirty(offset >> 4);
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset >> 4);
 }
 
 static ADDRESS_MAP_START( b16_map, AS_PROGRAM, 16, b16_state)

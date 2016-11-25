@@ -2172,7 +2172,7 @@ WRITE32_MEMBER(namcos23_state::textram_w)
 WRITE32_MEMBER(namcos23_state::textchar_w)
 {
 	COMBINE_DATA(&m_charram[offset]);
-	m_gfxdecode->gfx(0)->mark_dirty(offset/32);
+	m_gfxdecode->m_gfx[0]->mark_dirty(offset/32);
 }
 
 
@@ -2181,7 +2181,7 @@ WRITE32_MEMBER(namcos23_state::textchar_w)
 
 VIDEO_START_MEMBER(namcos23_state,s23)
 {
-	m_gfxdecode->gfx(0)->set_source(reinterpret_cast<UINT8 *>(m_charram.target()));
+	m_gfxdecode->m_gfx[0]->set_source(reinterpret_cast<UINT8 *>(m_charram.target()));
 	m_bgtilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(namcos23_state::TextTilemapGetInfo),this), TILEMAP_SCAN_ROWS, 16, 16, 64, 64);
 	m_bgtilemap->set_transparent_pen(0xf);
 	m_bgtilemap->set_scrolldx(860, 860);

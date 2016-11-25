@@ -107,7 +107,7 @@ void k3_state::video_start()
 
 void k3_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	UINT16 *source = m_spriteram_1;
 	UINT16 *source2 = m_spriteram_2;
 	UINT16 *finish = source + 0x1000 / 2;

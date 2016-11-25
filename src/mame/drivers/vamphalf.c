@@ -592,7 +592,7 @@ Offset+3
 */
 void vamphalf_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	UINT32 cnt;
 	int block, offs;
 	int code,color,x,y,fx,fy;
@@ -677,7 +677,7 @@ void vamphalf_state::draw_sprites(screen_device &screen, bitmap_ind16 &bitmap)
 
 void vamphalf_state::draw_sprites_aoh(screen_device &screen, bitmap_ind16 &bitmap)
 {
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	UINT32 cnt;
 	int block, offs;
 	int code,color,x,y,fx,fy;

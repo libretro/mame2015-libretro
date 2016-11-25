@@ -96,7 +96,7 @@ WRITE8_MEMBER(gottlieb_state::gottlieb_charram_w)
 	if (m_charram[offset] != data)
 	{
 		m_charram[offset] = data;
-		m_gfxdecode->gfx(0)->mark_dirty(offset / 32);
+		m_gfxdecode->m_gfx[0]->mark_dirty(offset / 32);
 	}
 }
 
@@ -146,7 +146,7 @@ void gottlieb_state::video_start()
 	m_bg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(gottlieb_state::get_bg_tile_info),this), TILEMAP_SCAN_ROWS, 8, 8, 32, 32);
 	m_bg_tilemap->set_transparent_pen(0);
 
-	m_gfxdecode->gfx(0)->set_source(m_charram);
+	m_gfxdecode->m_gfx[0]->set_source(m_charram);
 
 	/* save some state */
 	save_item(NAME(m_background_priority));
@@ -171,7 +171,7 @@ VIDEO_START_MEMBER(gottlieb_state,screwloo)
 	m_bg_tilemap = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(gottlieb_state::get_screwloo_bg_tile_info),this), TILEMAP_SCAN_ROWS, 8, 8, 32, 32);
 	m_bg_tilemap->set_transparent_pen(0);
 
-	m_gfxdecode->gfx(0)->set_source(m_charram);
+	m_gfxdecode->m_gfx[0]->set_source(m_charram);
 
 	/* save some state */
 	save_item(NAME(m_background_priority));
@@ -209,7 +209,7 @@ void gottlieb_state::draw_sprites(bitmap_rgb32 &bitmap, const rectangle &cliprec
 		if (flip_screen_y()) sy = 228 - sy;
 
 
-			m_gfxdecode->gfx(2)->transpen(bitmap,clip,
+			m_gfxdecode->m_gfx[2]->transpen(bitmap,clip,
 			code, 0,
 			flip_screen_x(), flip_screen_y(),
 			sx,sy, 0);

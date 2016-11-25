@@ -202,7 +202,7 @@ WRITE8_MEMBER( pv1000_state::gfxram_w )
 	UINT8 *gfxram = memregion( "gfxram" )->base();
 
 	gfxram[ offset ] = data;
-	m_gfxdecode->gfx(1)->mark_dirty(offset/32);
+	m_gfxdecode->m_gfx[1]->mark_dirty(offset/32);
 }
 
 
@@ -341,12 +341,12 @@ UINT32 pv1000_state::screen_update_pv1000(screen_device &screen, bitmap_ind16 &b
 			if ( tile < 0xe0 || m_force_pattern )
 			{
 				tile += ( m_pcg_bank << 8);
-				m_gfxdecode->gfx(0)->opaque(bitmap,cliprect, tile, 0, 0, 0, x*8, y*8 );
+				m_gfxdecode->m_gfx[0]->opaque(bitmap,cliprect, tile, 0, 0, 0, x*8, y*8 );
 			}
 			else
 			{
 				tile -= 0xe0;
-				m_gfxdecode->gfx(1)->opaque(bitmap,cliprect, tile, 0, 0, 0, x*8, y*8 );
+				m_gfxdecode->m_gfx[1]->opaque(bitmap,cliprect, tile, 0, 0, 0, x*8, y*8 );
 			}
 		}
 	}

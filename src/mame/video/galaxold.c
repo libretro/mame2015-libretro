@@ -430,7 +430,7 @@ VIDEO_START_MEMBER(galaxold_state,galaxold_plain)
 
 	m_bg_tilemap->set_scroll_cols(32);
 
-	m_color_mask = (m_gfxdecode->gfx(0)->m_color_granularity == 4) ? 7 : 3;
+	m_color_mask = (m_gfxdecode->m_gfx[0]->m_color_granularity == 4) ? 7 : 3;
 }
 
 VIDEO_START_MEMBER(galaxold_state,galaxold)
@@ -733,7 +733,7 @@ VIDEO_START_MEMBER(galaxold_state,harem)
 
 	m_bg_tilemap->set_scroll_cols(32);
 
-	m_color_mask = (m_gfxdecode->gfx(0)->m_color_granularity == 4) ? 7 : 3;
+	m_color_mask = (m_gfxdecode->m_gfx[0]->m_color_granularity == 4) ? 7 : 3;
 
 	m_modify_spritecode = &galaxold_state::harem_modify_spritecode;
 }
@@ -1699,7 +1699,7 @@ void galaxold_state::draw_sprites(bitmap_ind16 &bitmap, UINT8 *spriteram, size_t
 		if (offs < 3*4)  sy++;
 
 
-		m_gfxdecode->gfx(1)->transpen(bitmap,m_flipscreen_x ? spritevisibleareaflipx : spritevisiblearea,
+		m_gfxdecode->m_gfx[1]->transpen(bitmap,m_flipscreen_x ? spritevisibleareaflipx : spritevisiblearea,
 				code,color,
 				flipx,flipy,
 				sx,sy,0);

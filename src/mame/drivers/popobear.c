@@ -143,7 +143,7 @@ public:
 
 
 		COMBINE_DATA(&m_vram_rearranged[swapped_offset]);
-		m_gfxdecode->gfx(0)->mark_dirty((swapped_offset)/32);
+		m_gfxdecode->m_gfx[0]->mark_dirty((swapped_offset)/32);
 
 		// unfortunately tilemaps and tilegfx share the same ram so we're always dirty if we write to RAM
 		m_bg_tilemap[0]->mark_all_dirty();
@@ -210,7 +210,7 @@ void popobear_state::video_start()
 {
 	m_vram_rearranged.resize(0x100000 / 2);
 
-	m_gfxdecode->gfx(0)->set_source(reinterpret_cast<UINT8 *>(&m_vram_rearranged[0]));
+	m_gfxdecode->m_gfx[0]->set_source(reinterpret_cast<UINT8 *>(&m_vram_rearranged[0]));
 
 	m_bg_tilemap[0] = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(popobear_state::get_popobear_bg0_tile_info),this), TILEMAP_SCAN_ROWS, 8, 8, 128, 64);
 	m_bg_tilemap[1] = &machine().tilemap().create(m_gfxdecode, tilemap_get_info_delegate(FUNC(popobear_state::get_popobear_bg1_tile_info),this), TILEMAP_SCAN_ROWS, 8, 8, 128, 64);

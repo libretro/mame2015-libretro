@@ -392,7 +392,7 @@ void deco_zoomspr_device::dragngun_draw_sprites( bitmap_rgb32 &bitmap, const rec
 				sprite&=0x7fff;
 
 					dragngun_drawgfxzoom(
-						bitmap,cliprect,m_gfxdecode->gfx(bank),
+						bitmap,cliprect,m_gfxdecode->m_gfx[bank],
 						sprite,
 						colour,
 						fx,fy,

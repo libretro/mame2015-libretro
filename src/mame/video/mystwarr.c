@@ -50,7 +50,7 @@ void mystwarr_state::decode_tiles()
 		d += 5;
 	}
 
-	m_gfxdecode->gfx(gfxnum)->set_source(decoded);
+	m_gfxdecode->m_gfx[gfxnum]->set_source(decoded);
 }
 
 

@@ -91,7 +91,7 @@ void stlforce_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 {
 	const UINT16 *source = m_spriteram+0x0;
 	const UINT16 *finish = m_spriteram+0x800;
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 	int ypos, xpos, attr, num;
 
 	while (source<finish)

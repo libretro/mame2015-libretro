@@ -164,7 +164,7 @@ void slapfght_state::draw_perfrman_sprites(bitmap_ind16 &bitmap, const rectangle
 		}
 
 		if (layer == pri)
-			m_gfxdecode->gfx(1)->transpen(bitmap, cliprect, code, color, fx, fy, sx, sy, 0);
+			m_gfxdecode->m_gfx[1]->transpen(bitmap, cliprect, code, color, fx, fy, sx, sy, 0);
 	}
 }
 
@@ -211,7 +211,7 @@ void slapfght_state::draw_slapfight_sprites(bitmap_ind16 &bitmap, const rectangl
 			fx = fy = 1;
 		}
 
-		m_gfxdecode->gfx(2)->transpen(bitmap, cliprect, code, color, fx, fy, sx, sy, 0);
+		m_gfxdecode->m_gfx[2]->transpen(bitmap, cliprect, code, color, fx, fy, sx, sy, 0);
 	}
 }
 

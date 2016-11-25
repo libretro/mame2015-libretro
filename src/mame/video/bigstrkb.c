@@ -16,7 +16,7 @@ void bigstrkb_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprec
 	    ( rest unused )
 	**- End of Comments -*/
 
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 	UINT16 *source = m_spriteram;
 	UINT16 *finish = source + 0x800/2;
 

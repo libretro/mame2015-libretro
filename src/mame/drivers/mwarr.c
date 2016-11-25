@@ -416,7 +416,7 @@ void mwarr_state::draw_sprites( screen_device &screen, bitmap_ind16 &bitmap, con
 {
 	const UINT16 *source = m_sprites_buffer + 0x800 - 4;
 	const UINT16 *finish = m_sprites_buffer;
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	int x, y, color, flipx, dy, pri, pri_mask, i;
 
 	while (source >= finish)

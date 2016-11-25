@@ -82,7 +82,7 @@ void mainsnk_state::video_start()
 WRITE8_MEMBER(mainsnk_state::mainsnk_c600_w)
 {
 	int bank;
-	int total_elements = m_gfxdecode->gfx(0)->m_total_elements;
+	int total_elements = m_gfxdecode->m_gfx[0]->m_total_elements;
 
 	flip_screen_set(~data & 0x80);
 
@@ -118,7 +118,7 @@ WRITE8_MEMBER(mainsnk_state::mainsnk_bgram_w)
 
 void mainsnk_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect, int scrollx, int scrolly )
 {
-	gfx_element *gfx = m_gfxdecode->gfx(1);
+	gfx_element *gfx = m_gfxdecode->m_gfx[1];
 	const UINT8 *source, *finish;
 	source =  m_spriteram;
 	finish =  source + 25*4;

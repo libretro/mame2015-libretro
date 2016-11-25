@@ -224,13 +224,13 @@ READ8_MEMBER(jr200_state::jr200_pcg_2_r)
 WRITE8_MEMBER(jr200_state::jr200_pcg_1_w)
 {
 	m_pcg->base()[offset+0x000] = data;
-	m_gfxdecode->gfx(1)->mark_dirty((offset+0x000) >> 3);
+	m_gfxdecode->m_gfx[1]->mark_dirty((offset+0x000) >> 3);
 }
 
 WRITE8_MEMBER(jr200_state::jr200_pcg_2_w)
 {
 	m_pcg->base()[offset+0x400] = data;
-	m_gfxdecode->gfx(1)->mark_dirty((offset+0x400) >> 3);
+	m_gfxdecode->m_gfx[1]->mark_dirty((offset+0x400) >> 3);
 }
 
 READ8_MEMBER(jr200_state::jr200_bios_char_r)
@@ -243,7 +243,7 @@ WRITE8_MEMBER(jr200_state::jr200_bios_char_w)
 {
 	/* TODO: writing is presumably controlled by an I/O bit */
 //  m_gfx_ram->base()[offset] = data;
-//  m_gfxdecode->gfx(0)->mark_dirty(offset >> 3);
+//  m_gfxdecode->m_gfx[0]->mark_dirty(offset >> 3);
 }
 
 /*
@@ -537,7 +537,7 @@ void jr200_state::machine_reset()
 		gfx_ram[i] = gfx_rom[i];
 
 	for(i=0;i<0x800;i+=8)
-		m_gfxdecode->gfx(0)->mark_dirty(i >> 3);
+		m_gfxdecode->m_gfx[0]->mark_dirty(i >> 3);
 }
 
 

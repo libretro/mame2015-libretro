@@ -142,7 +142,7 @@ WRITE8_MEMBER(tsamurai_state::fg_colorram_w)
 
 void tsamurai_state::draw_sprites(bitmap_ind16 &bitmap, const rectangle &cliprect )
 {
-	gfx_element *gfx = m_gfxdecode->gfx(2);
+	gfx_element *gfx = m_gfxdecode->m_gfx[2];
 	const UINT8 *source = m_spriteram+32*4-4;
 	const UINT8 *finish = m_spriteram; /* ? */
 	m_flicker = 1-m_flicker;

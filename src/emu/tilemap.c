@@ -85,9 +85,9 @@ inline bool tilemap_t::gfx_elements_changed()
 	// iterate over all used gfx types and set the dirty flag if any of them have changed
 	for (int gfxnum = 0; usedmask != 0; usedmask >>= 1, gfxnum++)
 		if ((usedmask & 1) != 0)
-			if (m_gfx_dirtyseq[gfxnum] != m_tileinfo.decoder->gfx(gfxnum)->m_dirtyseq)
+			if (m_gfx_dirtyseq[gfxnum] != m_tileinfo.decoder->m_gfx[gfxnum]->m_dirtyseq)
 			{
-				m_gfx_dirtyseq[gfxnum] = m_tileinfo.decoder->gfx(gfxnum)->m_dirtyseq;
+				m_gfx_dirtyseq[gfxnum] = m_tileinfo.decoder->m_gfx[gfxnum]->m_dirtyseq;
 				isdirty = true;
 			}
 
@@ -348,7 +348,7 @@ tilemap_t &tilemap_t::init(tilemap_manager &manager, device_gfx_interface &decod
 	// populate managers and devices
 	m_manager = &manager;
 	m_device = dynamic_cast<tilemap_device *>(this);
-	m_palette = decoder.palette();
+	m_palette = decoder.m_palette;
 	m_next = NULL;
 	m_user_data = NULL;
 
@@ -762,7 +762,7 @@ void tilemap_t::tile_update(logical_index logindex, UINT32 col, UINT32 row)
 	if (m_tileinfo.gfxnum != 0xff && (m_gfx_used & (1 << m_tileinfo.gfxnum)) == 0)
 	{
 		m_gfx_used |= 1 << m_tileinfo.gfxnum;
-		m_gfx_dirtyseq[m_tileinfo.gfxnum] = m_tileinfo.decoder->gfx(m_tileinfo.gfxnum)->m_dirtyseq;
+		m_gfx_dirtyseq[m_tileinfo.gfxnum] = m_tileinfo.decoder->m_gfx[m_tileinfo.gfxnum]->m_dirtyseq;
 	}
 
 }

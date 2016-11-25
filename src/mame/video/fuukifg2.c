@@ -102,7 +102,7 @@ void fuuki16_state::video_start()
 	m_tilemap[2]->set_transparent_pen(0x0f);    // 4 bits
 	m_tilemap[3]->set_transparent_pen(0x0f);    // 4 bits
 
-	m_gfxdecode->gfx(2)->set_granularity(16); /* 256 colour tiles with palette selectable on 16 colour boundaries */
+	m_gfxdecode->m_gfx[2]->set_granularity(16); /* 256 colour tiles with palette selectable on 16 colour boundaries */
 }
 
 

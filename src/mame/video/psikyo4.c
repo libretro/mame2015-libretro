@@ -51,7 +51,7 @@ void psikyo4_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprec
 
 	**- End Sprite Format -*/
 
-	gfx_element *gfx = m_gfxdecode->gfx(0);
+	gfx_element *gfx = m_gfxdecode->m_gfx[0];
 	UINT32 *source = m_spriteram;
 	UINT16 *list = (UINT16 *)m_spriteram.target() + 0x2c00/2 + 0x04/2; /* 0x2c00/0x2c02 what are these for, pointers? one for each screen */
 	UINT16 listlen = (0xc00/2 - 0x04/2), listcntr = 0;
@@ -122,7 +122,7 @@ void psikyo4_state::draw_sprites( bitmap_ind16 &bitmap, const rectangle &cliprec
 UINT32 psikyo4_state::screen_update_psikyo4_left(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
 	bitmap.fill(0x800, cliprect);
-	m_gfxdecode->gfx(0)->set_palette(m_palette);
+	m_gfxdecode->m_gfx[0]->set_palette(m_palette);
 	draw_sprites(bitmap, cliprect, 0x0000);
 	return 0;
 }
@@ -130,12 +130,12 @@ UINT32 psikyo4_state::screen_update_psikyo4_left(screen_device &screen, bitmap_i
 UINT32 psikyo4_state::screen_update_psikyo4_right(screen_device &screen, bitmap_ind16 &bitmap, const rectangle &cliprect)
 {
 	bitmap.fill(0x800, cliprect);
-	m_gfxdecode->gfx(0)->set_palette(m_palette2);
+	m_gfxdecode->m_gfx[0]->set_palette(m_palette2);
 	draw_sprites(bitmap, cliprect, 0x2000);
 	return 0;
 }
 
 void psikyo4_state::video_start()
 {
-	m_gfxdecode->gfx(0)->set_granularity(32); /* 256 colour sprites with palette selectable on 32 colour boundaries */
+	m_gfxdecode->m_gfx[0]->set_granularity(32); /* 256 colour sprites with palette selectable on 32 colour boundaries */
 }
