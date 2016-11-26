@@ -60,6 +60,10 @@ else
 endif
 $(info COREDEF = $(CORE_DEFINE))
 
+ifndef SUBTARGET
+SUBTARGET = $(TARGET)
+endif
+
 #-------------------------------------------------
 # compile flags
 # CCOMFLAGS are common flags
@@ -149,6 +153,7 @@ else ifeq ($(platform), android)
 	CC = @arm-linux-androideabi-g++
 	AR = @arm-linux-androideabi-ar
 	LD = @arm-linux-androideabi-g++
+
 	FORCE_DRC_C_BACKEND = 1
 	CCOMFLAGS += -fPIC -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
 	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DANDROID -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
@@ -158,7 +163,7 @@ else ifeq ($(platform), android)
 		GLES = 1
 	endif
 	LDFLAGS += -Wl,--fix-cortex-a8 -llog $(fpic) $(SHARED)
-	REALCC   = gcc
+	REALCC   = arm-linux-androideabi-gcc
 	NATIVECC = g++
 	NATIVECFLAGS = -std=gnu99
 	CCOMFLAGS += $(PLATCFLAGS)
@@ -633,7 +638,7 @@ INCPATH += \
 # this variable
 #-------------------------------------------------
 
-OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(TARGET)
+OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(SUBTARGET)
 
 
 #-------------------------------------------------
@@ -643,7 +648,7 @@ OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(TARGET)
 LIBEMU = $(LIBEMUOBJS)
 LIBOPTIONAL = $(CPUOBJS) $(SOUNDOBJS) $(VIDEOOBJS) $(MACHINEOBJS) $(NETLISTOBJS)
 
-LIBDASM = $(OBJ)/$(TARGET)/$(TARGET)/libdasm.a
+LIBDASM = $(OBJ)/$(TARGET)/$(SUBTARGET)/libdasm.a
 LIBBUS = $(BUSOBJS)
 LIBUTIL = $(OBJ)/libutil.a
 LIBOCORE = $(OBJ)/libocore.a
@@ -651,8 +656,8 @@ LIBOSD =  $(OBJ)/osd/retro/libretro.o $(OSDOBJS)
 
 VERSIONOBJ = $(OBJ)/version.o
 EMUINFOOBJ = $(OBJ)/$(TARGET)/$(TARGET).o
-DRIVLISTSRC = $(OBJ)/$(TARGET)/$(TARGET)/drivlist.c
-DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(TARGET)/drivlist.o
+DRIVLISTSRC = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.c
+DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.o
 
 
 
@@ -862,10 +867,10 @@ $(EMULATOR): $(EMUINFOOBJ) $(DRIVLISTOBJ) $(DRVLIBS) $(LIBOSD) $(LIBBUS) $(LIBOP
 # generic rules
 #-------------------------------------------------
 
-ifeq ($(armplatform), 1)
-$(LIBCOOBJ)/armeabi_asm.o:
-	$(CC) -I$(SRC)/osd/retro/libretro-common/include -c $(SRC)/osd/retro/libretro-common/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
-endif
+#ifeq ($(armplatform), 1)
+#$(LIBCOOBJ)/armeabi_asm.o:
+#	$(CC) -I$(SRC)/osd/retro/libretro-common/include -c $(SRC)/osd/retro/libretro-common/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
+#endif
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
@@ -882,7 +887,7 @@ $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
 $(DRIVLISTOBJ): $(DRIVLISTSRC)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 
-$(DRIVLISTSRC): $(SRC)/$(TARGET)/$(TARGET).lst $(SRC)/build/makelist.py
+$(DRIVLISTSRC): $(SRC)/$(TARGET)/$(SUBTARGET).lst $(SRC)/build/makelist.py
 	@echo Building driver list $<...
 	$(PYTHON) $(SRC)/build/makelist.py $< >$@
 

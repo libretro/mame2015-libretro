@@ -199,17 +199,7 @@ CPUS += UCOM4
 CPUS += HMCS40
 
 # then the various core pieces
-ifeq ($(TARGET),mame)
-include $(SRC)/mame/mame.mak
-endif
-
-ifeq ($(TARGET),mess)
-include $(SRC)/mess/mess.mak
-endif
-
-ifeq ($(TARGET),ume)
-include $(SRC)/ume/ume.mak
-endif
+include $(SRC)/$(TARGET)/$(SUBTARGET).mak
 
 include $(SRC)/emu/emu.mak
 include $(SRC)/lib/lib.mak
