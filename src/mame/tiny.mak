@@ -42,9 +42,10 @@ CPUS += M6809
 CPUS += M680X0
 CPUS += TMS9900
 CPUS += COP400
-
-
-
+CPUS += UPD7810
+CPUS += M6805
+CPUS += I386
+CPUS += POWERPC
 #-------------------------------------------------
 # Specify all the sound cores necessary for the
 # drivers referenced in tiny.c.
@@ -62,8 +63,9 @@ SOUNDS += HC55516
 SOUNDS += YM3812
 SOUNDS += CEM3394
 SOUNDS += VOTRAX
-
-
+SOUNDS += BEEP
+SOUNDS += SPEAKER
+SOUNDS += CDDA
 #-------------------------------------------------
 # specify available video cores
 #-------------------------------------------------
@@ -81,12 +83,17 @@ MACHINES += PIT8253
 MACHINES += Z80CTC
 MACHINES += 68681
 MACHINES += BANKDEV
-
+MACHINES += Z80DART
+MACHINES += Z80PIO
+MACHINES += EEPROMDEV
+MACHINES += E05A03
+MACHINES += E05A30
+MACHINES += STEPPERS
 #-------------------------------------------------
 # specify available bus cores
 #-------------------------------------------------
 BUSES += CENTRONICS
-
+BUSES += SCSI
 
 #-------------------------------------------------
 # This is the list of files that are necessary
@@ -121,8 +128,8 @@ DRVLIBS = \
 #-------------------------------------------------
 
 #$(DRIVERS)/astrocde.o:  $(LAYOUT)/gorf.lh \
-#						$(LAYOUT)/seawolf2.lh \
-#						$(LAYOUT)/spacezap.lh \
-#						$(LAYOUT)/tenpindx.lh
+						$(LAYOUT)/seawolf2.lh \
+						$(LAYOUT)/spacezap.lh \
+						$(LAYOUT)/tenpindx.lh
 #$(DRIVERS)/circus.o:    $(LAYOUT)/circus.lh \
-#						$(LAYOUT)/crash.lh
+						$(LAYOUT)/crash.lh

@@ -81,6 +81,7 @@ $(LIBOCORE): $(OSDCOREOBJS)
 #	@echo Rebuilding depend_$(TARGET).mak...
 #	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/$(TARGET) > depend_$(TARGET).mak
 
+ifneq ($(SUBTARGET),tiny)
 #-------------------------------------------------
 # specify available CPU cores
 #-------------------------------------------------
@@ -197,6 +198,7 @@ CPUS += ARCOMPACT
 CPUS += AMIS2000
 CPUS += UCOM4
 CPUS += HMCS40
+endif
 
 # then the various core pieces
 include $(SRC)/$(TARGET)/$(SUBTARGET).mak
