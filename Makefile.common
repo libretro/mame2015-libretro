@@ -34,13 +34,16 @@ OSDCOREOBJS := \
 	$(MINIOBJ)/retrofile.o \
 	$(MINIOBJ)/../modules/font/font_none.o \
 	$(MINIOBJ)/../modules/lib/osdlib_retro.o \
-	$(OSDOBJ)/modules/sync/sync_retro.o \
 	$(MINIOBJ)/../modules/midi/none.o \
 	$(OSDOBJ)/modules/osdmodule.o
 
 INCPATH += -I$(SRC)/osd/retro/libretro-common/include
 
-OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_osd.o
+ifeq ($(TARGETOS),emscripten)
+OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_mini.o $(OSDOBJ)/modules/sync/sync_mini.o
+else
+OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_osd.o $(OSDOBJ)/modules/sync/sync_retro.o 
+endif
 
 #-------------------------------------------------
 # OSD mini library
@@ -51,7 +54,10 @@ OSDOBJS = \
 	$(MINIOBJ)/retromain.o
 
 DEFS    += -DNO_USE_MIDI
+
+ifneq ($(TARGETOS),emscripten)
 OSDOBJS += $(OSDOBJ)/modules/midi/none.o
+endif
 
 ifeq ($(VRENDER),opengl)
 OSDOBJS += $(GLOBJ)/rglgen.o
@@ -71,7 +77,7 @@ endif
 # rules for building the libaries
 #-------------------------------------------------
 
-$(LIBOCORE): $(OSDCOREOBJS)
+#$(LIBOCORE): $(OSDCOREOBJS)
 
 # In order to keep dependencies reasonable, we exclude objects in the base of
 # $(SRC)/emu, as well as all the OSD objects and anything in the $(OBJ) tree

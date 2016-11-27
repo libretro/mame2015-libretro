@@ -33,6 +33,14 @@ empty
 #endif
 #endif
 
+#if defined(__EMSCRIPTEN__)
+#undef YieldProcessor()
+#undef osd_yield_processor()
+#define YieldProcessor() do {} while (0)
+#define osd_yield_processor() YieldProcessor()
+#endif
+
+#if !defined(__EMSCRIPTEN__)
 #ifndef SDLMAME_ARM
 #define mul_32x32(a, b) ((INT64)a * (INT64)b)
 #define mulu_32x32(a, b) ((UINT64)a * (UINT64)b)
@@ -59,7 +67,7 @@ empty
 #undef PAGE_MASK
 #undef si_status
 #endif
-
+#endif
 #include "eminline.h"
 
 

@@ -95,9 +95,10 @@ BUILD_EXPAT = 1
 
 # uncomment next line to build zlib as part of MAME build
 ifneq ($(platform), android)
+ifneq ($(platform), emscripten)
 	BUILD_ZLIB = 1
 endif
-
+endif
 # uncomment next line to build libflac as part of MAME build
 BUILD_FLAC = 1
 
@@ -369,7 +370,36 @@ else ifeq ($(platform), wincross)
 	ifneq (,$(findstring mingw64-w64,$(PATH)))
 		PTR64=1
 	endif
+# emscripten
+else ifeq ($(platform), emscripten)
+   TARGETLIB := $(TARGET_NAME)_libretro_emscripten.bc
 
+   NATIVELD = em++
+   NATIVELDFLAGS = -Wl,--warn-common -lstdc++
+   NATIVECC = em++
+   NATIVECFLAGS = -std=gnu99
+   REALCC = emcc
+   CC_AS = emcc 
+   CC = em++ 
+   AR = emar
+   LD = em++
+   FORCE_DRC_C_BACKEND = 1
+   CCOMFLAGS += -DLSB_FIRST -fsigned-char -finline  -fno-common -fno-builtin 
+   ARFLAGS := rcs
+   EXCEPT_FLAGS := -s DISABLE_EXCEPTION_CATCHING=2 \
+-s EXCEPTION_CATCHING_WHITELIST='["__ZN15running_machine17start_all_devicesEv",\
+"__ZN12cli_frontend7executeEiPPc"]'  -s TOTAL_MEMORY=536870912
+
+   TARGETOS := emscripten
+   NOASM := 1
+   PLATCFLAGS +=  -s USE_ZLIB=1 -DSDLMAME_NO64BITIO  $(EXCEPT_FLAGS) -DRETRO_EMSCRIPTEN=1 
+   PLATCFLAGS += -DALIGN_INTS -DALIGN_SHORTS 
+   CCOMFLAGS += $(PLATCFLAGS) #-ffast-math 
+   PTR64 = 0
+   CFLAGS +=  -s USE_ZLIB=1 
+   CXXFLAGS += -s USE_ZLIB=1 
+   LDFLAGS += -s USE_ZLIB=1  $(EXCEPT_FLAGS) 
+   LDFLAGSEMULATOR +=
 # Windows
 else
 	TARGETLIB := $(TARGET_NAME)_libretro.dll
@@ -648,10 +678,10 @@ OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(SUBTARGET)
 LIBEMU = $(LIBEMUOBJS)
 LIBOPTIONAL = $(CPUOBJS) $(SOUNDOBJS) $(VIDEOOBJS) $(MACHINEOBJS) $(NETLISTOBJS)
 
-LIBDASM = $(OBJ)/$(TARGET)/$(SUBTARGET)/libdasm.a
+LIBDASM = $(DASMOBJS) #$(OBJ)/$(TARGET)/$(SUBTARGET)/libdasm.a
 LIBBUS = $(BUSOBJS)
-LIBUTIL = $(OBJ)/libutil.a
-LIBOCORE = $(OBJ)/libocore.a
+LIBUTIL = $(UTILOBJS) #$(OBJ)/libutil.a 
+LIBOCORE = $(OSDCOREOBJS) #$(OBJ)/libocore.a
 LIBOSD =  $(OBJ)/osd/retro/libretro.o $(OSDOBJS)
 
 VERSIONOBJ = $(OBJ)/version.o
@@ -670,7 +700,7 @@ DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.o
 # add expat XML library
 ifeq ($(BUILD_EXPAT),1)
 INCPATH += -I$(3RDPARTY)/expat/lib
-EXPAT = $(OBJ)/libexpat.a
+EXPAT =  $(EXPATOBJS) #$(OBJ)/libexpat.a
 else
 LIBS += -lexpat
 EXPAT =
@@ -688,8 +718,7 @@ endif
 # add flac library
 ifeq ($(BUILD_FLAC),1)
 INCPATH += -I$(SRC)/lib/util -I$(3RDPARTY)/libflac/src/libFLAC/include
-FLAC_LIB = $(OBJ)/libflac.a
-# $(OBJ)/libflac++.a
+FLAC_LIB = $(LIBFLACOBJS) #$(OBJ)/libflac.a
 else
 LIBS += -lFLAC
 FLAC_LIB =
@@ -698,17 +727,17 @@ endif
 # add jpeglib image library
 ifeq ($(BUILD_JPEGLIB),1)
 INCPATH += -I$(3RDPARTY)/libjpeg
-JPEG_LIB = $(OBJ)/libjpeg.a
+JPEG_LIB = $(LIBJPEGOBJS) #$(OBJ)/libjpeg.a
 else
 LIBS += -ljpeg
 JPEG_LIB =
 endif
 
 # add SoftFloat floating point emulation library
-SOFTFLOAT = $(OBJ)/libsoftfloat.a
+SOFTFLOAT = $(SOFTFLOATOBJS) #$(OBJ)/libsoftfloat.a
 
 # add formats emulation library
-FORMATS_LIB = $(OBJ)/libformats.a
+FORMATS_LIB = $(FORMATSOBJS) #$(OBJ)/libformats.a
 
 # add PortMidi MIDI library
 ifeq ($(BUILD_MIDILIB),1)
@@ -734,7 +763,7 @@ all: default tools
 
 tests: maketree jedutil$(EXE_EXT) chdman$(EXE_EXT)
 
-7Z_LIB = $(OBJ)/lib7z.a
+7Z_LIB = $(LIB7ZOBJS) #$(OBJ)/lib7z.a
 
 #-------------------------------------------------
 # defines needed by multiple make files
@@ -866,11 +895,10 @@ $(EMULATOR): $(EMUINFOOBJ) $(DRIVLISTOBJ) $(DRVLIBS) $(LIBOSD) $(LIBBUS) $(LIBOP
 #-------------------------------------------------
 # generic rules
 #-------------------------------------------------
-
-#ifeq ($(armplatform), 1)
-#$(LIBCOOBJ)/armeabi_asm.o:
-#	$(CC) -I$(SRC)/osd/retro/libretro-common/include -c $(SRC)/osd/retro/libretro-common/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
-#endif
+ifeq ($(TARGETOS),emscripten)
+(EMUOBJ)/memory.o: $(EMUSRC)/memory.c
+	$(CC) $(CDEFS) $(CFLAGS) -O1 -c $< -o $@
+endif
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
