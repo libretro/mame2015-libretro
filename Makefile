@@ -538,7 +538,8 @@ SRC = src
 3RDPARTY = 3rdparty
 
 # build the targets in different object dirs, so they can co-exist
-OBJ = obj/$(PREFIX)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
+OBJ = obj
+#/$(PREFIX)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
 #-------------------------------------------------
 # compile-time definitions
 #-------------------------------------------------
@@ -678,10 +679,16 @@ OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(SUBTARGET)
 LIBEMU = $(LIBEMUOBJS)
 LIBOPTIONAL = $(CPUOBJS) $(SOUNDOBJS) $(VIDEOOBJS) $(MACHINEOBJS) $(NETLISTOBJS)
 
+ifeq ($(TARGETOS),emscripten)
 LIBDASM = $(DASMOBJS) #$(OBJ)/$(TARGET)/$(SUBTARGET)/libdasm.a
-LIBBUS = $(BUSOBJS)
 LIBUTIL = $(UTILOBJS) #$(OBJ)/libutil.a 
 LIBOCORE = $(OSDCOREOBJS) #$(OBJ)/libocore.a
+else
+LIBDASM = $(OBJ)/$(TARGET)/$(SUBTARGET)/libdasm.a
+LIBUTIL = $(OBJ)/libutil.a 
+LIBOCORE = $(OBJ)/libocore.a
+endif
+LIBBUS = $(BUSOBJS)
 LIBOSD =  $(OBJ)/osd/retro/libretro.o $(OSDOBJS)
 
 VERSIONOBJ = $(OBJ)/version.o
@@ -700,7 +707,11 @@ DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.o
 # add expat XML library
 ifeq ($(BUILD_EXPAT),1)
 INCPATH += -I$(3RDPARTY)/expat/lib
+ifeq ($(TARGETOS),emscripten)
 EXPAT =  $(EXPATOBJS) #$(OBJ)/libexpat.a
+else
+EXPAT =  $(OBJ)/libexpat.a
+endif
 else
 LIBS += -lexpat
 EXPAT =
@@ -718,7 +729,11 @@ endif
 # add flac library
 ifeq ($(BUILD_FLAC),1)
 INCPATH += -I$(SRC)/lib/util -I$(3RDPARTY)/libflac/src/libFLAC/include
+ifeq ($(TARGETOS),emscripten)
 FLAC_LIB = $(LIBFLACOBJS) #$(OBJ)/libflac.a
+else
+FLAC_LIB = $(OBJ)/libflac.a
+endif
 else
 LIBS += -lFLAC
 FLAC_LIB =
@@ -727,17 +742,29 @@ endif
 # add jpeglib image library
 ifeq ($(BUILD_JPEGLIB),1)
 INCPATH += -I$(3RDPARTY)/libjpeg
+ifeq ($(TARGETOS),emscripten)
 JPEG_LIB = $(LIBJPEGOBJS) #$(OBJ)/libjpeg.a
+else
+JPEG_LIB = $(OBJ)/libjpeg.a
+endif
 else
 LIBS += -ljpeg
 JPEG_LIB =
 endif
 
+ifeq ($(TARGETOS),emscripten)
 # add SoftFloat floating point emulation library
 SOFTFLOAT = $(SOFTFLOATOBJS) #$(OBJ)/libsoftfloat.a
 
 # add formats emulation library
 FORMATS_LIB = $(FORMATSOBJS) #$(OBJ)/libformats.a
+else
+# add SoftFloat floating point emulation library
+SOFTFLOAT = $(OBJ)/libsoftfloat.a
+
+# add formats emulation library
+FORMATS_LIB = $(OBJ)/libformats.a
+endif
 
 # add PortMidi MIDI library
 ifeq ($(BUILD_MIDILIB),1)
@@ -763,7 +790,11 @@ all: default tools
 
 tests: maketree jedutil$(EXE_EXT) chdman$(EXE_EXT)
 
+ifeq ($(TARGETOS),emscripten)
 7Z_LIB = $(LIB7ZOBJS) #$(OBJ)/lib7z.a
+else
+7Z_LIB = $(OBJ)/lib7z.a
+endif
 
 #-------------------------------------------------
 # defines needed by multiple make files

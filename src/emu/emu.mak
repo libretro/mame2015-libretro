@@ -211,8 +211,9 @@ LIBEMUOBJS = $(EMUOBJS) $(EMUSOUNDOBJS) $(EMUDRIVEROBJS) $(EMUMACHINEOBJS) $(EMU
 
 include $(EMUSRC)/cpu/cpu.mak
 
-#$(LIBDASM): $(DASMOBJS)
-
+ifneq ($(TARGETOS),emscripten)
+$(LIBDASM): $(DASMOBJS)
+endif
 
 #-------------------------------------------------
 # sound core objects

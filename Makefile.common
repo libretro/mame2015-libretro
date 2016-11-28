@@ -77,7 +77,9 @@ endif
 # rules for building the libaries
 #-------------------------------------------------
 
-#$(LIBOCORE): $(OSDCOREOBJS)
+ifneq ($(TARGETOS),emscripten)
+$(LIBOCORE): $(OSDCOREOBJS)
+endif
 
 # In order to keep dependencies reasonable, we exclude objects in the base of
 # $(SRC)/emu, as well as all the OSD objects and anything in the $(OBJ) tree
