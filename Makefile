@@ -676,19 +676,22 @@ OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(SUBTARGET)
 # define standard libarires for CPU and sounds
 #-------------------------------------------------
 
+ifneq ($(TARGETOS),emscripten)
+LIBEMU = $(OBJ)/libemu.a
+LIBOPTIONAL = $(OBJ)/$(TARGET)/$(TARGET)/liboptional.a
+LIBDASM = $(OBJ)/$(TARGET)/$(TARGET)/libdasm.a
+LIBBUS = $(OBJ)/$(TARGET)/$(TARGET)/libbus.a
+LIBUTIL = $(OBJ)/libutil.a
+LIBOCORE = $(OBJ)/libocore.a
+else
 LIBEMU = $(LIBEMUOBJS)
 LIBOPTIONAL = $(CPUOBJS) $(SOUNDOBJS) $(VIDEOOBJS) $(MACHINEOBJS) $(NETLISTOBJS)
-
-ifeq ($(TARGETOS),emscripten)
-LIBDASM = $(DASMOBJS) #$(OBJ)/$(TARGET)/$(SUBTARGET)/libdasm.a
-LIBUTIL = $(UTILOBJS) #$(OBJ)/libutil.a 
-LIBOCORE = $(OSDCOREOBJS) #$(OBJ)/libocore.a
-else
-LIBDASM = $(OBJ)/$(TARGET)/$(SUBTARGET)/libdasm.a
-LIBUTIL = $(OBJ)/libutil.a 
-LIBOCORE = $(OBJ)/libocore.a
-endif
+LIBDASM = $(DASMOBJS) 
 LIBBUS = $(BUSOBJS)
+LIBUTIL = $(UTILOBJS) 
+LIBOCORE = $(OSDCOREOBJS) 
+endif
+
 LIBOSD =  $(OBJ)/osd/retro/libretro.o $(OSDOBJS)
 
 VERSIONOBJ = $(OBJ)/version.o
