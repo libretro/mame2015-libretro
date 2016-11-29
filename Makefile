@@ -60,6 +60,10 @@ else
 endif
 $(info COREDEF = $(CORE_DEFINE))
 
+ifndef SUBTARGET
+SUBTARGET = $(TARGET)
+endif
+
 #-------------------------------------------------
 # compile flags
 # CCOMFLAGS are common flags
@@ -80,6 +84,9 @@ CPPONLYFLAGS += $(CORE_DEFINE)
 LDFLAGS =
 LDFLAGSEMULATOR =
 
+PLATCFLAGS += -D__LIBRETRO__
+CCOMFLAGS  += -D__LIBRETRO__
+
 $(info CFLAGS = $(CONLYFLAGS))
 $(info CPPFLAGS = $(CPPONLYFLAGS))
 
@@ -88,9 +95,10 @@ BUILD_EXPAT = 1
 
 # uncomment next line to build zlib as part of MAME build
 ifneq ($(platform), android)
+ifneq ($(platform), emscripten)
 	BUILD_ZLIB = 1
 endif
-
+endif
 # uncomment next line to build libflac as part of MAME build
 BUILD_FLAC = 1
 
@@ -146,6 +154,7 @@ else ifeq ($(platform), android)
 	CC = @arm-linux-androideabi-g++
 	AR = @arm-linux-androideabi-ar
 	LD = @arm-linux-androideabi-g++
+
 	FORCE_DRC_C_BACKEND = 1
 	CCOMFLAGS += -fPIC -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
 	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DANDROID -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
@@ -155,7 +164,7 @@ else ifeq ($(platform), android)
 		GLES = 1
 	endif
 	LDFLAGS += -Wl,--fix-cortex-a8 -llog $(fpic) $(SHARED)
-	REALCC   = gcc
+	REALCC   = arm-linux-androideabi-gcc
 	NATIVECC = g++
 	NATIVECFLAGS = -std=gnu99
 	CCOMFLAGS += $(PLATCFLAGS)
@@ -361,7 +370,36 @@ else ifeq ($(platform), wincross)
 	ifneq (,$(findstring mingw64-w64,$(PATH)))
 		PTR64=1
 	endif
+# emscripten
+else ifeq ($(platform), emscripten)
+   TARGETLIB := $(TARGET_NAME)_libretro_emscripten.bc
 
+   NATIVELD = em++
+   NATIVELDFLAGS = -Wl,--warn-common -lstdc++
+   NATIVECC = em++
+   NATIVECFLAGS = -std=gnu99
+   REALCC = emcc
+   CC_AS = emcc 
+   CC = em++ 
+   AR = emar
+   LD = em++
+   FORCE_DRC_C_BACKEND = 1
+   CCOMFLAGS += -DLSB_FIRST -fsigned-char -finline  -fno-common -fno-builtin 
+   ARFLAGS := rcs
+   EXCEPT_FLAGS := -s DISABLE_EXCEPTION_CATCHING=2 \
+-s EXCEPTION_CATCHING_WHITELIST='["__ZN15running_machine17start_all_devicesEv",\
+"__ZN12cli_frontend7executeEiPPc"]'  -s TOTAL_MEMORY=536870912
+
+   TARGETOS := emscripten
+   NOASM := 1
+   PLATCFLAGS +=  -s USE_ZLIB=1 -DSDLMAME_NO64BITIO  $(EXCEPT_FLAGS) -DRETRO_EMSCRIPTEN=1 
+   PLATCFLAGS += -DALIGN_INTS -DALIGN_SHORTS 
+   CCOMFLAGS += $(PLATCFLAGS) #-ffast-math 
+   PTR64 = 0
+   CFLAGS +=  -s USE_ZLIB=1 
+   CXXFLAGS += -s USE_ZLIB=1 
+   LDFLAGS += -s USE_ZLIB=1  $(EXCEPT_FLAGS) 
+   LDFLAGSEMULATOR +=
 # Windows
 else
 	TARGETLIB := $(TARGET_NAME)_libretro.dll
@@ -500,7 +538,8 @@ SRC = src
 3RDPARTY = 3rdparty
 
 # build the targets in different object dirs, so they can co-exist
-OBJ = obj/$(PREFIX)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
+OBJ = obj
+#/$(PREFIX)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
 #-------------------------------------------------
 # compile-time definitions
 #-------------------------------------------------
@@ -630,25 +669,35 @@ INCPATH += \
 # this variable
 #-------------------------------------------------
 
-OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(TARGET)
+OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(SUBTARGET)
 
 
 #-------------------------------------------------
 # define standard libarires for CPU and sounds
 #-------------------------------------------------
 
+ifneq ($(TARGETOS),emscripten)
 LIBEMU = $(OBJ)/libemu.a
 LIBOPTIONAL = $(OBJ)/$(TARGET)/$(TARGET)/liboptional.a
 LIBDASM = $(OBJ)/$(TARGET)/$(TARGET)/libdasm.a
 LIBBUS = $(OBJ)/$(TARGET)/$(TARGET)/libbus.a
 LIBUTIL = $(OBJ)/libutil.a
 LIBOCORE = $(OBJ)/libocore.a
-LIBOSD = $(OBJ)/libosd.a
+else
+LIBEMU = $(LIBEMUOBJS)
+LIBOPTIONAL = $(CPUOBJS) $(SOUNDOBJS) $(VIDEOOBJS) $(MACHINEOBJS) $(NETLISTOBJS)
+LIBDASM = $(DASMOBJS) 
+LIBBUS = $(BUSOBJS)
+LIBUTIL = $(UTILOBJS) 
+LIBOCORE = $(OSDCOREOBJS) 
+endif
+
+LIBOSD =  $(OBJ)/osd/retro/libretro.o $(OSDOBJS)
 
 VERSIONOBJ = $(OBJ)/version.o
 EMUINFOOBJ = $(OBJ)/$(TARGET)/$(TARGET).o
-DRIVLISTSRC = $(OBJ)/$(TARGET)/$(TARGET)/drivlist.c
-DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(TARGET)/drivlist.o
+DRIVLISTSRC = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.c
+DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(SUBTARGET)/drivlist.o
 
 
 
@@ -661,7 +710,11 @@ DRIVLISTOBJ = $(OBJ)/$(TARGET)/$(TARGET)/drivlist.o
 # add expat XML library
 ifeq ($(BUILD_EXPAT),1)
 INCPATH += -I$(3RDPARTY)/expat/lib
-EXPAT = $(OBJ)/libexpat.a
+ifeq ($(TARGETOS),emscripten)
+EXPAT =  $(EXPATOBJS) #$(OBJ)/libexpat.a
+else
+EXPAT =  $(OBJ)/libexpat.a
+endif
 else
 LIBS += -lexpat
 EXPAT =
@@ -679,8 +732,11 @@ endif
 # add flac library
 ifeq ($(BUILD_FLAC),1)
 INCPATH += -I$(SRC)/lib/util -I$(3RDPARTY)/libflac/src/libFLAC/include
+ifeq ($(TARGETOS),emscripten)
+FLAC_LIB = $(LIBFLACOBJS) #$(OBJ)/libflac.a
+else
 FLAC_LIB = $(OBJ)/libflac.a
-# $(OBJ)/libflac++.a
+endif
 else
 LIBS += -lFLAC
 FLAC_LIB =
@@ -689,17 +745,29 @@ endif
 # add jpeglib image library
 ifeq ($(BUILD_JPEGLIB),1)
 INCPATH += -I$(3RDPARTY)/libjpeg
+ifeq ($(TARGETOS),emscripten)
+JPEG_LIB = $(LIBJPEGOBJS) #$(OBJ)/libjpeg.a
+else
 JPEG_LIB = $(OBJ)/libjpeg.a
+endif
 else
 LIBS += -ljpeg
 JPEG_LIB =
 endif
 
+ifeq ($(TARGETOS),emscripten)
+# add SoftFloat floating point emulation library
+SOFTFLOAT = $(SOFTFLOATOBJS) #$(OBJ)/libsoftfloat.a
+
+# add formats emulation library
+FORMATS_LIB = $(FORMATSOBJS) #$(OBJ)/libformats.a
+else
 # add SoftFloat floating point emulation library
 SOFTFLOAT = $(OBJ)/libsoftfloat.a
 
 # add formats emulation library
 FORMATS_LIB = $(OBJ)/libformats.a
+endif
 
 # add PortMidi MIDI library
 ifeq ($(BUILD_MIDILIB),1)
@@ -725,7 +793,11 @@ all: default tools
 
 tests: maketree jedutil$(EXE_EXT) chdman$(EXE_EXT)
 
+ifeq ($(TARGETOS),emscripten)
+7Z_LIB = $(LIB7ZOBJS) #$(OBJ)/lib7z.a
+else
 7Z_LIB = $(OBJ)/lib7z.a
+endif
 
 #-------------------------------------------------
 # defines needed by multiple make files
@@ -857,10 +929,9 @@ $(EMULATOR): $(EMUINFOOBJ) $(DRIVLISTOBJ) $(DRVLIBS) $(LIBOSD) $(LIBBUS) $(LIBOP
 #-------------------------------------------------
 # generic rules
 #-------------------------------------------------
-
-ifeq ($(armplatform), 1)
-$(LIBCOOBJ)/armeabi_asm.o:
-	$(CC) -I$(SRC)/osd/retro/libretro-common/include -c $(SRC)/osd/retro/libretro-common/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
+ifeq ($(TARGETOS),emscripten)
+(EMUOBJ)/memory.o: $(EMUSRC)/memory.c
+	$(CC) $(CDEFS) $(CFLAGS) -O1 -c $< -o $@
 endif
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
@@ -878,7 +949,7 @@ $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
 $(DRIVLISTOBJ): $(DRIVLISTSRC)
 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
 
-$(DRIVLISTSRC): $(SRC)/$(TARGET)/$(TARGET).lst $(SRC)/build/makelist.py
+$(DRIVLISTSRC): $(SRC)/$(TARGET)/$(SUBTARGET).lst $(SRC)/build/makelist.py
 	@echo Building driver list $<...
 	$(PYTHON) $(SRC)/build/makelist.py $< >$@
 

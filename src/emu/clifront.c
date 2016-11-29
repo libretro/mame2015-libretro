@@ -94,6 +94,9 @@ cli_frontend::~cli_frontend()
 		dump_unfreed_mem(m_start_memory);
 }
 
+#ifdef __LIBRETRO__
+machine_manager *retro_manager;
+#endif
 
 //-------------------------------------------------
 //  execute - execute a game via the standard
@@ -213,17 +216,43 @@ int cli_frontend::execute(int argc, char **argv)
       if (system == NULL && *(m_options.system_name()) != 0)
          throw emu_fatalerror(MAMERR_NO_SUCH_GAME, "Unknown system '%s'", m_options.system_name());
 
+#ifdef __LIBRETRO__
+			retro_manager = machine_manager::instance(m_options, m_osd);
+	        	m_result = retro_manager->execute();
+
+			goto retro_exit;
+#else
       // otherwise just run the game
       machine_manager *manager = machine_manager::instance(m_options, m_osd);
       m_result = manager->execute();
       global_free(manager);
+
+#endif
+
    }
 
    _7z_file_cache_clear();
 
    return m_result;
+
+#ifdef __LIBRETRO__
+retro_exit:
+
+	return m_result;
+#endif
 }
 
+#ifdef __LIBRETRO__
+void retro_execute(){
+  // mame_execute(retro_global_options);
+  retro_manager->execute();
+}
+
+void free_man(){
+   	global_free(retro_manager);
+	_7z_file_cache_clear();
+}
+#endif
 
 //-------------------------------------------------
 //  listxml - output the XML data for one or more

@@ -98,4 +98,8 @@ UINT16 i8xc196_device::io_r16(UINT8 adr)
 	return data;
 }
 
+void i8xc196_device::do_exec_partial()
+{
+}
+void i8xc196_device::next(int cycles) { icount -= cycles_scaling*cycles; inst_state = STATE_FETCH; }
 #include "cpu/mcs96/i8xc196.inc"

@@ -12,12 +12,9 @@ DEFS += -DOSD_RETRO
 MINISRC = $(SRC)/osd/retro
 MINIOBJ = $(OBJ)/osd/retro
 
-LIBCOOBJ = $(OBJ)/osd/retro/libretro-common/libco
-
 OSDOBJ = $(OBJ)/osd
 
 OBJDIRS += $(MINIOBJ) \
-			  $(LIBCOOBJ) \
 			  $(OSDOBJ)/modules/sync \
 			  $(OSDOBJ)/modules/font \
 			  $(OSDOBJ)/modules/lib \
@@ -37,13 +34,16 @@ OSDCOREOBJS := \
 	$(MINIOBJ)/retrofile.o \
 	$(MINIOBJ)/../modules/font/font_none.o \
 	$(MINIOBJ)/../modules/lib/osdlib_retro.o \
-	$(OSDOBJ)/modules/sync/sync_retro.o \
 	$(MINIOBJ)/../modules/midi/none.o \
 	$(OSDOBJ)/modules/osdmodule.o
 
 INCPATH += -I$(SRC)/osd/retro/libretro-common/include
 
-OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_osd.o
+ifeq ($(TARGETOS),emscripten)
+OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_mini.o $(OSDOBJ)/modules/sync/sync_mini.o
+else
+OSDCOREOBJS += $(OSDOBJ)/modules/sync/work_osd.o $(OSDOBJ)/modules/sync/sync_retro.o 
+endif
 
 #-------------------------------------------------
 # OSD mini library
@@ -54,9 +54,10 @@ OSDOBJS = \
 	$(MINIOBJ)/retromain.o
 
 DEFS    += -DNO_USE_MIDI
-OSDOBJS += $(OSDOBJ)/modules/midi/none.o
 
-OSDOBJS += $(LIBCOOBJ)/libco.o
+ifneq ($(TARGETOS),emscripten)
+OSDOBJS += $(OSDOBJ)/modules/midi/none.o
+endif
 
 ifeq ($(VRENDER),opengl)
 OSDOBJS += $(GLOBJ)/rglgen.o
@@ -76,18 +77,8 @@ endif
 # rules for building the libaries
 #-------------------------------------------------
 
+ifneq ($(TARGETOS),emscripten)
 $(LIBOCORE): $(OSDCOREOBJS)
-
-$(LIBOSD): $(OSDOBJS)
-
-# Override to force libco to build as C
-$(LIBCOOBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
-	@echo Compiling $< FOR C ONLY...
-	$(REALCC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) $(INCPATH) -c $< -o $@
-
-ifeq ($(armplatform), 1)
-$(LIBCOOBJ)/armeabi_asm.o:
-	$(REALCC) -I$(SRC)/osd/retro/libretro-common/include -c $(SRC)/osd/retro/libretro-common/libco/armeabi_asm.S -o $(LIBCOOBJ)/armeabi_asm.o
 endif
 
 # In order to keep dependencies reasonable, we exclude objects in the base of
@@ -98,6 +89,7 @@ depend: maketree $(MAKEDEP_TARGET)
 	@echo Rebuilding depend_$(TARGET).mak...
 	$(MAKEDEP) -I. $(INCPATH) -X$(SRC)/emu -X$(SRC)/osd/... -X$(OBJ)/... $(SRC)/$(TARGET) > depend_$(TARGET).mak
 
+ifneq ($(SUBTARGET),tiny)
 #-------------------------------------------------
 # specify available CPU cores
 #-------------------------------------------------
@@ -214,15 +206,10 @@ CPUS += ARCOMPACT
 CPUS += AMIS2000
 CPUS += UCOM4
 CPUS += HMCS40
+endif
 
 # then the various core pieces
-ifeq ($(TARGET),mame)
-include $(SRC)/mame/mame.mak
-endif
-
-ifeq ($(TARGET),mess)
-include $(SRC)/mess/mess.mak
-endif
+include $(SRC)/$(TARGET)/$(SUBTARGET).mak
 
 include $(SRC)/emu/emu.mak
 include $(SRC)/lib/lib.mak

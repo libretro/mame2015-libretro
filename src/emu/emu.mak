@@ -201,8 +201,9 @@ EMUVIDEOOBJS = \
 
 LIBEMUOBJS = $(EMUOBJS) $(EMUSOUNDOBJS) $(EMUDRIVEROBJS) $(EMUMACHINEOBJS) $(EMUIMAGEDEVOBJS) $(EMUVIDEOOBJS)
 
+ifneq ($(TARGETOS),emscripten)
 $(LIBEMU): $(LIBEMUOBJS)
-
+endif
 
 
 #-------------------------------------------------
@@ -211,8 +212,9 @@ $(LIBEMU): $(LIBEMUOBJS)
 
 include $(EMUSRC)/cpu/cpu.mak
 
+ifneq ($(TARGETOS),emscripten)
 $(LIBDASM): $(DASMOBJS)
-
+endif
 
 #-------------------------------------------------
 # sound core objects
@@ -247,10 +249,10 @@ include $(EMUSRC)/bus/bus.mak
 #-------------------------------------------------
 # core optional library
 #-------------------------------------------------
-
+ifneq ($(TARGETOS),emscripten)
 $(LIBOPTIONAL): $(CPUOBJS) $(SOUNDOBJS) $(VIDEOOBJS) $(MACHINEOBJS) $(NETLISTOBJS)
 $(LIBBUS): $(BUSOBJS)
-
+endif
 #-------------------------------------------------
 # additional dependencies
 #-------------------------------------------------

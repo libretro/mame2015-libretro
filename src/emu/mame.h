@@ -99,6 +99,7 @@ public:
 	/* execute as configured by the OPTION_SYSTEMNAME option on the specified options */
 	int execute();
 	void schedule_new_driver(const game_driver &driver);
+	void mmchange();
 private:
 	osd_interface &         m_osd;                  // reference to OSD system
 	emu_options &           m_options;              // reference to options

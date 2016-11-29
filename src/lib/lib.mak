@@ -70,8 +70,9 @@ UTILOBJS = \
 	$(LIBOBJ)/util/xmlfile.o \
 	$(LIBOBJ)/util/zippath.o \
 
+ifneq ($(TARGETOS),emscripten)
 $(OBJ)/libutil.a: $(UTILOBJS)
-
+endif
 
 
 #-------------------------------------------------
@@ -83,7 +84,9 @@ EXPATOBJS = \
 	$(LIBOBJ)/expat/xmlrole.o \
 	$(LIBOBJ)/expat/xmltok.o
 
+ifneq ($(TARGETOS),emscripten)
 $(OBJ)/libexpat.a: $(EXPATOBJS)
+endif
 
 $(LIBOBJ)/expat/%.o: $(3RDPARTY)/expat/lib/%.c | $(OSPREBUILD)
 	$(REALCC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) -c $< -o $@
@@ -234,8 +237,9 @@ FORMATSOBJS = \
 	$(LIBOBJ)/formats/hxcmfm_dsk.o  \
 	$(LIBOBJ)/formats/itt3030_dsk.o \
 
+ifneq ($(TARGETOS),emscripten)
 $(OBJ)/libformats.a: $(FORMATSOBJS)
-
+endif
 
 
 #-------------------------------------------------
@@ -281,7 +285,9 @@ SOFTFLOATOBJS = \
 	$(LIBOBJ)/softfloat/fsincos.o \
 	$(LIBOBJ)/softfloat/fyl2x.o
 
+ifneq ($(TARGETOS),emscripten)
 $(OBJ)/libsoftfloat.a: $(SOFTFLOATOBJS)
+endif
 
 $(LIBOBJ)/softfloat/softfloat.o: $(3RDPARTY)/softfloat/softfloat.c $(3RDPARTY)/softfloat/softfloat.h $(3RDPARTY)/softfloat/softfloat-macros $(3RDPARTY)/softfloat/softfloat-specialize
 $(LIBOBJ)/softfloat/fsincos.o: $(3RDPARTY)/softfloat/fsincos.c $(3RDPARTY)/softfloat/fpu_constant.h $(3RDPARTY)/softfloat/softfloat.h $(3RDPARTY)/softfloat/softfloat-macros $(3RDPARTY)/softfloat/softfloat-specialize
@@ -341,7 +347,9 @@ LIBJPEGOBJS= \
 	$(LIBOBJ)/libjpeg/jmemmgr.o \
 	$(LIBOBJ)/libjpeg/jmemansi.o \
 
+ifneq ($(TARGETOS),emscripten)
 $(OBJ)/libjpeg.a: $(LIBJPEGOBJS)
+endif
 
 $(LIBOBJ)/libjpeg/%.o: $(3RDPARTY)/libjpeg/%.c | $(OSPREBUILD)
 	$(REALCC) $(CDEFS) $(CCOMFLAGS) $(CONLYFLAGS) -I$(3RDPARTY)/libjpeg -c $< -o $@
@@ -377,7 +385,9 @@ LIBFLACOBJS = \
 	$(LIBOBJ)/libflac/stream_encoder_framing.o \
 	$(LIBOBJ)/libflac/window.o
 
+ifneq ($(TARGETOS),emscripten)
 $(OBJ)/libflac.a: $(LIBFLACOBJS)
+endif
 
 $(LIBOBJ)/libflac/%.o: $(3RDPARTY)/libflac/src/libFLAC/%.c | $(OSPREBUILD)
 	$(REALCC) $(CDEFS) $(CONLYFLAGS) $(CCOMFLAGS) $(FLACOPTS) -I$(3RDPARTY)/libflac/include -I$(3RDPARTY)/libflac/src/libFLAC/include -c $< -o $@
@@ -410,7 +420,9 @@ LIB7ZOBJS = \
 	$(LIBOBJ)/lib7z/Ppmd7Dec.o \
 	$(LIBOBJ)/lib7z/7zStream.o \
 
+ifneq ($(TARGETOS),emscripten)
 $(OBJ)/lib7z.a: $(LIB7ZOBJS)
+endif
 
 $(LIBOBJ)/lib7z/%.o: $(3RDPARTY)/lzma/C/%.c | $(OSPREBUILD)
 	$(REALCC) $(CDEFS) $(7ZOPTS) $(CCOMFLAGS) $(CONLYFLAGS) -I$(3RDPARTY)/lzma/C -c $< -o $@

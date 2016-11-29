@@ -217,7 +217,7 @@ MACHINES += 6522VIA
 #MACHINES += RIOT6532
 MACHINES += 6821PIA
 MACHINES += 6840PTM
-MACHINES += 68561MPCC
+#MACHINES += 68561MPCC
 #MACHINES += ACIA6850
 MACHINES += 68681
 MACHINES += 7200FIFO
@@ -1762,10 +1762,7 @@ $(MESSOBJ)/yamaha.a:            \
 	$(MESS_DRIVERS)/ymmu100.o   \
 	$(MESS_DRIVERS)/fb01.o      \
 
-$(MESS_DRIVERS)/ymmu100.o: $(MESS_DRIVERS)/ymmu100.inc
-$(MESS_DRIVERS)/ymmu100.inc: $(MESSSRC)/drivers/ymmu100.ppm $(SRC)/build/file2str.py
-	@echo Converting $<...
-	@$(PYTHON) $(SRC)/build/file2str.py $(MESSSRC)/drivers/ymmu100.ppm $@ ymmu100_bkg UINT8
+$(MESS_DRIVERS)/ymmu100.o: $(MESSSRC)/drivers/ymmu100.inc
 
 $(MESSOBJ)/zenith.a:            \
 	$(MESS_DRIVERS)/z100.o      \

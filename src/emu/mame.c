@@ -162,14 +162,28 @@ void machine_manager::update_machine()
 /*-------------------------------------------------
     execute - run the core emulation
 -------------------------------------------------*/
+#ifdef __LIBRETRO__
+
+extern machine_manager *retro_manager;
+static running_machine *retro_global_machine;
+static const machine_config *retro_global_config;
+
+int ENDEXEC=0;
+
+static bool firstgame = true;
+static bool firstrun = true;
+bool started_empty = false;
+
+#endif
 
 int machine_manager::execute()
 {
+#ifndef __LIBRETRO__
 	bool started_empty = false;
 
 	bool firstgame = true;
 	bool firstrun = true;
-
+#endif
 	// loop across multiple hard resets
 	bool exit_pending = false;
 	int error = MAMERR_NONE;
@@ -203,7 +217,20 @@ int machine_manager::execute()
 			validity_checker valid(m_options);
 			valid.check_shared_source(*system);
 		}
+#ifdef __LIBRETRO__
 
+		retro_global_config= global_alloc(machine_config(*system, m_options));
+
+	        retro_global_machine=global_alloc(running_machine(*retro_global_config, *this));
+
+		set_machine(&(*retro_global_machine));
+
+		error = retro_global_machine->run(firstrun);
+		firstrun = false;
+
+		goto retro_handle;
+
+#else
 		// create the machine configuration
 		machine_config config(*system, m_options);
 
@@ -245,11 +272,109 @@ int machine_manager::execute()
 
 		// machine will go away when we exit scope
 		set_machine(NULL);
+#endif
 	}
 	// return an error
 	return error;
+#ifdef __LIBRETRO__
+retro_handle:
+	return 1;
+#endif
 }
 
+#ifdef __LIBRETRO__
+extern int RLOOP,retro_pause;
+extern void retro_loop(running_machine *machine);
+extern void retro_execute();
+extern core_options *retro_global_options;
+
+void machine_manager::mmchange(){
+
+		// check the state of the machine
+		if (m_new_driver_pending)
+		{
+			astring old_system_name(m_options.system_name());
+			bool new_system = (old_system_name != m_new_driver_pending->name);
+			// first: if we scheduled a new system, remove device options of the old system
+			// notice that, if we relaunch the same system, there is no effect on the emulation
+			if (new_system)
+				m_options.remove_device_options();
+			// second: set up new system name (and the related device options)
+			m_options.set_system_name(m_new_driver_pending->name);
+			// third: if we scheduled a new system, take also care of ramsize options
+			if (new_system)
+			{
+				astring error_string;
+				m_options.set_value(OPTION_RAMSIZE, "", OPTION_PRIORITY_CMDLINE, error_string);
+			}
+			firstrun = true;
+		}
+		else
+		{
+			if (retro_global_machine->exit_pending()) m_options.set_system_name("");
+		}
+
+		//FIXME RETRO
+		//if (retro_global_machine->exit_pending() && (!started_empty || (system == &GAME_NAME(___empty))))
+			//exit_pending = true;
+		
+
+}
+
+void free_machineconfig(){
+
+		global_free(retro_global_machine);
+		global_free(retro_global_config);
+
+		retro_manager->set_machine(NULL);
+}
+
+extern void free_man();
+
+
+void retro_finish(){
+	printf("retro_finish begin\n");
+	retro_global_machine->retro_machineexit();
+	free_machineconfig();
+	free_man();
+	printf("retro_finish end\n");
+}
+
+void retro_main_loop()
+{
+	retro_global_machine->retro_loop();
+
+	if(ENDEXEC==1){
+
+		ENDEXEC=0;
+
+		retro_manager->mmchange();
+
+		if(firstrun == true){
+			//restart a new driver from UI
+			retro_execute();
+			return;
+		}
+		else{ 
+			RLOOP=0;
+			
+			global_free(retro_global_machine);
+			global_free(retro_global_config);
+			retro_manager->set_machine(NULL);
+
+			printf("exit scope, restart empty driver\n");
+			//FIXME restart empty driver else it crash
+			// we quit using retroarch (ESC or Menu)
+			retro_execute();
+
+		}
+
+	}
+
+}
+
+
+#endif
 
 /***************************************************************************
     MISCELLANEOUS

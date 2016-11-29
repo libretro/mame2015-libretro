@@ -104,7 +104,9 @@
 #else
 #define USE_DELEGATE_TYPE DELEGATE_TYPE_COMPATIBLE
 #endif
-
+#if defined(__EMSCRIPTEN__)
+#define USE_DELEGATE_TYPE DELEGATE_TYPE_COMPATIBLE
+#endif
 
 
 //**************************************************************************

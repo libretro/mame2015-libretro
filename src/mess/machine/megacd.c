@@ -1060,7 +1060,7 @@ inline UINT8 sega_segacd_device::get_stampmap_16x16_1x1_tile_info_pixel(int xpos
 	int tile_region, tileno;
 	SCD_GET_TILE_INFO_16x16_1x1(tile_region,tileno,(int)tile_index);
 
-	tileno %= m_gfx[tile_region]->elements();
+	tileno %= m_gfx[tile_region]->m_total_elements;
 
 	if (tileno==0) return 0x00;
 
@@ -1098,7 +1098,7 @@ inline UINT8 sega_segacd_device::get_stampmap_32x32_1x1_tile_info_pixel(int xpos
 	int tile_region, tileno;
 	SCD_GET_TILE_INFO_32x32_1x1(tile_region,tileno,(int)tile_index);
 
-	tileno %= m_gfx[tile_region]->elements();
+	tileno %= m_gfx[tile_region]->m_total_elements;
 
 	if (tileno==0) return 0x00; // does this apply in this mode?
 
@@ -1136,7 +1136,7 @@ inline UINT8 sega_segacd_device::get_stampmap_16x16_16x16_tile_info_pixel(int xp
 	int tile_region, tileno;
 	SCD_GET_TILE_INFO_16x16_16x16(tile_region,tileno,(int)tile_index);
 
-	tileno %= m_gfx[tile_region]->elements();
+	tileno %= m_gfx[tile_region]->m_total_elements;
 
 	if (tileno==0) return 0x00; // does this apply in this mode
 
@@ -1174,7 +1174,7 @@ inline UINT8 sega_segacd_device::get_stampmap_32x32_16x16_tile_info_pixel(int xp
 	int tile_region, tileno;
 	SCD_GET_TILE_INFO_32x32_16x16(tile_region,tileno,(int)tile_index);
 
-	tileno %= m_gfx[tile_region]->elements();
+	tileno %= m_gfx[tile_region]->m_total_elements;
 
 	if (tileno==0) return 0x00;
 

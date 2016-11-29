@@ -16,10 +16,6 @@
 
 /* forward decls / externs / prototypes */
 
-
-static cothread_t mainThread;
-static cothread_t emuThread;
-
 int retro_pause       = 0;
 
 int fb_width          = 320;
@@ -451,23 +447,6 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 
 }
 
-static void retro_wrap_emulator(void)
-{
-   mmain(1,RPATH);
-
-   retro_pause = -1;
-
-   /* Were done here. */
-   co_switch(mainThread);
-
-   /* Dead emulator, but libco says not to return. */
-   while(true)
-   {
-      if (log_cb)
-         log_cb(RETRO_LOG_ERROR, "Running a dead emulator.\n");
-      co_switch(mainThread);
-   }
-}
 
 void retro_init (void)
 {
@@ -519,8 +498,12 @@ void retro_init (void)
 
 }
 
+extern void retro_finish();
+
 void retro_deinit(void)
 {
+   printf("RETRO DEINIT\n");
+   retro_finish();
 }
 
 void retro_reset (void)
@@ -528,12 +511,23 @@ void retro_reset (void)
    mame_reset = 1;
 }
 
+int RLOOP=1;
+extern void retro_main_loop();
+
 void retro_run (void)
 {
    bool updated = false;
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
       check_variables();
+
+   static int mfirst=1;
+   if(mfirst==1){
+	mfirst++;
+	mmain(1,RPATH);
+	printf("MAIN FIRST\n");
+	return;
+   }
 
    if (NEWGAME_FROM_OSD == 1)
    {
@@ -550,7 +544,11 @@ void retro_run (void)
       NEWGAME_FROM_OSD=0;
    }
 
+   if(retro_pause==0)retro_main_loop();
+
    input_poll_cb();
+
+   RLOOP=1;
 
    process_mouse_state();
    process_keyboard_state();
@@ -565,7 +563,7 @@ void retro_run (void)
       video_cb(NULL, fb_width, fb_height, fb_pitch << LOG_PIXEL_BYTES);
 #endif
 
-   co_switch(emuThread);
+   //co_switch(emuThread);
 }
 
 bool retro_load_game(const struct retro_game_info *info)
@@ -582,12 +580,6 @@ bool retro_load_game(const struct retro_game_info *info)
       if (log_cb)
          log_cb(RETRO_LOG_ERROR, "pixel format not supported");
       return false;
-   }
-
-   if(!emuThread && !mainThread)
-   {
-      mainThread = co_active();
-      emuThread  = co_create(65536 * sizeof(void*), retro_wrap_emulator);
    }
 
    check_variables();
@@ -619,8 +611,6 @@ bool retro_load_game(const struct retro_game_info *info)
    extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
    strcpy(RPATH,info->path);
 
-   co_switch(emuThread);
-
    return true;
 }
 
@@ -629,14 +619,8 @@ void retro_unload_game(void)
    if (retro_pause == 0)
    {
       retro_pause = -1;
-      co_switch(emuThread);
    }
 
-   if (emuThread)
-   {
-      co_delete(emuThread);
-      emuThread = 0;
-   }
 }
 
 /* Stubs */
@@ -654,7 +638,7 @@ void retro_set_controller_port_device(unsigned in_port, unsigned device) {}
 
 void retro_switch_to_main_thread(void)
 {
-	co_switch(mainThread);
+
 }
 
 void *retro_get_fb_ptr(void)

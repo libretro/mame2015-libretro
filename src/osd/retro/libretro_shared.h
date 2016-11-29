@@ -1,8 +1,6 @@
 #ifndef _LIBRETRO_SHARED_H
 #define _LIBRETRO_SHARED_H
 
-#include <libco.h>
-
 #ifndef MAX_BUTTONS
 #define MAX_BUTTONS 16
 #endif
