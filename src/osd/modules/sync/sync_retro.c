@@ -365,10 +365,16 @@ int osd_event_wait(osd_event *event, osd_ticks_t timeout)
       {
          struct timespec   ts;
          struct timeval    tp;
-         UINT64 msec = timeout * 1000 / osd_ticks_per_second();
+         UINT64 msec ;//= timeout * 1000 / osd_ticks_per_second();
          UINT64 nsec;
 
          gettimeofday(&tp, NULL);
+	      
+	 if(timeout!=OSD_EVENT_WAIT_INFINITE)
+
+	 	msec = timeout * 1000 / osd_ticks_per_second();
+	 else 
+		msec = (OSD_EVENT_WAIT_INFINITE - tp.tv_usec * (UINT64) 1000)/osd_ticks_per_second();
 
          ts.tv_sec  = tp.tv_sec;
          nsec = (UINT64) tp.tv_usec * (UINT64) 1000 + (msec * (UINT64) 1000000);
