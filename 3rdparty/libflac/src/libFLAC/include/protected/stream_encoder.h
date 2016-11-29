@@ -32,6 +32,8 @@
 #ifndef FLAC__PROTECTED__STREAM_ENCODER_H
 #define FLAC__PROTECTED__STREAM_ENCODER_H
 
+#include <stdint.h>
+
 #include "FLAC/stream_encoder.h"
 #if FLAC__HAS_OGG
 #include "private/ogg_encoder_aspect.h"
@@ -98,10 +100,10 @@ typedef struct FLAC__StreamEncoderProtected {
 	unsigned min_residual_partition_order;
 	unsigned max_residual_partition_order;
 	unsigned rice_parameter_search_dist;
-	FLAC__uint64 total_samples_estimate;
+	uint64_t total_samples_estimate;
 	FLAC__StreamMetadata **metadata;
 	unsigned num_metadata_blocks;
-	FLAC__uint64 streaminfo_offset, seektable_offset, audio_offset;
+	uint64_t streaminfo_offset, seektable_offset, audio_offset;
 #if FLAC__HAS_OGG
 	FLAC__OggEncoderAspect ogg_encoder_aspect;
 #endif
