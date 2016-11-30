@@ -144,32 +144,6 @@ ifeq ($(platform), unix)
 		BIGENDIAN=1
 	endif
 
-# Android
-else ifeq ($(platform), android)
-	armplatform := 1
-	TARGETLIB := $(TARGET_NAME)_libretro.so
-	TARGETOS=linux
-	fpic := -fPIC
-	SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
-	CC = @arm-linux-androideabi-g++
-	AR = @arm-linux-androideabi-ar
-	LD = @arm-linux-androideabi-g++
-
-	FORCE_DRC_C_BACKEND = 1
-	CCOMFLAGS += -fPIC -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
-	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DANDROID -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
-	ifeq ($(VRENDER),opengl)
-		PLATCFLAGS += -DHAVE_OPENGL
-		LIBS += -lGLESv2
-		GLES = 1
-	endif
-	LDFLAGS += -Wl,--fix-cortex-a8 -llog $(fpic) $(SHARED)
-	REALCC   = arm-linux-androideabi-gcc
-	NATIVECC = g++
-	NATIVECFLAGS = -std=gnu99
-	CCOMFLAGS += $(PLATCFLAGS)
-	LIBS += -lstdc++
-	#-lpthread
 # OS X
 else ifeq ($(platform), osx)
 	TARGETLIB := $(TARGET_NAME)_libretro.dylib
@@ -180,10 +154,11 @@ else ifeq ($(platform), osx)
 	PLATCFLAGS += $(fpic)
 	SHARED := -dynamiclib
 	CXX_AS = c++
-	CC = $(CXX_AS) -stdlib=$(LIBCXX)
+        CC = cc
 	LD = $(CXX_AS) -stdlib=$(LIBCXX)
 	REALCC   = $(CC)
 	NATIVECC = $(CXX_AS)
+	NATIVECFLAGS = -std=gnu99
 	LDFLAGS +=  $(fpic) $(SHARED)
 	AR = @ar
 	PYTHON ?= @python
@@ -226,6 +201,33 @@ else ifeq ($(platform), ios)
 	LDFLAGSEMULATOR += -stdlib=$(LIBCXX)
 	PLATCFLAGS += -DSDLMAME_NO64BITIO -DIOS -DSDLMAME_ARM -DHAVE_POSIX_MEMALIGN
 	CCOMFLAGS += $(PLATCFLAGS)
+
+# Android
+else ifeq ($(platform), android)
+	armplatform := 1
+	TARGETLIB := $(TARGET_NAME)_libretro.so
+	TARGETOS=linux
+	fpic := -fPIC
+	SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
+	CC = @arm-linux-androideabi-g++
+	AR = @arm-linux-androideabi-ar
+	LD = @arm-linux-androideabi-g++
+
+	FORCE_DRC_C_BACKEND = 1
+	CCOMFLAGS += -fPIC -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
+	PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DANDROID -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
+	ifeq ($(VRENDER),opengl)
+		PLATCFLAGS += -DHAVE_OPENGL
+		LIBS += -lGLESv2
+		GLES = 1
+	endif
+	LDFLAGS += -Wl,--fix-cortex-a8 -llog $(fpic) $(SHARED)
+	REALCC   = arm-linux-androideabi-gcc
+	NATIVECC = g++
+	NATIVECFLAGS = -std=gnu99
+	CCOMFLAGS += $(PLATCFLAGS)
+	LIBS += -lstdc++
+	#-lpthread
 
 # QNX
 else ifeq ($(platform), qnx)

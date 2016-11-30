@@ -401,10 +401,10 @@ FLAC__bool FLAC__MD5Accumulate(FLAC__MD5Context *ctx, const FLAC__int32 * const 
 		return false;
 
 	if(ctx->capacity < bytes_needed) {
-		FLAC__byte *tmp = realloc(ctx->internal_buf, bytes_needed);
+		FLAC__byte *tmp = (FLAC__byte*)realloc(ctx->internal_buf, bytes_needed);
 		if(0 == tmp) {
 			free(ctx->internal_buf);
-			if(0 == (ctx->internal_buf = safe_malloc_(bytes_needed)))
+			if(0 == (ctx->internal_buf = (FLAC__byte*)safe_malloc_(bytes_needed)))
 				return false;
 		}
 		else
