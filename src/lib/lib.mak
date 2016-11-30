@@ -389,8 +389,8 @@ ifneq ($(TARGETOS),emscripten)
 $(OBJ)/libflac.a: $(LIBFLACOBJS)
 endif
 
-$(LIBOBJ)/libflac/%.o: $(3RDPARTY)/libflac/src/libFLAC/%.c | $(OSPREBUILD)
-	$(REALCC) $(CDEFS) $(CONLYFLAGS) $(CCOMFLAGS) $(FLACOPTS) -I$(3RDPARTY)/libflac/include -I$(3RDPARTY)/libflac/src/libFLAC/include -c $< -o $@
+$(LIBOBJ)/libflac/%.o: $(3RDPARTY)/libflac/%.c | $(OSPREBUILD)
+	$(REALCC) $(CDEFS) $(CONLYFLAGS) $(CCOMFLAGS) $(FLACOPTS) -I$(3RDPARTY)/libflac/include -c $< -o $@
 
 
 
