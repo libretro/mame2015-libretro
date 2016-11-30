@@ -439,23 +439,6 @@ LIBPMOBJS = \
 	$(LIBOBJ)/portmidi/pm_common/pmutil.o \
 	$(LIBOBJ)/portmidi/porttime/porttime.o \
 
-ifeq ($(TARGETOS),linux)
-PMOPTS = -DPMALSA=1
-
-LIBPMOBJS += \
-	$(LIBOBJ)/portmidi/pm_linux/pmlinux.o \
-	$(LIBOBJ)/portmidi/pm_linux/pmlinuxalsa.o \
-	$(LIBOBJ)/portmidi/pm_linux/finddefault.o \
-	$(LIBOBJ)/portmidi/porttime/ptlinux.o
-endif
-
-ifeq ($(TARGETOS),win32)
-LIBPMOBJS += \
-	$(LIBOBJ)/portmidi/pm_win/pmwin.o \
-	$(LIBOBJ)/portmidi/pm_win/pmwinmm.o \
-	$(LIBOBJ)/portmidi/porttime/ptwinmm.o
-endif
-
 $(OBJ)/libportmidi.a: $(LIBPMOBJS)
 
 $(LIBOBJ)/portmidi/%.o: $(3RDPARTY)/portmidi/%.c | $(OSPREBUILD)
