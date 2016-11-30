@@ -43,8 +43,10 @@
 #include <intrin.h> /* for _BitScanReverse* */
 #endif
 
+#include <retro_inline.h>
+
 /* Will never be emitted for MSVC, GCC, Intel compilers */
-static inline unsigned int FLAC__clz_soft_uint32(unsigned int word)
+static INLINE unsigned int FLAC__clz_soft_uint32(unsigned int word)
 {
     static const unsigned char byte_to_unary_table[] = {
     8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,
@@ -71,7 +73,7 @@ static inline unsigned int FLAC__clz_soft_uint32(unsigned int word)
     byte_to_unary_table[(word)] + 24;
 }
 
-static inline unsigned int FLAC__clz_uint32(FLAC__uint32 v)
+static INLINE unsigned int FLAC__clz_uint32(FLAC__uint32 v)
 {
 /* Never used with input 0 */
 #if defined(__INTEL_COMPILER)
@@ -90,7 +92,7 @@ static inline unsigned int FLAC__clz_uint32(FLAC__uint32 v)
 }
 
 /* This one works with input 0 */
-static inline unsigned int FLAC__clz2_uint32(FLAC__uint32 v)
+static INLINE unsigned int FLAC__clz2_uint32(FLAC__uint32 v)
 {
     if (!v)
         return 32;
@@ -120,7 +122,7 @@ static inline unsigned int FLAC__clz2_uint32(FLAC__uint32 v)
  * ilog2(18) = 4
  */
 
-static inline unsigned FLAC__bitmath_ilog2(FLAC__uint32 v)
+static INLINE unsigned FLAC__bitmath_ilog2(FLAC__uint32 v)
 {
 #if defined(__INTEL_COMPILER)
     return _bit_scan_reverse(v);
@@ -136,7 +138,7 @@ static inline unsigned FLAC__bitmath_ilog2(FLAC__uint32 v)
 
 #ifdef FLAC__INTEGER_ONLY_LIBRARY /* Unused otherwise */
 
-static inline unsigned FLAC__bitmath_ilog2_wide(FLAC__uint64 v)
+static INLINE unsigned FLAC__bitmath_ilog2_wide(FLAC__uint64 v)
 {
     if (v == 0)
 		return 0;

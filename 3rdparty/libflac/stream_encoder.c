@@ -63,6 +63,7 @@
 #include "share/alloc.h"
 #include "share/private.h"
 
+#include <retro_inline.h>
 #include <retro_miscellaneous.h>
 
 
@@ -3984,7 +3985,7 @@ void precompute_partition_info_escapes_(
 }
 
 #ifdef EXACT_RICE_BITS_CALCULATION
-static inline unsigned count_rice_bits_in_partition_(
+static INLINE unsigned count_rice_bits_in_partition_(
 	const unsigned rice_parameter,
 	const unsigned partition_samples,
 	const FLAC__int32 *residual
@@ -3999,7 +4000,7 @@ static inline unsigned count_rice_bits_in_partition_(
 	return partition_bits;
 }
 #else
-static inline unsigned count_rice_bits_in_partition_(
+static INLINE unsigned count_rice_bits_in_partition_(
 	const unsigned rice_parameter,
 	const unsigned partition_samples,
 	const FLAC__uint64 abs_residual_partition_sum

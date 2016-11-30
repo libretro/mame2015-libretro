@@ -300,7 +300,7 @@ INLINE UINT8 count_leading_ones(UINT32 val)
 -------------------------------------------------*/
 
 #ifndef compare_exchange32
-INLINE INT32 compare_exchange32(INT32 volatile *ptr, INT32 compare, INT32 exchange)
+static INLINE INT32 compare_exchange32(INT32 volatile *ptr, INT32 compare, INT32 exchange)
 {
 	INT32 oldval = *ptr;
 	if (*ptr == compare)
@@ -324,7 +324,7 @@ INLINE INT32 compare_exchange32(INT32 volatile *ptr, INT32 compare, INT32 exchan
 
 #ifdef PTR64
 #ifndef compare_exchange64
-INLINE INT64 compare_exchange64(INT64 volatile *ptr, INT64 compare, INT64 exchange)
+static INLINE INT64 compare_exchange64(INT64 volatile *ptr, INT64 compare, INT64 exchange)
 {
 	INT64 oldval = *ptr;
 	if (*ptr == compare)
@@ -343,7 +343,7 @@ INLINE INT64 compare_exchange64(INT64 volatile *ptr, INT64 compare, INT64 exchan
 -------------------------------------------------*/
 
 #ifndef compare_exchange_ptr
-INLINE void *compare_exchange_ptr(void * volatile *ptr, void *compare, void *exchange)
+static INLINE void *compare_exchange_ptr(volatile void *ptr, void *compare, void *exchange)
 {
 #ifdef PTR64
 	INT64 result;
@@ -369,7 +369,7 @@ INLINE void *compare_exchange_ptr(void * volatile *ptr, void *compare, void *exc
 -------------------------------------------------*/
 
 #ifndef atomic_exchange32
-INLINE INT32 atomic_exchange32(INT32 volatile *ptr, INT32 exchange)
+static INLINE INT32 atomic_exchange32(INT32 volatile *ptr, INT32 exchange)
 {
 	INT32 oldval = *ptr;
 	*ptr = exchange;
@@ -390,7 +390,7 @@ INLINE INT32 atomic_exchange32(INT32 volatile *ptr, INT32 exchange)
 -------------------------------------------------*/
 
 #ifndef atomic_add32
-INLINE INT32 atomic_add32(INT32 volatile *ptr, INT32 delta)
+static INLINE INT32 atomic_add32(INT32 volatile *ptr, INT32 delta)
 {
 	return (*ptr += delta);
 }
@@ -409,7 +409,7 @@ INLINE INT32 atomic_add32(INT32 volatile *ptr, INT32 delta)
 -------------------------------------------------*/
 
 #ifndef atomic_increment32
-INLINE INT32 atomic_increment32(INT32 volatile *ptr)
+static INLINE INT32 atomic_increment32(INT32 volatile *ptr)
 {
 	return atomic_add32(ptr, 1);
 }
@@ -428,7 +428,7 @@ INLINE INT32 atomic_increment32(INT32 volatile *ptr)
 -------------------------------------------------*/
 
 #ifndef atomic_decrement32
-INLINE INT32 atomic_decrement32(INT32 volatile *ptr)
+static INLINE INT32 atomic_decrement32(INT32 volatile *ptr)
 {
 	return atomic_add32(ptr, -1);
 }
@@ -448,7 +448,7 @@ INLINE INT32 atomic_decrement32(INT32 volatile *ptr)
 -------------------------------------------------*/
 
 #ifndef get_profile_ticks
-INLINE INT64 get_profile_ticks(void)
+static INLINE INT64 get_profile_ticks(void)
 {
 	return osd_ticks();
 }

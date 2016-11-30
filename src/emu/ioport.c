@@ -4071,7 +4071,7 @@ analog_field::analog_field(ioport_field &field)
 //  the appropriate min/max for the analog control
 //-------------------------------------------------
 
-static INLINE INT32 analog_field::apply_min_max(INT32 value) const
+inline INT32 analog_field::apply_min_max(INT32 value) const
 {
 	// take the analog minimum and maximum values and apply the inverse of the
 	// sensitivity so that we can clamp against them before applying sensitivity
@@ -4107,7 +4107,7 @@ static INLINE INT32 analog_field::apply_min_max(INT32 value) const
 //  adjustment for a current value
 //-------------------------------------------------
 
-static INLINE INT32 analog_field::apply_sensitivity(INT32 value) const
+inline INT32 analog_field::apply_sensitivity(INT32 value) const
 {
 	return INT32((INT64(value) * m_sensitivity) / 100.0 + 0.5);
 }
@@ -4118,7 +4118,7 @@ static INLINE INT32 analog_field::apply_sensitivity(INT32 value) const
 //  sensitivity adjustment for a current value
 //-------------------------------------------------
 
-static INLINE INT32 analog_field::apply_inverse_sensitivity(INT32 value) const
+inline INT32 analog_field::apply_inverse_sensitivity(INT32 value) const
 {
 	return INT32((INT64(value) * 100) / m_sensitivity);
 }
