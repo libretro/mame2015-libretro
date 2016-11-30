@@ -149,7 +149,7 @@ struct char_info
 //  from a numerator and a denominator
 //-------------------------------------------------
 
-inline INT64 compute_scale(INT32 num, INT32 den)
+static INLINE INT64 compute_scale(INT32 num, INT32 den)
 {
 	return (INT64(num) << 24) / den;
 }
@@ -160,7 +160,7 @@ inline INT64 compute_scale(INT32 num, INT32 den)
 //  an 8.24 scale value
 //-------------------------------------------------
 
-inline INT64 recip_scale(INT64 scale)
+static INLINE INT64 recip_scale(INT64 scale)
 {
 	return (INT64(1) << 48) / scale;
 }
@@ -171,7 +171,7 @@ inline INT64 recip_scale(INT64 scale)
 //  a 32-bit value
 //-------------------------------------------------
 
-inline INT32 apply_scale(INT32 value, INT64 scale)
+static INLINE INT32 apply_scale(INT32 value, INT64 scale)
 {
 	return (INT64(value) * scale) >> 24;
 }
@@ -4071,7 +4071,7 @@ analog_field::analog_field(ioport_field &field)
 //  the appropriate min/max for the analog control
 //-------------------------------------------------
 
-inline INT32 analog_field::apply_min_max(INT32 value) const
+static INLINE INT32 analog_field::apply_min_max(INT32 value) const
 {
 	// take the analog minimum and maximum values and apply the inverse of the
 	// sensitivity so that we can clamp against them before applying sensitivity
@@ -4107,7 +4107,7 @@ inline INT32 analog_field::apply_min_max(INT32 value) const
 //  adjustment for a current value
 //-------------------------------------------------
 
-inline INT32 analog_field::apply_sensitivity(INT32 value) const
+static INLINE INT32 analog_field::apply_sensitivity(INT32 value) const
 {
 	return INT32((INT64(value) * m_sensitivity) / 100.0 + 0.5);
 }
@@ -4118,7 +4118,7 @@ inline INT32 analog_field::apply_sensitivity(INT32 value) const
 //  sensitivity adjustment for a current value
 //-------------------------------------------------
 
-inline INT32 analog_field::apply_inverse_sensitivity(INT32 value) const
+static INLINE INT32 analog_field::apply_inverse_sensitivity(INT32 value) const
 {
 	return INT32((INT64(value) * 100) / m_sensitivity);
 }

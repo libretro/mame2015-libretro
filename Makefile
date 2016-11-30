@@ -542,11 +542,10 @@ SRC = src
 # build the targets in different object dirs, so they can co-exist
 OBJ = obj
 #/$(PREFIX)$(SUFFIXDEBUG)$(SUFFIXPROFILE)
+
 #-------------------------------------------------
 # compile-time definitions
 #-------------------------------------------------
-# map the INLINE to something digestible by GCC
-DEFS += -DINLINE="static inline"
 
 # define PTR64 if we are a 64-bit target
 ifeq ($(PTR64),1)

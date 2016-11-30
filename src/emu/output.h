@@ -18,6 +18,7 @@
 #ifndef __OUTPUT_H__
 #define __OUTPUT_H__
 
+#include <retro_inline.h>
 
 /***************************************************************************
     TYPE DEFINITIONS
@@ -64,33 +65,33 @@ const char *output_id_to_name(UINT32 id);
     INLINES
 ***************************************************************************/
 
-INLINE void output_set_led_value(int index, int value)
+static INLINE void output_set_led_value(int index, int value)
 {
 	output_set_indexed_value("led", index, value ? 1 : 0);
 }
 
-INLINE void output_set_lamp_value(int index, int value)
+static INLINE void output_set_lamp_value(int index, int value)
 {
 	output_set_indexed_value("lamp", index, value);
 }
 
-INLINE void output_set_digit_value(int index, int value)
+static INLINE void output_set_digit_value(int index, int value)
 {
 	output_set_indexed_value("digit", index, value);
 }
 
 
-INLINE INT32 output_get_led_value(int index)
+static INLINE INT32 output_get_led_value(int index)
 {
 	return output_get_indexed_value("led", index);
 }
 
-INLINE INT32 output_get_lamp_value(int index)
+static INLINE INT32 output_get_lamp_value(int index)
 {
 	return output_get_indexed_value("lamp", index);
 }
 
-INLINE INT32 output_get_digit_value(int index)
+static INLINE INT32 output_get_digit_value(int index)
 {
 	return output_get_indexed_value("digit", index);
 }
