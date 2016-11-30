@@ -449,16 +449,6 @@ LIBPMOBJS += \
 	$(LIBOBJ)/portmidi/porttime/ptlinux.o
 endif
 
-ifeq ($(TARGETOS),macosx)
-LIBPMOBJS += \
-	$(LIBOBJ)/portmidi/pm_mac/pmmac.o \
-	$(LIBOBJ)/portmidi/pm_mac/pmmacosxcm.o \
-	$(LIBOBJ)/portmidi/pm_mac/finddefault.o \
-	$(LIBOBJ)/portmidi/pm_mac/readbinaryplist.o \
-	$(LIBOBJ)/portmidi/pm_mac/osxsupport.o \
-	$(LIBOBJ)/portmidi/porttime/ptmacosx_mach.o
-endif
-
 ifeq ($(TARGETOS),win32)
 LIBPMOBJS += \
 	$(LIBOBJ)/portmidi/pm_win/pmwin.o \
