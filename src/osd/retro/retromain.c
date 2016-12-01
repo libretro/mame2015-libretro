@@ -1338,6 +1338,22 @@ static void Input_Binding(running_machine &machine)
       Buttons_mapping[4]=RETROPAD_L;
       Buttons_mapping[5]=RETROPAD_R;
    }
+   else if (
+              (core_stricmp(machine.system().name, "chasehq") == 0) ||
+              (core_stricmp(machine.system().parent, "chasehq") == 0) ||
+              (core_stricmp(machine.system().name, "superchs") == 0) ||
+              (core_stricmp(machine.system().parent, "superchs") == 0)
+           )
+   {
+      /* Chase H.Q. and Super Chase - Criminal Termination */
+
+      Buttons_mapping[0]=RETROPAD_A;
+      Buttons_mapping[1]=RETROPAD_B;
+      Buttons_mapping[2]=RETROPAD_X;
+      Buttons_mapping[3]=RETROPAD_R;
+      Buttons_mapping[4]=RETROPAD_L;
+      Buttons_mapping[5]=RETROPAD_Y;
+   }
 
 }
 
