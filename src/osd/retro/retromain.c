@@ -1199,7 +1199,7 @@ static void Input_Binding(running_machine &machine)
               (core_stricmp(machine.system().parent, "dynwar") == 0)
            )
    {
-	  /* Capcom CPS-1: Dynasty Wars */
+      /* Capcom CPS-1: Dynasty Wars */
 
       Buttons_mapping[0]=RETROPAD_B;
       Buttons_mapping[1]=RETROPAD_A;
@@ -1213,7 +1213,7 @@ static void Input_Binding(running_machine &machine)
               (core_stricmp(machine.system().parent, "ddsom") == 0)
            )
    {
-	  /* Capcom CPS-2: Dungeons & Dragons: Shadow over Mystara (same layout of ddtod) */
+      /* Capcom CPS-2: Dungeons & Dragons: Shadow over Mystara (same layout of ddtod) */
 
       Buttons_mapping[0]=RETROPAD_A;
       Buttons_mapping[1]=RETROPAD_B;
