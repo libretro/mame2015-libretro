@@ -1622,14 +1622,7 @@ UINT32 ui_manager::handler_ingame(running_machine &machine, render_container *co
 		popmessage("Autofire %s", autofire_toggle ? "Disabled" : "Enabled");
 	}
 
-	// check for fast forward
-	if (machine.ioport().type_pressed(IPT_UI_FAST_FORWARD))
-	{
-		machine.video().set_fastforward(true);
-		machine.ui().show_fps_temp(0.5);
-	}
-	else
-		machine.video().set_fastforward(false);
+   machine.video().set_fastforward(false);
 
 	return 0;
 }
