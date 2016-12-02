@@ -219,10 +219,6 @@ astring &video_manager::speed_text(astring &string)
 	if (paused)
 		string.cat("paused");
 
-	// if we're fast forwarding, just display Fast-forward
-	else if (m_fastforward)
-		string.cat("fast ");
-
 	// if we're auto frameskipping, display that plus the level
 	else if (effective_autoframeskip())
 		string.catprintf("auto%2d/%d", effective_frameskip(), MAX_FRAMESKIP);
@@ -294,7 +290,7 @@ void video_manager::postload()
 inline int video_manager::effective_autoframeskip() const
 {
 	// if we're fast forwarding or paused, autoframeskip is disabled
-	if (m_fastforward || machine().paused())
+	if (machine().paused())
 		return false;
 
 	// otherwise, it's up to the user
@@ -310,11 +306,6 @@ inline int video_manager::effective_autoframeskip() const
 
 inline int video_manager::effective_frameskip() const
 {
-	// if we're fast forwarding, use the maximum frameskip
-	if (m_fastforward)
-		return FRAMESKIP_LEVELS - 1;
-
-	// otherwise, it's up to the user
 	return m_frameskip_level;
 }
 
@@ -330,10 +321,6 @@ inline bool video_manager::effective_throttle() const
 	// if we're paused, or if the UI is active, we always throttle
 	if (machine().paused() || machine().ui().is_menu_active())
 		return true;
-
-	// if we're fast forwarding, we don't throttle
-	if (m_fastforward)
-		return false;
 
 	// otherwise, it's up to the user
 	return throttled();
