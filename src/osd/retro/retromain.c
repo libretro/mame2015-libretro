@@ -810,8 +810,8 @@ input_item_id PAD_DIR[4][4]=
    {ITEM_ID_8_PAD ,ITEM_ID_2_PAD   ,ITEM_ID_4_PAD   ,ITEM_ID_6_PAD }
 };
 
-//    Default : A ->B1 | B ->B2 | X ->B3 | Y ->B4 | L ->B5 | R ->B6
-int   Buttons_mapping[6]={RETROPAD_A,RETROPAD_B,RETROPAD_X,RETROPAD_Y,RETROPAD_L,RETROPAD_R};
+//    Default : A ->B1 | B ->B2 | X ->B3 | Y ->B4 | L ->B5 | R ->B6 | keyboard c ->B7 | keyboard v -> B8
+int   Buttons_mapping[8]={RETROPAD_A,RETROPAD_B,RETROPAD_X,RETROPAD_Y,RETROPAD_L,RETROPAD_R,RETROK_c,RETROK_v};
 
 static void Input_Binding(running_machine &machine);
 
@@ -989,6 +989,16 @@ static void initInput(running_machine &machine)
             &joystate[i].button[Buttons_mapping[4]],(input_item_id)(ITEM_ID_BUTTON1+4),generic_button_get_state );
       input_device_item_add_joy (i,Buttons_Name[Buttons_mapping[5]],\
             &joystate[i].button[Buttons_mapping[5]],(input_item_id)(ITEM_ID_BUTTON1+5),generic_button_get_state );
+      if (Buttons_mapping[6]!=RETROK_c)
+      {
+         input_device_item_add_joy (i,Buttons_Name[Buttons_mapping[6]],\
+               &joystate[i].button[Buttons_mapping[6]],(input_item_id)(ITEM_ID_BUTTON1+6),generic_button_get_state );
+      }
+      if (Buttons_mapping[7]!=RETROK_v)
+      {
+         input_device_item_add_joy (i,Buttons_Name[Buttons_mapping[7]],\
+               &joystate[i].button[Buttons_mapping[7]],(input_item_id)(ITEM_ID_BUTTON1+7),generic_button_get_state );
+      }
 
       sprintf(defname, "Pad%d", i);
       Pad_device[i] = machine.input().device_class(DEVICE_CLASS_KEYBOARD).add_device(defname);
@@ -1369,6 +1379,22 @@ static void Input_Binding(running_machine &machine)
       Buttons_mapping[3]=RETROPAD_Y;
       Buttons_mapping[4]=RETROPAD_L;
       Buttons_mapping[5]=RETROPAD_X;
+   }
+   else if (
+              (core_stricmp(machine.system().name, "vr") == 0) ||
+              (core_stricmp(machine.system().parent, "vr") == 0)
+           )
+   {
+      /* Virtua Racing */
+
+      Buttons_mapping[0]=RETROPAD_A;
+      Buttons_mapping[1]=RETROPAD_B;
+      Buttons_mapping[2]=RETROPAD_X;
+      Buttons_mapping[3]=RETROPAD_Y;
+      Buttons_mapping[4]=RETROPAD_PAD_DOWN;
+      Buttons_mapping[5]=RETROPAD_PAD_UP;
+      Buttons_mapping[6]=RETROPAD_L;
+      Buttons_mapping[7]=RETROPAD_R;
    }
 
 }
