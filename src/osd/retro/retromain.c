@@ -1195,6 +1195,20 @@ static void Input_Binding(running_machine &machine)
 
    }
    else if (
+              (core_stricmp(machine.system().name, "dynwar") == 0) ||
+              (core_stricmp(machine.system().parent, "dynwar") == 0)
+           )
+   {
+	  /* Capcom CPS-1: Dynasty Wars */
+
+      Buttons_mapping[0]=RETROPAD_B;
+      Buttons_mapping[1]=RETROPAD_A;
+      Buttons_mapping[2]=RETROPAD_X;
+      Buttons_mapping[3]=RETROPAD_Y;
+      Buttons_mapping[4]=RETROPAD_L;
+      Buttons_mapping[5]=RETROPAD_R;
+   }
+   else if (
               (core_stricmp(machine.system().parent, "aof") == 0) ||
               (core_stricmp(machine.system().parent, "aof2") == 0) ||
               (core_stricmp(machine.system().parent, "aof3") == 0) ||
