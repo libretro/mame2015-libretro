@@ -1354,6 +1354,20 @@ static void Input_Binding(running_machine &machine)
       Buttons_mapping[4]=RETROPAD_L;
       Buttons_mapping[5]=RETROPAD_Y;
    }
+   else if (
+              (core_stricmp(machine.system().name, "outrun") == 0) ||
+              (core_stricmp(machine.system().parent, "outrun") == 0)
+           )
+   {
+      /* Out Run */
+
+      Buttons_mapping[0]=RETROPAD_A;
+      Buttons_mapping[1]=RETROPAD_B;
+      Buttons_mapping[2]=RETROPAD_R;
+      Buttons_mapping[3]=RETROPAD_Y;
+      Buttons_mapping[4]=RETROPAD_L;
+      Buttons_mapping[5]=RETROPAD_X;
+   }
 
 }
 
