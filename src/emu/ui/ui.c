@@ -1591,21 +1591,6 @@ UINT32 ui_manager::handler_ingame(running_machine &machine, render_container *co
 		return machine.ui().set_handler(handler_load_save, LOADSAVE_LOAD);
 	}
 
-	// toggle pause
-	if (ui_input_pressed(machine, IPT_UI_PAUSE))
-	{
-      bool pressed_lshift = machine.input().code_value(KEYCODE_LSHIFT) != 0;
-      bool pressed_rshift = machine.input().code_value(KEYCODE_RSHIFT) != 0;
-		// with a shift key, it is single step
-		if (is_paused && (pressed_lshift || pressed_rshift))
-		{
-			machine.ui().set_single_step(true);
-			machine.resume();
-		}
-		else
-			machine.toggle_pause();
-	}
-
 	// handle a toggle cheats request
 	if (ui_input_pressed(machine, IPT_UI_TOGGLE_CHEAT))
 		machine.cheat().set_enable(!machine.cheat().enabled());
