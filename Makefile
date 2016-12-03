@@ -670,7 +670,7 @@ INCPATH += \
 # this variable
 #-------------------------------------------------
 
-OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(SUBTARGET)
+OBJDIRS = $(OBJ) $(OBJ)/$(TARGET)/$(SUBTARGET) $(OBJ)/$(TARGET)/$(TARGET)
 
 
 #-------------------------------------------------

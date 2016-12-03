@@ -56,6 +56,10 @@ SOUNDS += DAC
 SOUNDS += DISCRETE
 SOUNDS += AY8910
 SOUNDS += YM2151
+SOUNDS += YM2203
+SOUNDS += YM2608
+SOUNDS += YM2610
+SOUNDS += YM2610B
 SOUNDS += ASTROCADE
 SOUNDS += TMS5220
 SOUNDS += OKIM6295
@@ -89,12 +93,13 @@ MACHINES += EEPROMDEV
 MACHINES += E05A03
 MACHINES += E05A30
 MACHINES += STEPPERS
+MACHINES += UPD1990A
 #-------------------------------------------------
 # specify available bus cores
 #-------------------------------------------------
 BUSES += CENTRONICS
 BUSES += SCSI
-
+BUSES += NEOGEO
 #-------------------------------------------------
 # This is the list of files that are necessary
 # for building all of the drivers referenced
@@ -120,7 +125,13 @@ DRVLIBS = \
 	$(DRIVERS)/wrally.o $(MACHINE)/wrally.o $(VIDEO)/wrally.o \
 	$(DRIVERS)/looping.o \
 	$(DRIVERS)/supertnk.o \
-
+	$(DRIVERS)/neogeo.o $(VIDEO)/neogeo.o \
+	$(DRIVERS)/neogeo_noslot.o \
+	$(VIDEO)/neogeo_spr.o \
+	$(MACHINE)/neoboot.o \
+	$(MACHINE)/neocrypt.o \
+	$(MACHINE)/neoprot.o \
+	$(MACHINE)/ng_memcard.o \
 
 
 #-------------------------------------------------
