@@ -46,6 +46,7 @@ CPUS += UPD7810
 CPUS += M6805
 CPUS += I386
 CPUS += POWERPC
+CPUS += DSP16A
 #-------------------------------------------------
 # Specify all the sound cores necessary for the
 # drivers referenced in tiny.c.
@@ -70,6 +71,8 @@ SOUNDS += VOTRAX
 SOUNDS += BEEP
 SOUNDS += SPEAKER
 SOUNDS += CDDA
+SOUNDS += QSOUND
+SOUNDS += MSM5205
 #-------------------------------------------------
 # specify available video cores
 #-------------------------------------------------
@@ -94,6 +97,8 @@ MACHINES += E05A03
 MACHINES += E05A30
 MACHINES += STEPPERS
 MACHINES += UPD1990A
+MACHINES += TIMEKPR
+MACHINES += I8255
 #-------------------------------------------------
 # specify available bus cores
 #-------------------------------------------------
@@ -132,7 +137,11 @@ DRVLIBS = \
 	$(MACHINE)/neocrypt.o \
 	$(MACHINE)/neoprot.o \
 	$(MACHINE)/ng_memcard.o \
-
+	$(DRIVERS)/cps1.o $(VIDEO)/cps1.o \
+	$(DRIVERS)/cps2.o $(MACHINE)/cps2crpt.o \
+	$(DRIVERS)/fcrash.o \
+	$(DRIVERS)/kenseim.o \
+	$(MACHINE)/kabuki.o \
 
 #-------------------------------------------------
 # layout dependencies
