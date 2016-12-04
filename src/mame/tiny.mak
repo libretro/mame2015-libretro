@@ -46,6 +46,7 @@ CPUS += UPD7810
 CPUS += M6805
 CPUS += I386
 CPUS += POWERPC
+CPUS += DSP16A
 #-------------------------------------------------
 # Specify all the sound cores necessary for the
 # drivers referenced in tiny.c.
@@ -56,6 +57,10 @@ SOUNDS += DAC
 SOUNDS += DISCRETE
 SOUNDS += AY8910
 SOUNDS += YM2151
+SOUNDS += YM2203
+SOUNDS += YM2608
+SOUNDS += YM2610
+SOUNDS += YM2610B
 SOUNDS += ASTROCADE
 SOUNDS += TMS5220
 SOUNDS += OKIM6295
@@ -66,6 +71,8 @@ SOUNDS += VOTRAX
 SOUNDS += BEEP
 SOUNDS += SPEAKER
 SOUNDS += CDDA
+SOUNDS += QSOUND
+SOUNDS += MSM5205
 #-------------------------------------------------
 # specify available video cores
 #-------------------------------------------------
@@ -89,12 +96,15 @@ MACHINES += EEPROMDEV
 MACHINES += E05A03
 MACHINES += E05A30
 MACHINES += STEPPERS
+MACHINES += UPD1990A
+MACHINES += TIMEKPR
+MACHINES += I8255
 #-------------------------------------------------
 # specify available bus cores
 #-------------------------------------------------
 BUSES += CENTRONICS
 BUSES += SCSI
-
+BUSES += NEOGEO
 #-------------------------------------------------
 # This is the list of files that are necessary
 # for building all of the drivers referenced
@@ -120,8 +130,18 @@ DRVLIBS = \
 	$(DRIVERS)/wrally.o $(MACHINE)/wrally.o $(VIDEO)/wrally.o \
 	$(DRIVERS)/looping.o \
 	$(DRIVERS)/supertnk.o \
-
-
+	$(DRIVERS)/neogeo.o $(VIDEO)/neogeo.o \
+	$(DRIVERS)/neogeo_noslot.o \
+	$(VIDEO)/neogeo_spr.o \
+	$(MACHINE)/neoboot.o \
+	$(MACHINE)/neocrypt.o \
+	$(MACHINE)/neoprot.o \
+	$(MACHINE)/ng_memcard.o \
+	$(DRIVERS)/cps1.o $(VIDEO)/cps1.o \
+	$(DRIVERS)/cps2.o $(MACHINE)/cps2crpt.o \
+	$(DRIVERS)/fcrash.o \
+	$(DRIVERS)/kenseim.o \
+	$(MACHINE)/kabuki.o \
 
 #-------------------------------------------------
 # layout dependencies
