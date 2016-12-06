@@ -22,6 +22,8 @@ ifeq ($(platform),)
 	else ifneq ($(findstring win,$(UNAME)),)
 		platform = win
 	endif
+else ifneq (,$(findstring armv,$(platform)))
+	override platform += unix
 endif
 
 # system platform
@@ -110,7 +112,7 @@ BUILD_JPEGLIB = 1
 VRENDER ?= soft
 
 # Unix
-ifeq ($(platform), unix)
+ifneq (,$(findstring unix,$(platform)))
 	TARGETLIB := $(TARGET_NAME)_libretro.so
 	TARGETOS=linux
 	fpic := -fPIC
@@ -142,6 +144,13 @@ ifeq ($(platform), unix)
 	endif
 	ifneq (,$(findstring ppc,$(UNAME)))
 		BIGENDIAN=1
+	endif
+	ifneq (,$(findstring armv,$(UNAME)))
+		CCOMFLAGS += -mstructure-size-boundary=32
+		PLATCFLAGS += -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK -DARM
+		LDFLAGS += -Wl,--fix-cortex-a8 -Wl,--no-as-needed
+		NOASM = 1
+		FORCE_DRC_C_BACKEND = 1
 	endif
 
 # OS X
@@ -179,9 +188,9 @@ else ifeq ($(platform), osx)
 	endif
 	PLATCFLAGS += -DSDLMAME_NO64BITIO -DOSX
 	CCOMFLAGS += $(PLATCFLAGS)
+
 # iOS
 else ifeq ($(platform), ios)
-	armplatform := 1
 	FORCE_DRC_C_BACKEND = 1
 	TARGETLIB := $(TARGET_NAME)_libretro_ios.dylib
 	fpic := -fPIC
@@ -204,7 +213,6 @@ else ifeq ($(platform), ios)
 
 # Android
 else ifeq ($(platform), android)
-	armplatform := 1
 	TARGETLIB := $(TARGET_NAME)_libretro.so
 	TARGETOS=linux
 	fpic := -fPIC
@@ -231,7 +239,6 @@ else ifeq ($(platform), android)
 
 # QNX
 else ifeq ($(platform), qnx)
-	armplatform := 1
 	TARGETLIB := $(TARGET_NAME)_libretro_qnx.so
 	TARGETOS=linux
 	fpic := -fPIC
@@ -311,48 +318,6 @@ else ifeq ($(platform), wii)
 	BIGENDIAN=1
 	LIBS += -lstdc++ -lpthread
 
-# ARM
-else ifneq (,$(findstring armv,$(platform)))
-	armplatform := 1
-	TARGETLIB := $(TARGET_NAME)_libretro.so
-	TARGETOS=linux
-	fpic := -fPIC
-	SHARED := -shared -Wl,--version-script=src/osd/retro/link.T -Wl,--no-undefined
-	CCOMFLAGS += $(fpic) -mstructure-size-boundary=32 -falign-functions=16 -fsigned-char -finline -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
-	PLATCFLAGS += -march=armv7-a -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
-	LDFLAGS += -Wl,--fix-cortex-a8 -Wl,--no-as-needed $(fpic) $(SHARED)
-	REALCC   = gcc
-	NATIVECC = g++
-	NATIVECFLAGS = -std=gnu99
-	CC = g++
-	AR = @ar
-	LD = g++
-	CCOMFLAGS += $(PLATCFLAGS)
-
-	ifneq (,$(findstring cortexa8,$(platform)))
-		PLATCFLAGS += -marm -mcpu=cortex-a8
-	else ifneq (,$(findstring cortexa9,$(platform)))
-		PLATCFLAGS += -marm -mcpu=cortex-a9
-	endif
-	PLATCFLAGS += -marm
-	ifneq (,$(findstring neon,$(platform)))
-		PLATCFLAGS += -mfpu=neon
-		HAVE_NEON = 1
-	endif
-	ifneq (,$(findstring softfloat,$(platform)))
-		PLATCFLAGS += -mfloat-abi=softfp
-	else ifneq (,$(findstring hardfloat,$(platform)))
-		PLATCFLAGS += -mfloat-abi=hard
-	endif
-	ifeq ($(VRENDER),opengl)
-		PLATCFLAGS += -DHAVE_OPENGL
-		LIBS += -lGLESv2
-		GLES = 1
-	endif
-
-	PLATCFLAGS += -DARM
-	LIBS += -lstdc++ -lpthread -ldl
-
 # Windows cross compiler
 else ifeq ($(platform), wincross)
 	TARGETLIB := $(TARGET_NAME)_libretro.dll
@@ -372,6 +337,7 @@ else ifeq ($(platform), wincross)
 	ifneq (,$(findstring mingw64-w64,$(PATH)))
 		PTR64=1
 	endif
+
 # emscripten
 else ifeq ($(platform), emscripten)
    TARGETLIB := $(TARGET_NAME)_libretro_emscripten.bc
@@ -402,6 +368,7 @@ else ifeq ($(platform), emscripten)
    CXXFLAGS += -s USE_ZLIB=1 
    LDFLAGS += -s USE_ZLIB=1  $(EXCEPT_FLAGS) 
    LDFLAGSEMULATOR +=
+
 # Windows
 else
 	TARGETLIB := $(TARGET_NAME)_libretro.dll
