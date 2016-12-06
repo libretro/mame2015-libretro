@@ -117,7 +117,7 @@ ifneq (,$(findstring unix,$(platform)))
    fpic := -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T -Wl,--no-undefined
    CCOMFLAGS += $(fpic) -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
-   PLATCFLAGS +=  -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants  $(fpic)
+   PLATCFLAGS +=  -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants
    ifeq ($(VRENDER),opengl)
       PLATCFLAGS += -DHAVE_OPENGL
       LIBS += -lGL
