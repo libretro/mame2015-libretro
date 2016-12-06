@@ -131,7 +131,6 @@ ifneq (,$(findstring unix,$(platform)))
    CC = g++
    AR = @ar
    LD = g++
-   CCOMFLAGS += $(PLATCFLAGS)
    LIBS += -lstdc++ -lpthread -ldl
    ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
       PTR64 = 1
@@ -145,13 +144,14 @@ ifneq (,$(findstring unix,$(platform)))
    ifneq (,$(findstring ppc,$(UNAME)))
       BIGENDIAN=1
    endif
-   ifneq (,$(findstring armv,$(UNAME)))
+   ifneq (,$(findstring armv,$(UNAME) $(platform)))
       CCOMFLAGS += -mstructure-size-boundary=32
       PLATCFLAGS += -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK -DARM
       LDFLAGS += -Wl,--fix-cortex-a8 -Wl,--no-as-needed
       NOASM = 1
       FORCE_DRC_C_BACKEND = 1
    endif
+   CCOMFLAGS += $(PLATCFLAGS)
 
 # OS X
 else ifeq ($(platform), osx)
