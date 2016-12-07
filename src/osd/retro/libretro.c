@@ -636,11 +636,6 @@ void retro_cheat_reset(void) {}
 void retro_cheat_set(unsigned unused, bool unused1, const char* unused2) {}
 void retro_set_controller_port_device(unsigned in_port, unsigned device) {}
 
-void retro_switch_to_main_thread(void)
-{
-
-}
-
 void *retro_get_fb_ptr(void)
 {
    return videoBuffer;

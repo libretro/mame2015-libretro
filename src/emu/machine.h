@@ -197,10 +197,8 @@ public:
 	// configuration helpers
 	device_t &add_dynamic_device(device_t &owner, device_type type, const char *tag, UINT32 clock);
 
-#ifdef __LIBRETRO__
-void retro_machineexit();
-void retro_loop();
-#endif
+   void retro_machineexit();
+   void retro_loop();
 	// immediate operations
 	int run(bool firstrun);
 	void pause();

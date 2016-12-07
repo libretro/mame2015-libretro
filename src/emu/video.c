@@ -29,7 +29,6 @@
 //  GLOBAL VARIABLES
 //**************************************************************************
 
-void retro_switch_to_main_thread();
 extern render_target *our_target;
 extern int mame_reset;
 extern int retro_pause;
@@ -200,8 +199,6 @@ void video_manager::frame_update(bool debug)
 		if (machine().first_screen() != NULL && (machine().paused() || debug || debugger_within_instruction_hook(machine())))
 			machine().first_screen()->reset_partial_updates();
 	}
-
-   retro_switch_to_main_thread();
 }
 
 

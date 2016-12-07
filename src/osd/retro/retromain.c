@@ -2195,10 +2195,6 @@ void retro_osd_interface::init(running_machine &machine)
 
 	if (log_cb)
 		log_cb(RETRO_LOG_INFO, "OSD initialization complete\n");
-
-//   retro_switch_to_main_thread();
-
-
 }
 
 void retro_osd_interface::update(bool skip_redraw, UINT32 flags)
