@@ -519,17 +519,18 @@ extern void retro_main_loop();
 
 void retro_run (void)
 {
+   static int mfirst=1;
    bool updated = false;
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
       check_variables();
 
-   static int mfirst=1;
-   if(mfirst==1){
-	mfirst++;
-	mmain(1,RPATH);
-	printf("MAIN FIRST\n");
-	return;
+   if(mfirst==1)
+   {
+      mfirst++;
+      mmain(1,RPATH);
+      printf("MAIN FIRST\n");
+      return;
    }
 
    if (NEWGAME_FROM_OSD == 1)
@@ -565,8 +566,6 @@ void retro_run (void)
    else
       video_cb(NULL, fb_width, fb_height, fb_pitch << LOG_PIXEL_BYTES);
 #endif
-
-   //co_switch(emuThread);
 }
 
 bool retro_load_game(const struct retro_game_info *info)
@@ -620,10 +619,7 @@ bool retro_load_game(const struct retro_game_info *info)
 void retro_unload_game(void)
 {
    if (retro_pause == 0)
-   {
       retro_pause = -1;
-   }
-
 }
 
 /* Stubs */
