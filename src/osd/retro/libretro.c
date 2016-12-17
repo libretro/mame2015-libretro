@@ -416,7 +416,7 @@ void retro_get_system_info(struct retro_system_info *info)
 #define GIT_VERSION ""
 #endif
    info->library_version  = "0.159" GIT_VERSION;
-   info->valid_extensions = "zip|chd|7z";
+   info->valid_extensions = "chd|cmd|zip|7z";
    info->need_fullpath    = true;
    info->block_extract    = true;
 }

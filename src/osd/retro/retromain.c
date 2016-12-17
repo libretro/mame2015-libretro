@@ -2045,6 +2045,26 @@ static int execute_game_cmd(char* path)
 
    return 0;
 }
+
+static char CMDFILE[512];
+
+int loadcmdfile(char *argv)
+{
+    int res=0;
+
+    FILE *fp = fopen(argv,"r");
+
+    if( fp != NULL )
+    {
+	if ( fgets (CMDFILE , 512 , fp) != NULL )
+		res=1;	
+	fclose (fp);
+    }
+
+    return res;
+}
+
+
 /*
 #ifdef __cplusplus
 extern "C"
@@ -2054,7 +2074,7 @@ retro_osd_interface *retro_global_osd;
 
 int mmain(int argc, const char *argv)
 {
-   unsigned i;
+   unsigned i=0;
    //osd_options options;
    //cli_options MRoptions;
    int result = 0;
@@ -2063,6 +2083,22 @@ int mmain(int argc, const char *argv)
 
    strcpy(gameName,argv);
 
+   // handle cmd file 
+   if (strlen(gameName) >= strlen("cmd")){
+           if(!core_stricmp(&gameName[strlen(gameName)-strlen("cmd")], "cmd"))
+                       i=loadcmdfile(gameName);     
+   }
+
+   if(i==1)
+   {
+      parse_cmdline(CMDFILE);
+      if (log_cb)
+         log_cb(RETRO_LOG_INFO, "Starting game from command line:%s\n",CMDFILE);
+
+      result = execute_game_cmd(ARGUV[ARGUC-1]);      
+
+   }
+   else
    if(experimental_cmdline)
    {
       parse_cmdline(argv);
