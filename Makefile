@@ -50,6 +50,8 @@ endif
 EXE =
 LIBS =
 
+CORE_DIR := .
+
 ifeq ($(TARGET), mess)
    CORE_DEFINE := -DWANT_MESS
    TARGET_NAME = mess2014
@@ -612,6 +614,7 @@ endif
 
 # add core include paths
 INCPATH += \
+	-I$(CORE_DIR)/src/$(TARGET)/layout \
    -I$(SRC)/$(TARGET) \
    -I$(SRC)/$(TARGET)/layout \
    -I$(SRC)/emu \
