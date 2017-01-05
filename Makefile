@@ -9,6 +9,8 @@
 #
 ###########################################################################
 
+DEBUG=0
+
 UNAME=$(shell uname -a)
 
 ifeq ($(platform),)
@@ -460,17 +462,6 @@ endif
 # a native backend
 # FORCE_DRC_C_BACKEND = 1
 
-#-------------------------------------------------
-# specify build options; see each option below
-# for details
-#-------------------------------------------------
-
-
-# specify optimization level or leave commented to use the default
-# (default is OPTIMIZE = 3 normally, or OPTIMIZE = 0 with symbols)
-OPTIMIZE = 3
-
-
 ###########################################################################
 ##################   END USER-CONFIGURABLE OPTIONS   ######################
 ###########################################################################
@@ -559,10 +550,14 @@ COBJFLAGS += -x objective-c++
 CCOMFLAGS += -pipe
 
 # add the optimization flag
-CCOMFLAGS += -O$(OPTIMIZE)
+ifeq ($(DEBUG), 1)
+CCOMFLAGS += -O0 -g
+else
+CCOMFLAGS += -O3
+endif
 
 # if we are optimizing, include optimization options
-ifneq ($(OPTIMIZE),0)
+ifneq ($(DEBUG),1)
 CCOMFLAGS += -fno-strict-aliasing $(ARCHOPTS)
 endif
 
