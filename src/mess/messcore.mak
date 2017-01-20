@@ -14,7 +14,7 @@
 # add some additional include libraries for the mame files
 INCPATH += \
 	-I$(SRC)/mame \
-	-I$(OBJ)/mame/layout \
+	-I$(SRC)/mame/layout \
 	-I$(SRC)/mess/osd \
 	-I$(SRC)/mess/osd/$(OSD)
 
