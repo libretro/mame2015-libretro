@@ -225,25 +225,37 @@ else ifeq ($(platform), android)
    TARGETOS=linux
    fpic := -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
-   CC = @arm-linux-androideabi-g++
-   AR = @arm-linux-androideabi-ar
-   LD = @arm-linux-androideabi-g++
+   CC = $(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-g++
+   AR = @$(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-ar
+   LD = $(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-g++
 
    FORCE_DRC_C_BACKEND = 1
-   CCOMFLAGS += -fPIC -mstructure-size-boundary=32 -mthumb-interwork -falign-functions=16 -fsigned-char -finline  -fno-common -fno-builtin -fweb -frename-registers -falign-functions=16
-   PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -DANDROID -DALIGN_INTS -DALIGN_SHORTS -fstrict-aliasing -fno-merge-constants -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK
+
+   CCOMFLAGS += -fPIC -fpic -ffunction-sections -funwind-tables
+
+   PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -mthumb -DANDROID -DALIGN_INTS -DALIGN_SHORTS -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK 
+
+   PLATCFLAGS += -I$(ANDROID_NDK_ROOT)/platforms/android-19/arch-arm/usr/include -I$(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.9/include
+
+   PLATCFLAGS += -I$(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include
+
    ifeq ($(VRENDER),opengl)
       PLATCFLAGS += -DHAVE_OPENGL
       LIBS += -lGLESv2
       GLES = 1
    endif
-   LDFLAGS += -Wl,--fix-cortex-a8 -llog $(fpic) $(SHARED)
-   REALCC   = arm-linux-androideabi-gcc
+
+   LDFLAGS += $(fpic) $(SHARED) -L$(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/thumb
+
+   LDFLAGS += -L$(ANDROID_NDK_ROOT)/platforms/android-19/arch-arm/usr/lib  --sysroot=$(ANDROID_NDK_ROOT)/platforms/android-19/arch-arm -march=armv7-a -mthumb -shared
+
+
+   REALCC   = $(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-gcc
    NATIVECC = g++
    NATIVECFLAGS = -std=gnu99
    CCOMFLAGS += $(PLATCFLAGS)
-   LIBS += -lstdc++
-   #-lpthread
+
+   LIBS += -lc -ldl -lm -landroid -llog -lsupc++ $(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/thumb/libgnustl_static.a -lgcc
 
 # QNX
 else ifeq ($(platform), qnx)
@@ -749,9 +761,10 @@ MIDI_LIB =
 endif
 
 ifneq (,$(findstring clang,$(CC)))
+ifneq ($(platform), android)
 LIBS += -lstdc++ -lpthread
 endif
-
+endif
 #-------------------------------------------------
 # 'default' target needs to go here, before the
 # include files which define additional targets
