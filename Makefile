@@ -221,13 +221,13 @@ else ifeq ($(platform), ios)
 
 # Android
 else ifeq ($(platform), android)
-   TARGETLIB := $(TARGET_NAME)_libretro.so
+   TARGETLIB := $(TARGET_NAME)_libretro_android.so
    TARGETOS=linux
    fpic := -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
-   CC = $(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-g++
+   CC = @$(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-g++
    AR = @$(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-ar
-   LD = $(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-g++
+   LD = @$(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-g++
 
    FORCE_DRC_C_BACKEND = 1
 
