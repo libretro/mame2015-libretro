@@ -132,13 +132,13 @@ ifneq (,$(findstring unix,$(platform)))
       LIBS += -lGL
    endif
    LDFLAGS +=  $(fpic) $(SHARED)
-   REALCC   = gcc
-   NATIVECC = g++
-   NATIVECFLAGS = -std=gnu99
-   BASELIBS +=  -lpthread
-   CC = g++
-   AR = @ar
-   LD = g++
+   REALCC ?= gcc
+   NATIVECC ?= g++
+   NATIVECFLAGS ?= -std=gnu99
+   BASELIBS += -lpthread
+   CC ?= g++
+   AR ?= @ar
+   LD ?= g++
    LIBS += -lstdc++ -lpthread -ldl
    ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
       PTR64 = 1
