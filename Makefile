@@ -136,9 +136,11 @@ ifneq (,$(findstring unix,$(platform)))
    NATIVECC ?= g++
    NATIVECFLAGS ?= -std=gnu99
    BASELIBS += -lpthread
-   CC ?= g++
+   CXX ?= g++
+   #workaround for mame bug (c++ in .c files)
+   CC := $(CXX)
    AR ?= @ar
-   LD ?= g++
+   LD := $(CXX)
    LIBS += -lstdc++ -lpthread -ldl
    ifeq ($(firstword $(filter x86_64,$(UNAME))),x86_64)
       PTR64 = 1
