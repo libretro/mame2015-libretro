@@ -528,8 +528,9 @@ void retro_run (void)
    if(mfirst==1)
    {
       mfirst++;
-      mmain(1,RPATH);
-      printf("MAIN FIRST\n");
+      int res=mmain(1,RPATH);
+      if(res!=1)exit(0);
+      if (log_cb)log_cb(RETRO_LOG_INFO,"MAIN FIRST\n");
       retro_load_ok=true;
       return;
    }

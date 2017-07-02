@@ -106,7 +106,9 @@ machine_manager *retro_manager;
 int cli_frontend::execute(int argc, char **argv)
 {
    m_result = MAMERR_NONE;
-
+// wrap the core execution in a try/catch to field all fatal errors
+try
+{
    // first parse options to be able to get software from it
    astring option_errors;
    m_options.parse_command_line(argc, argv, option_errors);
@@ -230,6 +232,51 @@ int cli_frontend::execute(int argc, char **argv)
 #endif
 
    }
+}
+// handle exceptions of various types
+	catch (emu_fatalerror &fatal)
+	{
+		astring string(fatal.string());
+		osd_printf_error("%s\n", string.trimspace().cstr());
+		m_result = (fatal.exitcode() != 0) ? fatal.exitcode() : MAMERR_FATALERROR;
+
+		// if a game was specified, wasn't a wildcard, and our error indicates this was the
+		// reason for failure, offer some suggestions
+		if (m_result == MAMERR_NO_SUCH_GAME && *(m_options.system_name()) != 0 && strchr(m_options.system_name(), '*') == NULL && m_options.system() == NULL)
+		{
+			// get the top 16 approximate matches
+			driver_enumerator drivlist(m_options);
+			int matches[16];
+			drivlist.find_approximate_matches(m_options.system_name(), ARRAY_LENGTH(matches), matches);
+
+			// print them out
+			osd_printf_error("\n\"%s\" approximately matches the following\n"
+					"supported %s (best match first):\n\n", m_options.system_name(),emulator_info::get_gamesnoun());
+			for (int matchnum = 0; matchnum < ARRAY_LENGTH(matches); matchnum++)
+				if (matches[matchnum] != -1)
+					osd_printf_error("%-18s%s\n", drivlist.driver(matches[matchnum]).name, drivlist.driver(matches[matchnum]).description);
+		}
+	}
+	catch (emu_exception &)
+	{
+		osd_printf_error("Caught unhandled emulator exception\n");
+		m_result = MAMERR_FATALERROR;
+	}
+	catch (add_exception &aex)
+	{
+		osd_printf_error("Tag '%s' already exists in tagged_list\n", aex.tag());
+		m_result = MAMERR_FATALERROR;
+	}
+	catch (std::exception &ex)
+	{
+		osd_printf_error("Caught unhandled %s exception: %s\n", typeid(ex).name(), ex.what());
+		m_result = MAMERR_FATALERROR;
+	}
+	catch (...)
+	{
+		osd_printf_error("Caught unhandled exception\n");
+		m_result = MAMERR_FATALERROR;
+	}
 
    _7z_file_cache_clear();
 

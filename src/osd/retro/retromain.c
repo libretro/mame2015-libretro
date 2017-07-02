@@ -1948,6 +1948,7 @@ static int execute_game_cmd(char* path)
    int gameRot=0;
    bool CreateConf = (strcmp(ARGUV[0],"-cc") == 0 || strcmp(ARGUV[0],"-createconfig") == 0) ? 1 : 0;
    bool Only1Arg   = (ARGUC == 1) ? 1 : 0;
+   bool Mamecmdopt = strcmp(ARGUV[0],core) == 0 ? 1: 0;
 
    FirstTimeUpdate = 1;
 
@@ -1996,11 +1997,11 @@ static int execute_game_cmd(char* path)
             {
                if (log_cb)
                   log_cb(RETRO_LOG_ERROR, "Driver not found: %s\n", MsystemName);
-               return -2;
+               if(!Mamecmdopt)return -2;
             }
          }
          else
-            return -2;
+            if(!Mamecmdopt)return -2;
       }
    }
 
@@ -2043,6 +2044,10 @@ static int execute_game_cmd(char* path)
             Add_Option(MsystemName);
          Add_Option(MgameName);
       }
+   }
+   else if (Mamecmdopt){
+       for(i = 1;i < ARGUC; i++)
+         Add_Option(ARGUV[i]);
    }
    else
    {
@@ -2149,7 +2154,7 @@ int mmain(int argc, const char *argv)
 
    xargv_cmd[PARAMCOUNT - 2] = NULL;
 
-   return 1;
+   return result;
 }
 
 #include "../../emu/drawgfx.h"
