@@ -1200,10 +1200,10 @@ static void Input_Binding(running_machine &machine)
    {
       /* Capcom CPS-1: Dynasty Wars */
 
-      Buttons_mapping[0]=RETROPAD_B;
+      Buttons_mapping[0]=RETROPAD_Y;
       Buttons_mapping[1]=RETROPAD_A;
       Buttons_mapping[2]=RETROPAD_X;
-      Buttons_mapping[3]=RETROPAD_Y;
+      Buttons_mapping[3]=RETROPAD_B;
       Buttons_mapping[4]=RETROPAD_L;
       Buttons_mapping[5]=RETROPAD_R;
    }
