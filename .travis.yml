@@ -12,9 +12,9 @@ env:
   global:
     - COMPILER_NAME=gcc CXX=g++-7 CC=gcc-7
   matrix:
-    - PLATFORM=linux_x64 CORE=mame2014
-    - PLATFORM=linux_x64 CORE=mess2014
-    - PLATFORM=linux_x64 CORE=ume2014
+    - PLATFORM=linux_x64 CORE=mame2014 NAME=mame2014
+    - PLATFORM=linux_x64 CORE=mame2014 NAME=mess2014
+    - PLATFORM=linux_x64 CORE=mame2014 NAME=ume2014
 before_script:
   - pwd
   - mkdir -p ~/bin
