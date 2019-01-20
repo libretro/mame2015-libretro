@@ -403,19 +403,19 @@ void retro_get_system_info(struct retro_system_info *info)
    memset(info, 0, sizeof(*info));
 
 #if defined(WANT_MAME)
-   info->library_name     = "MAME 2014";
+   info->library_name     = "MAME 2015";
 #elif defined(WANT_MESS)
-   info->library_name     = "MESS 2014";
+   info->library_name     = "MESS 2015";
 #elif defined(WANT_UME)
-   info->library_name     = "UME 2014";
+   info->library_name     = "UME 2015";
 #else
-   info->library_name     = "MAME 2014";
+   info->library_name     = "MAME 2015";
 #endif
 
 #ifndef GIT_VERSION
 #define GIT_VERSION ""
 #endif
-   info->library_version  = "0.159" GIT_VERSION;
+   info->library_version  = "0.160" GIT_VERSION;
    info->valid_extensions = "chd|cmd|zip|7z";
    info->need_fullpath    = true;
    info->block_extract    = true;

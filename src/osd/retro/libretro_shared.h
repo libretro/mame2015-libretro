@@ -63,14 +63,14 @@ extern float retro_aspect;
 extern float retro_fps;
 
 #if defined(WANT_MAME)
-static const char core[] = "mame2014";
+static const char core[] = "mame2015";
 #elif defined(WANT_MESS)
-static const char core[] = "mess2014";
+static const char core[] = "mess2015";
 #elif defined(WANT_UME)
-static const char core[] = "ume2014";
+static const char core[] = "ume2015";
 #else
 /* fallback */
-static const char core[] = "mame2014";
+static const char core[] = "mame2015";
 #endif
 
 /* libretro callbacks */
