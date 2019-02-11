@@ -46,7 +46,7 @@ ARFLAGS = -cr
 
 ifeq ($(TARGET),)
    TARGET = mame
-   TARGET_NAME = mame2014
+   TARGET_NAME = mame2015
 endif
 
 EXE =
@@ -56,13 +56,13 @@ CORE_DIR := .
 
 ifeq ($(TARGET), mess)
    CORE_DEFINE := -DWANT_MESS
-   TARGET_NAME = mess2014
+   TARGET_NAME = mess2015
 else ifeq ($(TARGET), mame)
    CORE_DEFINE := -DWANT_MAME
-   TARGET_NAME = mame2014
+   TARGET_NAME = mame2015
 else
    CORE_DEFINE := -DWANT_UME
-   TARGET_NAME = ume2014
+   TARGET_NAME = ume2015
 endif
 $(info COREDEF = $(CORE_DEFINE))
 
