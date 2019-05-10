@@ -19,3 +19,8 @@ endif
 ifeq ($(findstring arm,$(UNAME)),arm)
 	CCOMFLAGS += -Wno-cast-align
 endif
+
+ifneq (,$(findstring unix,$(platform)))
+	CCOMFLAGS += -fweb -frename-registers
+	PLATCFLAGS += -fno-merge-constants
+endif
