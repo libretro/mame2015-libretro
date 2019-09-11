@@ -200,7 +200,7 @@ else ifeq ($(platform), osx)
    CCOMFLAGS += $(PLATCFLAGS)
 
 # iOS
-else ifeq ($(platform), ios)
+else ifneq (,$(findstring ios,$(platform)))
    FORCE_DRC_C_BACKEND = 1
    TARGETLIB := $(TARGET_NAME)_libretro_ios.dylib
    fpic := -fPIC
@@ -210,8 +210,35 @@ else ifeq ($(platform), ios)
 
    IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
    CXX_AS := c++
-   CC = $(CXX_AS) -arch armv7 -isysroot $(IOSSDK)
-   LD = $(CC) -stdlib=$(LIBCXX)
+   ifeq ($(platform),ios-arm64)
+     CC = $(CXX_AS) -arch arm64 -isysroot $(IOSSDK)
+     PTR64 = 1
+   else
+     CC = $(CXX_AS) -arch armv7 -isysroot $(IOSSDK)
+   endif
+   LD = $(CXX) -stdlib=$(LIBCXX)
+   LDFLAGS +=  $(fpic) $(SHARED)
+   REALCC   = $(CC)
+   NATIVECC = $(CXX_AS)
+   PYTHON ?= @python
+   CFLAGS += -DIOS
+   LDFLAGSEMULATOR += -stdlib=$(LIBCXX)
+   PLATCFLAGS += -DSDLMAME_NO64BITIO -DIOS -DSDLMAME_ARM -DHAVE_POSIX_MEMALIGN
+   CCOMFLAGS += $(PLATCFLAGS)
+
+# tvOS
+else ifeq ($(platform), tvos-arm64)
+   FORCE_DRC_C_BACKEND = 1
+   TARGETLIB := $(TARGET_NAME)_libretro_tvos.dylib
+   fpic := -fPIC
+   SHARED := -dynamiclib
+   TARGETOS = macosx
+   LIBCXX := libc++
+   IOSSDK := $(shell xcodebuild -version -sdk appletvos Path)
+   CXX_AS := c++
+   CC = $(CXX_AS) -arch arm64 -isysroot $(IOSSDK)
+   PTR64 = 1
+   LD = $(CXX) -stdlib=$(LIBCXX)
    LDFLAGS +=  $(fpic) $(SHARED)
    REALCC   = $(CC)
    NATIVECC = $(CXX_AS)
