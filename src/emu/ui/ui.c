@@ -1591,6 +1591,20 @@ UINT32 ui_manager::handler_ingame(running_machine &machine, render_container *co
 		return machine.ui().set_handler(handler_load_save, LOADSAVE_LOAD);
 	}
 
+	// handle quick save request
+	if (ui_input_pressed(machine, IPT_UI_QUICK_SAVE))
+	{
+		machine.pause();
+		return machine.ui().set_handler(handler_quick_save,0);
+	}
+	// handle quick load request
+	if (ui_input_pressed(machine, IPT_UI_QUICK_LOAD))
+	{
+		machine.pause();
+		return machine.ui().set_handler(handler_quick_load,0);
+	}
+
+
 	// handle a toggle cheats request
 	if (ui_input_pressed(machine, IPT_UI_TOGGLE_CHEAT))
 		machine.cheat().set_enable(!machine.cheat().enabled());
@@ -1690,6 +1704,45 @@ UINT32 ui_manager::handler_load_save(running_machine &machine, render_container 
 		popmessage("Load from position %c", file);
 		machine.schedule_load(filename);
 	}
+
+	// remove the pause and reset the state
+	machine.resume();
+	return UI_HANDLER_CANCEL;
+}
+
+
+//-------------------------------------------------
+//  handler_save_quick - quickload slots 1-3
+//-------------------------------------------------
+UINT32 ui_manager::handler_quick_save(running_machine &machine, render_container *container, UINT32 state)
+{
+	char filename[20];
+	input_code code;
+	char file = ITEM_ID_1 - ITEM_ID_0 + '0';
+
+	// display a popup indicating that the save will proceed
+	sprintf(filename, "%c", file);
+	popmessage("Save to position %c", file);
+	machine.schedule_save(filename);
+
+	// remove the pause and reset the state
+	machine.resume();
+	return UI_HANDLER_CANCEL;
+}
+
+//-------------------------------------------------
+//  handler_load_quick - quickload slots 1-3
+//-------------------------------------------------
+UINT32 ui_manager::handler_quick_load(running_machine &machine, render_container *container, UINT32 state)
+{
+	char filename[20];
+	input_code code;
+	char file = ITEM_ID_1 - ITEM_ID_0 + '0';
+
+	// display a popup indicating that the save will proceed
+	sprintf(filename, "%c", file);
+	popmessage("Load to position %c", file);
+	machine.schedule_load(filename);
 
 	// remove the pause and reset the state
 	machine.resume();

@@ -194,6 +194,8 @@ private:
 	static UINT32 handler_messagebox_anykey(running_machine &machine, render_container *container, UINT32 state);
 	static UINT32 handler_ingame(running_machine &machine, render_container *container, UINT32 state);
 	static UINT32 handler_load_save(running_machine &machine, render_container *container, UINT32 state);
+	static UINT32 handler_quick_save(running_machine &machine, render_container *container, UINT32 state);
+	static UINT32 handler_quick_load(running_machine &machine, render_container *container, UINT32 state);
 	static UINT32 handler_confirm_quit(running_machine &machine, render_container *container, UINT32 state);
 
 	// private methods
