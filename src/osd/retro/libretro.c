@@ -27,6 +27,8 @@ int SHIFTON           = -1;
 int NEWGAME_FROM_OSD  = 0;
 char RPATH[512];
 
+int serialize_size = 0; // memorize serialize size
+
 static char option_mouse[50];
 static char option_cheats[50];
 static char option_nag[50];
@@ -516,6 +518,7 @@ void retro_reset (void)
 
 int RLOOP=1;
 extern void retro_main_loop();
+extern void retro_save_state(retro_buffer &buf);
 
 void retro_run (void)
 {
@@ -625,7 +628,17 @@ void retro_unload_game(void)
 }
 
 /* Stubs */
-size_t retro_serialize_size(void) { return 0; }
+size_t retro_serialize_size(void) 
+{ 
+	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE CALLED");
+	
+	retro_buffer saveBuffer;
+	retro_save_state(saveBuffer);
+	serialize_size  = saveBuffer.size();
+	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE IS: %d",serialize_size);
+
+	return 0; 
+}
 bool retro_serialize(void *data, size_t size) { return false; }
 bool retro_unserialize(const void * data, size_t size) { return false; }
 

@@ -15,6 +15,7 @@
 
 #include "corefile.h"
 #include "hash.h"
+#include <vector>
 
 // some systems use macros for getc/putc rather than functions
 #ifdef getc
@@ -170,6 +171,33 @@ private:
 	bool            m_remove_on_close;              // flag: remove the file when closing
 	bool        m_restrict_to_mediapath;    // flag: restrict to paths inside the media-path
 };
+
+// simple memory buffer modelled to be similar to emu_file
+
+class retro_buffer
+{
+public:
+        // file open/creation
+        retro_buffer();
+        virtual ~retro_buffer();
+
+
+        // control
+        //int seek(INT64 offset, int whence);
+        //UINT64 tell();
+        //bool eof();
+        //UINT64 size();
+
+        // reading
+        UINT32 read(void *buffer, UINT32 length);
+
+        // writing
+        UINT32 write(const void *buffer, UINT32 length);
+	size_t size();
+private:
+        std::vector<char>     m_vector;  // the actual buffer
+};
+
 
 
 #endif  /* __FILEIO_H__ */

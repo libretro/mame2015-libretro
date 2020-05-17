@@ -340,6 +340,11 @@ void retro_finish(){
 	printf("retro_finish end\n");
 }
 
+void retro_save_state(retro_buffer &buf)
+{
+	retro_global_machine->save().retro_write_file(buf);
+}
+
 void retro_main_loop()
 {
 	retro_global_machine->retro_loop();

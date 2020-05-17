@@ -172,6 +172,7 @@ public:
 
 	// file processing
 	static save_error check_file(running_machine &machine, emu_file &file, const char *gamename, void (CLIB_DECL *errormsg)(const char *fmt, ...));
+	save_error retro_write_file(retro_buffer &file);
 	save_error write_file(emu_file &file);
 	save_error read_file(emu_file &file);
 

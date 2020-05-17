@@ -285,6 +285,44 @@ void save_manager::dispatch_presave()
 //  write_file - writes the data to a file
 //-------------------------------------------------
 
+save_error save_manager::retro_write_file(retro_buffer &file)
+{
+	// if we have illegal registrations, return an error
+	if (m_illegal_regs > 0)
+		return STATERR_ILLEGAL_REGISTRATIONS;
+
+	// generate the header
+	UINT8 header[HEADER_SIZE];
+	memcpy(&header[0], emulator_info::get_state_magic_num(), 8);
+	header[8] = SAVE_VERSION;
+	header[9] = NATIVE_ENDIAN_VALUE_LE_BE(0, SS_MSB_FIRST);
+	strncpy((char *)&header[0x0a], machine().system().name, 0x1c - 0x0a);
+	UINT32 sig = signature();
+	*(UINT32 *)&header[0x1c] = LITTLE_ENDIANIZE_INT32(sig);
+
+	// write the header and turn on compression for the rest of the file
+	//file.compress(FCOMPRESS_NONE);
+	//file.seek(0, SEEK_SET);
+	if (file.write(header, sizeof(header)) != sizeof(header))
+		return STATERR_WRITE_ERROR;
+	//file.compress(FCOMPRESS_MEDIUM);
+
+	// call the pre-save functions
+	dispatch_presave();
+
+	// then write all the data
+	for (state_entry *entry = m_entry_list.first(); entry != NULL; entry = entry->next())
+	{
+		UINT32 totalsize = entry->m_typesize * entry->m_typecount;
+		if (file.write(entry->m_data, totalsize) != totalsize)
+			return STATERR_WRITE_ERROR;
+	}
+	return STATERR_NONE;
+}
+//-------------------------------------------------
+//  write_file - writes the data to a file
+//-------------------------------------------------
+
 save_error save_manager::write_file(emu_file &file)
 {
 	// if we have illegal registrations, return an error
