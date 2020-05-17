@@ -405,13 +405,13 @@ void retro_get_system_info(struct retro_system_info *info)
    memset(info, 0, sizeof(*info));
 
 #if defined(WANT_MAME)
-   info->library_name     = "MAME 2015";
+   info->library_name     = "MAME 2015 msx";
 #elif defined(WANT_MESS)
-   info->library_name     = "MESS 2015";
+   info->library_name     = "MESS 2015 msx";
 #elif defined(WANT_UME)
-   info->library_name     = "UME 2015";
+   info->library_name     = "UME 2015 msx";
 #else
-   info->library_name     = "MAME 2015";
+   info->library_name     = "MAME 2015 msx";
 #endif
 
 #ifndef GIT_VERSION
@@ -518,7 +518,7 @@ void retro_reset (void)
 
 int RLOOP=1;
 extern void retro_main_loop();
-extern void retro_save_state(retro_buffer &buf);
+extern void retro_save_state(retro_buffer_writer &buf);
 
 void retro_run (void)
 {
@@ -540,6 +540,7 @@ void retro_run (void)
 
    if (NEWGAME_FROM_OSD == 1)
    {
+	serialize_size = 0; // reset stored serial size
       struct retro_system_av_info ninfo;
 
       retro_get_system_av_info(&ninfo);
@@ -623,6 +624,7 @@ bool retro_load_game(const struct retro_game_info *info)
 
 void retro_unload_game(void)
 {
+   serialize_size = 0;
    if (retro_pause == 0)
       retro_pause = -1;
 }
@@ -631,15 +633,21 @@ void retro_unload_game(void)
 size_t retro_serialize_size(void) 
 { 
 	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE CALLED");
-	
-	retro_buffer saveBuffer;
-	retro_save_state(saveBuffer);
-	serialize_size  = saveBuffer.size();
+	if(serialize_size == 0)
+	{
+		retro_buffer_writer saveBuffer;
+		retro_save_state(saveBuffer);
+		serialize_size  = saveBuffer.size()*2; // allocate twice the space to be sure
+	}
 	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE IS: %d",serialize_size);
 
-	return 0; 
+	return serialize_size; 
 }
-bool retro_serialize(void *data, size_t size) { return false; }
+bool retro_serialize(void *data, size_t size) 
+{
+	
+	return false; 
+}
 bool retro_unserialize(const void * data, size_t size) { return false; }
 
 unsigned retro_get_region (void) { return RETRO_REGION_NTSC; }

@@ -340,7 +340,7 @@ void retro_finish(){
 	printf("retro_finish end\n");
 }
 
-void retro_save_state(retro_buffer &buf)
+void retro_save_state(retro_buffer_writer &buf)
 {
 	retro_global_machine->save().retro_write_file(buf);
 }

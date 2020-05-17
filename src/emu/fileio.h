@@ -172,30 +172,32 @@ private:
 	bool        m_restrict_to_mediapath;    // flag: restrict to paths inside the media-path
 };
 
-// simple memory buffer modelled to be similar to emu_file
 
-class retro_buffer
+class retro_buffer_writer
 {
 public:
-        // file open/creation
-        retro_buffer();
-        virtual ~retro_buffer();
-
-
-        // control
-        //int seek(INT64 offset, int whence);
-        //UINT64 tell();
-        //bool eof();
-        //UINT64 size();
-
-        // reading
-        UINT32 read(void *buffer, UINT32 length);
+        retro_buffer_writer();
+        virtual ~retro_buffer_writer();
 
         // writing
         UINT32 write(const void *buffer, UINT32 length);
 	size_t size();
 private:
         std::vector<char>     m_vector;  // the actual buffer
+};
+
+class retro_buffer_reader
+{
+public:
+        retro_buffer_reader(const void *data, UINT32 size);
+        virtual ~retro_buffer_reader();
+
+        // reading
+        UINT32 read(void *buffer, UINT32 length);
+
+private:
+        const void*	m_data;
+	UINT32		m_size;	
 };
 
 
