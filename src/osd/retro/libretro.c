@@ -639,7 +639,7 @@ size_t retro_serialize_size(void)
 		retro_save_state(saveBuffer);
 		serialize_size  = saveBuffer.size()*2; // allocate twice the space to be sure
 	}
-	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE IS: %d\n",serialize_size);
+	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE IS: %d, ALLOCATED: %d\n",serialize_size / 2, serialize_size);
 
 	return serialize_size; 
 }
@@ -647,7 +647,7 @@ bool retro_serialize(void *data, size_t size)
 {
 	retro_buffer_writer saveBuffer;
 	retro_save_state(saveBuffer);
-	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE ACTUAL SIZE IS: %d\n",saveBuffer.size());
+	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE ACTUAL SIZE IS: %d\n",saveBuffer.size());
 	if( (saveBuffer.size() > size) || (size>serialize_size) ) 
 	{
 		log_cb(RETRO_LOG_ERROR, "RETRO_SERIALIZE too big. Got %d buffer size: %d stored size: %d\n",saveBuffer.size(), size, serialize_size);
