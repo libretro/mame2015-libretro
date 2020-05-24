@@ -925,14 +925,40 @@ UINT32 retro_buffer_writer::write(const void *buffer, UINT32 length)
         return length;
 }
 
+char* retro_buffer_writer::data()
+{
+	return m_vector.data();
+}
+
 size_t retro_buffer_writer::size()
 {
 	return m_vector.size();
 }
 
+retro_buffer_reader::retro_buffer_reader(const void *data, UINT32 size)
+{
+	m_data = data;
+	m_size = size;
+}
+
 UINT32 retro_buffer_reader::read(void *buffer, UINT32 length)
 {
-        return 0;
+	UINT32 read;
+	if(m_size > length)
+	{
+		read = length;
+	}
+	else
+	{
+		read = m_size;
+	}
+	memcpy(buffer, m_data, read);
+	m_data += read;
+	m_size -= read;
+        return read;
+}
+retro_buffer_reader::~retro_buffer_reader()
+{
 }
 
 

@@ -519,7 +519,7 @@ void retro_reset (void)
 int RLOOP=1;
 extern void retro_main_loop();
 extern void retro_save_state(retro_buffer_writer &buf);
-
+extern bool retro_load_state(retro_buffer_reader &buf);
 void retro_run (void)
 {
    static int mfirst=1;
@@ -540,7 +540,7 @@ void retro_run (void)
 
    if (NEWGAME_FROM_OSD == 1)
    {
-	serialize_size = 0; // reset stored serial size
+      serialize_size = 0; // reset stored serial size
       struct retro_system_av_info ninfo;
 
       retro_get_system_av_info(&ninfo);
@@ -645,10 +645,22 @@ size_t retro_serialize_size(void)
 }
 bool retro_serialize(void *data, size_t size) 
 {
-	
-	return false; 
+	retro_buffer_writer saveBuffer;
+	retro_save_state(saveBuffer);
+	if(saveBuffer.size() > size) 
+	{
+		log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE too big. Got %d expected: %d stored %d",saveBuffer.size(), size, serialize_size);
+		return false;
+	}
+	memcpy(data, saveBuffer.data(), saveBuffer.size()); 
+	return true;
 }
-bool retro_unserialize(const void * data, size_t size) { return false; }
+bool retro_unserialize(const void * data, size_t size) 
+{ 
+	retro_buffer_reader readBuffer(data, size);
+	return retro_load_state(readBuffer);
+//	return true; 
+}
 
 unsigned retro_get_region (void) { return RETRO_REGION_NTSC; }
 void *retro_get_memory_data(unsigned type) { return 0; }

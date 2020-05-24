@@ -182,6 +182,7 @@ public:
         // writing
         UINT32 write(const void *buffer, UINT32 length);
 	size_t size();
+	char* data();
 private:
         std::vector<char>     m_vector;  // the actual buffer
 };

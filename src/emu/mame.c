@@ -345,6 +345,11 @@ void retro_save_state(retro_buffer_writer &buf)
 	retro_global_machine->save().retro_write_file(buf);
 }
 
+bool retro_load_state(retro_buffer_reader &buf)
+{
+	return retro_global_machine->save().retro_read_file(buf) == STATERR_NONE;
+}
+
 void retro_main_loop()
 {
 	retro_global_machine->retro_loop();
