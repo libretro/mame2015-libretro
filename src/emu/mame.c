@@ -347,7 +347,11 @@ void retro_save_state(retro_buffer_writer &buf)
 
 bool retro_load_state(retro_buffer_reader &buf)
 {
-	return retro_global_machine->save().retro_read_file(buf) == STATERR_NONE;
+	
+	save_error r = retro_global_machine->save().retro_read_file(buf);
+	if (r == STATERR_NONE ) return true;
+	printf("retro_load_state error: %d \n", r);
+	return false;
 }
 
 void retro_main_loop()

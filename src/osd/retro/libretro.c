@@ -632,14 +632,14 @@ void retro_unload_game(void)
 /* Stubs */
 size_t retro_serialize_size(void) 
 { 
-	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE CALLED");
+	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE CALLED\n");
 	if(serialize_size == 0)
 	{
 		retro_buffer_writer saveBuffer;
 		retro_save_state(saveBuffer);
 		serialize_size  = saveBuffer.size()*2; // allocate twice the space to be sure
 	}
-	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE IS: %d",serialize_size);
+	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE IS: %d\n",serialize_size);
 
 	return serialize_size; 
 }
@@ -647,9 +647,10 @@ bool retro_serialize(void *data, size_t size)
 {
 	retro_buffer_writer saveBuffer;
 	retro_save_state(saveBuffer);
-	if(saveBuffer.size() > size) 
+	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE ACTUAL SIZE IS: %d\n",saveBuffer.size());
+	if( (saveBuffer.size() > size) || (size>serialize_size) ) 
 	{
-		log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE too big. Got %d expected: %d stored %d",saveBuffer.size(), size, serialize_size);
+		log_cb(RETRO_LOG_ERROR, "RETRO_SERIALIZE too big. Got %d buffer size: %d stored size: %d\n",saveBuffer.size(), size, serialize_size);
 		return false;
 	}
 	memcpy(data, saveBuffer.data(), saveBuffer.size()); 
@@ -657,9 +658,14 @@ bool retro_serialize(void *data, size_t size)
 }
 bool retro_unserialize(const void * data, size_t size) 
 { 
+	log_cb(RETRO_LOG_INFO, "RETRO_UNSERIALIZE. SIZE: %d\n",size);
 	retro_buffer_reader readBuffer(data, size);
-	return retro_load_state(readBuffer);
-//	return true; 
+	bool ret = retro_load_state(readBuffer);
+	if(!ret) {
+		log_cb(RETRO_LOG_ERROR, "RETRO_UNSERIALIZE. ERROR!\n");
+	}
+	return ret;
+
 }
 
 unsigned retro_get_region (void) { return RETRO_REGION_NTSC; }
