@@ -14,6 +14,8 @@
 #include "libretro.h"
 #include "libretro_shared.h"
 
+#define SAVE_SIZE_MULTIPLIER 1.5
+
 /* forward decls / externs / prototypes */
 bool retro_load_ok    = false;
 int retro_pause       = 0;
@@ -637,9 +639,10 @@ size_t retro_serialize_size(void)
 	{
 		retro_buffer_writer saveBuffer;
 		retro_save_state(saveBuffer);
-		serialize_size  = saveBuffer.size()*2; // allocate twice the space to be sure
+		serialize_size  = saveBuffer.size() * SAVE_SIZE_MULTIPLIER;
+		log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE IS: %d, ALLOCATED: %d\n", saveBuffer.size(), serialize_size);
 	}
-	log_cb(RETRO_LOG_INFO, "RETRO_SERIALIZE_SIZE IS: %d, ALLOCATED: %d\n",serialize_size / 2, serialize_size);
+
 
 	return serialize_size; 
 }
