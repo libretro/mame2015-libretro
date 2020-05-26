@@ -54,7 +54,7 @@ enum
 //**************************************************************************
 //  INITIALIZATION
 //**************************************************************************
-
+	
 //-------------------------------------------------
 //  save_manager - constructor
 //-------------------------------------------------
@@ -270,6 +270,47 @@ save_error save_manager::read_file(emu_file &file)
 }
 
 //-------------------------------------------------
+//  retro_read_file - read the data from a buffer
+//-------------------------------------------------
+
+save_error save_manager::retro_read_file(retro_buffer_reader &file)
+{
+	// if we have illegal registrations, return an error
+	if (m_illegal_regs > 0)
+		return STATERR_ILLEGAL_REGISTRATIONS;
+
+	// read the header and turn on compression for the rest of the file
+	UINT8 header[HEADER_SIZE];
+	if (file.read(header, sizeof(header)) != sizeof(header))
+		return STATERR_READ_ERROR;
+
+	// verify the header and report an error if it doesn't match
+	UINT32 sig = signature();
+	if (validate_header(header, machine().system().name, sig, popmessage, "Error: ")  != STATERR_NONE)
+		return STATERR_INVALID_HEADER;
+
+	// determine whether or not to flip the data when done
+	bool flip = NATIVE_ENDIAN_VALUE_LE_BE((header[9] & SS_MSB_FIRST) != 0, (header[9] & SS_MSB_FIRST) == 0);
+
+	// read all the data, flipping if necessary
+	for (state_entry *entry = m_entry_list.first(); entry != NULL; entry = entry->next())
+	{
+		UINT32 totalsize = entry->m_typesize * entry->m_typecount;
+		if (file.read(entry->m_data, totalsize) != totalsize)
+			return STATERR_READ_ERROR;
+
+		// handle flipping
+		if (flip)
+			entry->flip_data();
+	}
+
+	// call the post-load functions
+	dispatch_postload();
+
+	return STATERR_NONE;
+}
+
+//-------------------------------------------------
 //  dispatch_presave - invoke all registered
 //  presave callbacks for updates
 //-------------------------------------------------
@@ -281,6 +322,43 @@ void save_manager::dispatch_presave()
 		func->m_func();
 }
 
+//-------------------------------------------------
+//  retro_write_file - writes the data to a buffer
+//-------------------------------------------------
+save_error save_manager::retro_write_file(retro_buffer_writer &file)
+{
+	// if we have illegal registrations, return an error
+	if (m_illegal_regs > 0)
+		return STATERR_ILLEGAL_REGISTRATIONS;
+
+	// generate the header
+	UINT8 header[HEADER_SIZE];
+	memcpy(&header[0], emulator_info::get_state_magic_num(), 8);
+	header[8] = SAVE_VERSION;
+	header[9] = NATIVE_ENDIAN_VALUE_LE_BE(0, SS_MSB_FIRST);
+	strncpy((char *)&header[0x0a], machine().system().name, 0x1c - 0x0a);
+	UINT32 sig = signature();
+	*(UINT32 *)&header[0x1c] = LITTLE_ENDIANIZE_INT32(sig);
+
+	// write the header and turn on compression for the rest of the file
+	//file.compress(FCOMPRESS_NONE);
+	//file.seek(0, SEEK_SET);
+	if (file.write(header, sizeof(header)) != sizeof(header))
+		return STATERR_WRITE_ERROR;
+	//file.compress(FCOMPRESS_MEDIUM);
+
+	// call the pre-save functions
+	dispatch_presave();
+
+	// then write all the data
+	for (state_entry *entry = m_entry_list.first(); entry != NULL; entry = entry->next())
+	{
+		UINT32 totalsize = entry->m_typesize * entry->m_typecount;
+		if (file.write(entry->m_data, totalsize) != totalsize)
+			return STATERR_WRITE_ERROR;
+	}
+	return STATERR_NONE;
+}
 //-------------------------------------------------
 //  write_file - writes the data to a file
 //-------------------------------------------------

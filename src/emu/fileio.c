@@ -907,3 +907,58 @@ file_error emu_file::load__7zped_file()
 	m__7zfile = NULL;
 	return FILERR_NONE;
 }
+
+retro_buffer_writer::retro_buffer_writer()
+        : m_vector()
+{
+}
+
+retro_buffer_writer::~retro_buffer_writer()
+{
+}
+
+UINT32 retro_buffer_writer::write(const void *buffer, UINT32 length)
+{
+	char* buf = (char*)buffer;
+        m_vector.insert(m_vector.end(), buf, buf + length);
+        return length;
+}
+
+char* retro_buffer_writer::data()
+{
+	return m_vector.data();
+}
+
+size_t retro_buffer_writer::size()
+{
+	return m_vector.size();
+}
+
+retro_buffer_reader::retro_buffer_reader(const void *data, UINT32 size)
+{
+	m_data = data;
+	m_size = size;
+}
+
+UINT32 retro_buffer_reader::read(void *buffer, UINT32 length)
+{
+	UINT32 read;
+	if(m_size > length)
+	{
+		read = length;
+	}
+	else
+	{
+		read = m_size;
+	}
+	memcpy(buffer, m_data, read);
+	m_data += read;
+	m_size -= read;
+        return read;
+}
+retro_buffer_reader::~retro_buffer_reader()
+{
+}
+
+
+

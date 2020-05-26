@@ -15,6 +15,7 @@
 
 #include "corefile.h"
 #include "hash.h"
+#include <vector>
 
 // some systems use macros for getc/putc rather than functions
 #ifdef getc
@@ -170,6 +171,45 @@ private:
 	bool            m_remove_on_close;              // flag: remove the file when closing
 	bool        m_restrict_to_mediapath;    // flag: restrict to paths inside the media-path
 };
+
+/*
+Generic class to write data into a buffer.
+Made along the lines of emu_file with a compatible write method.
+Use a std::vector to store data.
+*/
+class retro_buffer_writer
+{
+public:
+        retro_buffer_writer();
+        virtual ~retro_buffer_writer();
+
+        // writing
+        UINT32 write(const void *buffer, UINT32 length);
+	size_t size();
+	char* data();
+private:
+        std::vector<char>     m_vector;  // the actual buffer
+};
+
+
+/*
+Generic class to read data from a buffer. Made along
+the line of emu_file
+*/
+class retro_buffer_reader
+{
+public:
+        retro_buffer_reader(const void *data, UINT32 size);
+        virtual ~retro_buffer_reader();
+
+        // reading
+        UINT32 read(void *buffer, UINT32 length);
+
+private:
+        const void*	m_data;
+	UINT32		m_size;	
+};
+
 
 
 #endif  /* __FILEIO_H__ */
