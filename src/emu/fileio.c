@@ -917,7 +917,6 @@ retro_buffer_writer::~retro_buffer_writer()
 {
 }
 
-        // writing
 UINT32 retro_buffer_writer::write(const void *buffer, UINT32 length)
 {
 	char* buf = (char*)buffer;

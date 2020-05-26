@@ -340,11 +340,13 @@ void retro_finish(){
 	printf("retro_finish end\n");
 }
 
+/* Called by libretro to save the state on a buffer */
 void retro_save_state(retro_buffer_writer &buf)
 {
 	retro_global_machine->save().retro_write_file(buf);
 }
 
+/* Called by libretro to load a state from a buffer */
 bool retro_load_state(retro_buffer_reader &buf)
 {
 	

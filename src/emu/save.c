@@ -325,7 +325,6 @@ void save_manager::dispatch_presave()
 //-------------------------------------------------
 //  retro_write_file - writes the data to a buffer
 //-------------------------------------------------
-
 save_error save_manager::retro_write_file(retro_buffer_writer &file)
 {
 	// if we have illegal registrations, return an error

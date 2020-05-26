@@ -172,7 +172,11 @@ private:
 	bool        m_restrict_to_mediapath;    // flag: restrict to paths inside the media-path
 };
 
-
+/*
+Generic class to write data into a buffer.
+Made along the lines of emu_file with a compatible write method.
+Use a std::vector to store data.
+*/
 class retro_buffer_writer
 {
 public:
@@ -187,6 +191,11 @@ private:
         std::vector<char>     m_vector;  // the actual buffer
 };
 
+
+/*
+Generic class to read data from a buffer. Made along
+the line of emu_file
+*/
 class retro_buffer_reader
 {
 public:
