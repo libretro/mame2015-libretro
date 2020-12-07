@@ -952,7 +952,7 @@ UINT32 retro_buffer_reader::read(void *buffer, UINT32 length)
 		read = m_size;
 	}
 	memcpy(buffer, m_data, read);
-	m_data += read;
+	m_data = ((char*)m_data) + read;
 	m_size -= read;
         return read;
 }
