@@ -26,9 +26,7 @@
 #include <stdint.h>
 #include <math.h>
 
-#if defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)
-#include <sys/timer.h>
-#elif defined(XENON)
+#if defined(XENON)
 #include <time/time.h>
 #elif defined(GEKKO) || defined(__PSL1GHT__) || defined(__QNX__)
 #include <unistd.h>

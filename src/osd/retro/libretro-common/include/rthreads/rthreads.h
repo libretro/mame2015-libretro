@@ -169,9 +169,7 @@ int scond_broadcast(scond_t *cond);
 void scond_signal(scond_t *cond);
 
 #ifndef RARCH_INTERNAL
-#if defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)
-#include <sys/timer.h>
-#elif defined(XENON)
+#if defined(XENON)
 #include <time/time.h>
 #elif defined(GEKKO) || defined(__PSL1GHT__) || defined(__QNX__)
 #include <unistd.h>
@@ -193,9 +191,7 @@ void scond_signal(scond_t *cond);
  **/
 static inline void retro_sleep(unsigned msec)
 {
-#if defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)
-   sys_timer_usleep(1000 * msec);
-#elif defined(PSP)
+#if defined(PSP)
    sceKernelDelayThread(1000 * msec);
 #elif defined(_WIN32)
    Sleep(msec);
