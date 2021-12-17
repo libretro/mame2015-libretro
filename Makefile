@@ -66,6 +66,12 @@ else
 endif
 $(info COREDEF = $(CORE_DEFINE))
 
+ifeq ($(SUBTARGET), cdi)
+   TARGET := mame
+   TARGET_NAME = cdi2015
+   CORE_DEFINE := -DWANT_PHILIPS_CDI
+endif 
+
 ifndef SUBTARGET
    SUBTARGET = $(TARGET)
 endif
