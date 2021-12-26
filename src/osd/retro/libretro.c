@@ -161,12 +161,13 @@ void retro_set_environment(retro_environment_t cb)
 
     { option_read_config, "Read configuration; disabled|enabled" },
 
+#if !defined(WANT_PHILIPS_CDI)
     /* ONLY FOR MESS/UME */
 #if !defined(WANT_MAME)
     { option_write_config, "Write configuration; disabled|enabled" },
     { option_saves, "Save state naming; game|system" },
 #endif
-
+#endif
     /* common for MAME/MESS/UME */
     { option_auto_save, "Auto save/load states; disabled|enabled" },
     { option_mouse, "Enable in-game mouse; disabled|enabled" },
@@ -178,6 +179,7 @@ void retro_set_environment(retro_environment_t cb)
     { option_warnings, "Hide warnings screen; disabled|enabled" },
     { option_renderer, "Alternate render method; disabled|enabled" },
 
+#if !defined(WANT_PHILIPS_CDI)
     /* ONLY FOR MESS/UME */
 #if !defined(WANT_MAME)
     { option_softlist, "Enable softlists; enabled|disabled" },
@@ -193,6 +195,7 @@ void retro_set_environment(retro_environment_t cb)
     /* common for MAME/MESS/UME */
     { option_osd, "Boot to OSD; disabled|enabled" },
     { option_cli, "Boot from CLI; disabled|enabled" },
+#endif
     { NULL, NULL },
 
    };
@@ -421,6 +424,8 @@ void retro_get_system_info(struct retro_system_info *info)
    info->library_name     = "MESS 2015";
 #elif defined(WANT_UME)
    info->library_name     = "UME 2015";
+#elif defined(WANT_PHILIPS_CDI)
+   info->library_name     = "Philips CD-i 2015";
 #else
    info->library_name     = "MAME 2015";
 #endif
@@ -429,7 +434,11 @@ void retro_get_system_info(struct retro_system_info *info)
 #define GIT_VERSION ""
 #endif
    info->library_version  = "0.160" GIT_VERSION;
+#if !defined(WANT_PHILIPS_CDI)
    info->valid_extensions = "chd|cmd|zip|7z";
+#else
+   info->valid_extensions = "chd";
+#endif
    info->need_fullpath    = true;
    info->block_extract    = true;
 }

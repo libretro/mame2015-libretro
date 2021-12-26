@@ -1290,7 +1290,7 @@ UINT32 ui_manager::handler_messagebox_anykey(running_machine &machine, render_co
 	machine.ui().draw_text_box(container, messagebox_text, JUSTIFY_LEFT, 0.5f, 0.5f, messagebox_backcolor);
 
 	// if the user cancels, exit out completely
-	if (ui_input_pressed(machine, IPT_UI_CANCEL))
+	if (ui_input_pressed(machine, IPT_UI_EXIT_GAME))
 	{
 		machine.schedule_exit();
 		state = UI_HANDLER_CANCEL;
@@ -1529,7 +1529,7 @@ UINT32 ui_manager::handler_ingame(running_machine &machine, render_container *co
 
 	if (ui_disabled) return ui_disabled;
 
-	if (ui_input_pressed(machine, IPT_UI_CANCEL))
+	if (ui_input_pressed(machine, IPT_UI_EXIT_GAME))
 	{
 		machine.ui().request_quit();
 		return 0;

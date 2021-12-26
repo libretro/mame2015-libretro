@@ -66,6 +66,12 @@ else
 endif
 $(info COREDEF = $(CORE_DEFINE))
 
+ifeq ($(SUBTARGET), cdi)
+   TARGET := mame
+   TARGET_NAME = cdi2015
+   CORE_DEFINE := -DWANT_PHILIPS_CDI
+endif 
+
 ifndef SUBTARGET
    SUBTARGET = $(TARGET)
 endif
@@ -80,10 +86,10 @@ endif
 
 # start with empties for everything
 CCOMFLAGS = -DDISABLE_MIDI -fno-delete-null-pointer-checks
-CONLYFLAGS = -fpermissive
+CONLYFLAGS = -fpermissive -fno-stack-protector
 CONLYFLAGS += $(CORE_DEFINE)
 COBJFLAGS =
-CPPONLYFLAGS = -fpermissive
+CPPONLYFLAGS = -fpermissive -fno-stack-protector
 CPPONLYFLAGS += $(CORE_DEFINE)
 # LDFLAGS are used generally; LDFLAGSEMULATOR are additional
 # flags only used when linking the core emulator
@@ -147,6 +153,10 @@ ifneq (,$(findstring unix,$(platform)))
    endif
    ifeq ($(firstword $(filter amd64,$(UNAME))),amd64)
       PTR64 = 1
+   endif
+   ifeq ($(firstword $(filter aarch64,$(UNAME))),aarch64)
+      PTR64 = 1
+      PLATCFLAGS += -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DFORCE_DRC_C_BACKEND
    endif
    ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
       PTR64 = 1

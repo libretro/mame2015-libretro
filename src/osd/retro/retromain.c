@@ -1711,7 +1711,7 @@ static void Set_Default_Option(void)
 
    if(game_specific_saves_enable)
    {
-      char option[50];
+      char option[1024];
       Add_Option("-statename");
       sprintf(option,"%%g/%s",MgameName);
       Add_Option(option);
@@ -1721,7 +1721,7 @@ static void Set_Default_Option(void)
 static void Set_Path_Option(void)
 {
    int i;
-   char tmp_dir[256];
+   char tmp_dir[1024];
 
    /*Setup path option according to retro (save/system) directory,
     * or current if NULL. */
@@ -1770,6 +1770,7 @@ static int execute_game(char* path)
 
    Extract_AllPath(path);
 
+#if !defined(WANT_PHILIPS_CDI)
 #ifdef WANT_MAME
    //find if the driver exists for MgameName, if not, exit
    if (getGameInfo(MgameName, &gameRot, &driverIndex,&arcade) == 0)
@@ -1806,6 +1807,7 @@ static int execute_game(char* path)
    }
 
 #endif
+#endif //WANT_PHILIPS_CDI
 
    /* useless ? */
    if (tate)
@@ -1850,12 +1852,28 @@ static int execute_game(char* path)
 
    Add_Option((char*)("-rompath"));
 
-#ifdef WANT_MAME
+#if defined(WANT_MAME)
    sprintf(tmp_dir, "%s", MgamePath);
    Add_Option((char*)(tmp_dir));
    if(!boot_to_osd_enable)
       Add_Option(MgameName);
-
+#elif defined(WANT_PHILIPS_CDI)
+   // test whether cdimono1.zip in retroarch bios dir.
+   sprintf(tmp_dir, "%s%ccdimono1.zip", retro_system_directory, slash);
+   if(access(tmp_dir, F_OK ) == 0) {
+      sprintf(tmp_dir, "%s", retro_system_directory);
+      Add_Option((char*)(tmp_dir));
+   } else { // test whether cdimono1.zip in game dir with chd files.
+      sprintf(tmp_dir, "%s%ccdimono1.zip", MgamePath, slash);
+      if(access(tmp_dir, F_OK ) == 0) {
+         sprintf(tmp_dir, "%s", MgamePath);
+         Add_Option((char*)(tmp_dir));
+      } else
+         return -2;
+   }
+   Add_Option((char*)("cdimono1"));
+   Add_Option((char*)("-cdrom"));
+   Add_Option((char*)gameName);
 #else
 
    if(!boot_to_osd_enable)

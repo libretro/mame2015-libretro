@@ -68,6 +68,8 @@ static const char core[] = "mame2015";
 static const char core[] = "mess2015";
 #elif defined(WANT_UME)
 static const char core[] = "ume2015";
+#elif defined(WANT_PHILIPS_CDI)
+static const char core[] = "cdi2015";
 #else
 /* fallback */
 static const char core[] = "mame2015";
