@@ -524,8 +524,8 @@ endif
 # utilities
 MD = -mkdir$(EXE_EXT)
 RM = @rm -f
-OBJDUMP = @objdump
-PYTHON ?= @python2
+OBJDUMP ?= @objdump
+PYTHON ?= @python3
 
 #-------------------------------------------------
 # form the name of the executable
