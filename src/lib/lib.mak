@@ -255,16 +255,15 @@ ZLIBOPTS += -DZLIB_CONST -Wno-strict-prototypes
 ZLIBOBJS = \
 	$(LIBOBJ)/zlib/adler32.o \
 	$(LIBOBJ)/zlib/compress.o \
-	$(LIBOBJ)/zlib/crc32.o \
 	$(LIBOBJ)/zlib/deflate.o \
+	$(LIBOBJ)/zlib/gzclose.o \
 	$(LIBOBJ)/zlib/inffast.o \
 	$(LIBOBJ)/zlib/inflate.o \
-	$(LIBOBJ)/zlib/infback.o \
 	$(LIBOBJ)/zlib/inftrees.o \
+	$(LIBOBJ)/zlib/libz-crc32.o \
 	$(LIBOBJ)/zlib/trees.o \
 	$(LIBOBJ)/zlib/uncompr.o \
 	$(LIBOBJ)/zlib/zutil.o
-
 
 $(OBJ)/libz.a: $(ZLIBOBJS)
 

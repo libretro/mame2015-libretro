@@ -1,0 +1,113 @@
+# DESCRIPTION: GitLab CI/CD for libRetro (NOT FOR GitLab-proper)
+
+##############################################################################
+################################# BOILERPLATE ################################
+##############################################################################
+
+# Core definitions
+.core-defs-cdi2015:
+  variables:
+    CORENAME: cdi2015
+    SUBTARGET: cdi
+
+# Inclusion templates, required for the build to work
+include:
+  ################################## DESKTOPS ################################
+  # Windows 64-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/windows-x64-mingw.yml'
+    
+  # Windows 32-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/windows-i686-mingw.yml'
+    
+  # Linux 64-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/linux-x64.yml'
+
+  # Linux 32-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/linux-i686.yml'
+
+  # MacOS 64-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/osx-x64.yml'
+
+  # MacOS ARM 64-bit
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/osx-arm64.yml'
+
+  #################################### MISC ##################################
+    
+# Stages for building
+stages:
+  - build-prepare
+  - build-shared
+
+##############################################################################
+#################################### STAGES ##################################
+##############################################################################
+#
+
+#############
+## cdi2015 ##
+#############
+
+################################### DESKTOPS #################################
+# Windows 64-bit
+libretro-build-windows-x64-cdi2015:
+  extends:
+    - .libretro-windows-x64-mingw-make-default
+    - .core-defs-cdi2015
+  variables:
+    CC:    ${CXX}
+    CC_AS: ${CC}
+    
+# Windows 32-bit
+libretro-build-windows-i686-cdi2015:
+  extends:
+    - .libretro-windows-i686-mingw-make-default
+    - .core-defs-cdi2015
+  variables:
+    CC:    ${CXX}
+    CC_AS: ${CC}
+    
+# Linux 64-bit
+libretro-build-linux-x64-cdi2015:
+  extends:
+    - .libretro-linux-x64-make-default
+    - .core-defs-cdi2015
+    
+# Linux 32-bit
+libretro-build-linux-i686-cdi2015:
+  extends:
+    - .libretro-linux-i686-make-default
+    - .core-defs-cdi2015
+
+# MacOS 64-bit
+libretro-build-osx-x64-cdi2015:
+  tags:
+    - macosx-packaging
+  extends:
+    - .libretro-osx-x64-make-default
+    - .core-defs-cdi2015
+  variables:
+    CC:     ${CXX}
+    CC_AS:  ${CC}
+    CXX_AS: ${CXX}
+    AR:     ar
+    LD:     ld
+
+# MacOS ARM 64-bit
+libretro-build-osx-arm64-cdi2015:
+  tags:
+    - macosx-packaging
+  extends:
+    - .libretro-osx-arm64-make-default
+    - .core-defs-cdi2015
+  variables:
+    CC:     ${CXX}
+    CC_AS:  ${CC}
+    CXX_AS: ${CXX}
+    AR:     ar
+    LD:     ld
