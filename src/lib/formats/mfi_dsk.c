@@ -141,7 +141,7 @@ bool mfi_format::load(io_generic *io, UINT32 form_factor, floppy_image *image)
 			image->set_track_size(cyl >> 2, head, cell_count, cyl & 3);
 			UINT32 *trackbuf = image->get_buffer(cyl >> 2, head, cyl & 3);
 
-			uLongf size = ent->uncompressed_size;
+			uint32_t size = ent->uncompressed_size;
 			if(uncompress((Bytef *)trackbuf, &size, compressed, ent->compressed_size) != Z_OK)
 				return false;
 

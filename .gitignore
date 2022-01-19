@@ -5,6 +5,7 @@
 !/.gitignore
 !/makefile
 !/*.md
+!/.gitlab-ci.yml
 /cfg
 /diff
 /ini
@@ -16,3 +17,4 @@ src/regtests/chdman/temp
 src/regtests/jedutil/output
 /sta
 *.pyc
+*.o

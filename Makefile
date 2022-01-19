@@ -139,8 +139,6 @@ ifneq (,$(findstring unix,$(platform)))
    endif
    LDFLAGS +=  $(fpic) $(SHARED)
    REALCC ?= gcc
-   NATIVECC ?= g++
-   NATIVECFLAGS ?= -std=gnu99
    BASELIBS += -lpthread
    CXX ?= g++
    #workaround for mame bug (c++ in .c files)
@@ -178,18 +176,17 @@ else ifeq ($(platform), osx)
    TARGETLIB := $(TARGET_NAME)_libretro.dylib
    TARGETOS = macosx
    fpic := -fPIC -mmacosx-version-min=10.7
-   LIBCXX := libstdc++
-   LDFLAGSEMULATOR +=  -stdlib=$(LIBCXX)
+   LIBCPLUSPLUS := -stdlib=libc++
+   LDFLAGSEMULATOR +=  $(LIBCPLUSPLUS)
    PLATCFLAGS += $(fpic)
    SHARED := -dynamiclib
-   CXX_AS = c++
-        CC = cc
+   CXX_AS ?= c++
+   CC ?= cc
    LD = $(CXX_AS) -stdlib=$(LIBCXX)
-   REALCC   = $(CC)
-   NATIVECC = $(CXX_AS)
-   NATIVECFLAGS = -std=gnu99
+   REALCC   = cc
+   CFLAGS += $(LIBCPLUSPLUS)
    LDFLAGS +=  $(fpic) $(SHARED)
-   AR = @ar
+   AR ?= @ar
    PYTHON ?= @python
    ifeq ($(COMMAND_MODE),"legacy")
       ARFLAGS = -crs
@@ -229,7 +226,6 @@ else ifneq (,$(findstring ios,$(platform)))
    LD = $(CXX) -stdlib=$(LIBCXX)
    LDFLAGS +=  $(fpic) $(SHARED)
    REALCC   = $(CC)
-   NATIVECC = $(CXX_AS)
    PYTHON ?= @python
    CFLAGS += -DIOS
    LDFLAGSEMULATOR += -stdlib=$(LIBCXX)
@@ -251,7 +247,6 @@ else ifeq ($(platform), tvos-arm64)
    LD = $(CXX) -stdlib=$(LIBCXX)
    LDFLAGS +=  $(fpic) $(SHARED)
    REALCC   = $(CC)
-   NATIVECC = $(CXX_AS)
    PYTHON ?= @python
    CFLAGS += -DIOS
    LDFLAGSEMULATOR += -stdlib=$(LIBCXX)
@@ -290,8 +285,6 @@ else ifeq ($(platform), android)
 
 
    REALCC   = $(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-gcc
-   NATIVECC = g++
-   NATIVECFLAGS = -std=gnu99
    CCOMFLAGS += $(PLATCFLAGS)
 
    LIBS += -lc -ldl -lm -landroid -llog -lsupc++ $(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/thumb/libgnustl_static.a -lgcc
@@ -401,10 +394,6 @@ else ifeq ($(platform), wincross)
 else ifeq ($(platform), emscripten)
    TARGETLIB := $(TARGET_NAME)_libretro_emscripten.bc
 
-   NATIVELD = em++
-   NATIVELDFLAGS = -Wl,--warn-common -lstdc++
-   NATIVECC = em++
-   NATIVECFLAGS = -std=gnu99
    REALCC = emcc
    CC_AS = emcc 
    CC = em++ 
@@ -432,11 +421,9 @@ else ifeq ($(platform), emscripten)
 else
    TARGETLIB := $(TARGET_NAME)_libretro.dll
    TARGETOS = win32
-   CC = g++
-   LD = g++
-   REALCC   = gcc
-   NATIVECC = g++
-   NATIVECFLAGS = -std=gnu99
+   CC ?= g++
+   LD = $(CC)
+   REALCC   = $(CC)
    SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=src/osd/retro/link.T
    CCOMFLAGS += -D__WIN32__
    LDFLAGS += $(SHARED)
@@ -668,6 +655,7 @@ INCPATH += \
    -I$(SRC)/emu/layout \
    -I$(SRC)/lib/util \
    -I$(SRC)/lib \
+   -I$(SRC)/osd/retro/libretro-common/include/compat/zlib \
    -I$(3RDPARTY) \
    -I$(SRC)/osd \
    -I$(SRC)/osd/retro \
@@ -701,14 +689,18 @@ ifneq ($(TARGETOS),emscripten)
 LIBEMU = $(OBJ)/libemu.a
 LIBOPTIONAL = $(OBJ)/$(TARGET)/$(TARGET)/liboptional.a
 LIBDASM = $(OBJ)/$(TARGET)/$(TARGET)/libdasm.a
-LIBBUS = $(OBJ)/$(TARGET)/$(TARGET)/libbus.a
+ifneq ($(SUBTARGET), cdi)
+	LIBBUS = $(OBJ)/$(TARGET)/$(TARGET)/libbus.a
+endif
 LIBUTIL = $(OBJ)/libutil.a
 LIBOCORE = $(OBJ)/libocore.a
 else
 LIBEMU = $(LIBEMUOBJS)
 LIBOPTIONAL = $(CPUOBJS) $(SOUNDOBJS) $(VIDEOOBJS) $(MACHINEOBJS) $(NETLISTOBJS)
 LIBDASM = $(DASMOBJS) 
-LIBBUS = $(BUSOBJS)
+ifneq ($(SUBTARGET), cdi)
+	LIBBUS = $(BUSOBJS)
+endif
 LIBUTIL = $(UTILOBJS) 
 LIBOCORE = $(OSDCOREOBJS) 
 endif
@@ -984,8 +976,11 @@ $(OBJ)/%.a:
 $(OBJ)/%.bc: $(OBJ)/%.a
 	@cp $< $@
 else
+	# Only run ar if the prerequisites list
+	# is valid (not empty) - otherwise OSX
+	# builds will fail
 $(OBJ)/%.a:
 	@echo Archiving $@...
 	$(RM) $@
-	$(AR) $(ARFLAGS) $@ $^
+	@$(if $(strip $^),$(AR) $(ARFLAGS) $@ $^,)
 endif
