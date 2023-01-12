@@ -71,48 +71,48 @@ class OpcodeList:
         self.ea = {}
         self.macros = {}
         try:
-            f = open(fname, "rU")
+            with open(fname, "r") as f:
+                inf = None
+                for line in f:
+                    if line.startswith("#"):
+                        continue
+                    line = line.rstrip()
+                    if not line:
+                        continue
+                    if line.startswith(" ") or line.startswith("\t"):
+                        # append instruction to last opcode, maybe expand a macro
+                        tokens = line.split()
+                        if tokens[0] in self.macros:
+                            self.macros[tokens[0]].apply(inf, tokens)
+                        else:
+                            inf.add_source_line(line)
+                    else:
+                        # New something
+                        tokens = line.split()
+                        #   Addressing mode header
+                        if tokens[0] == "eadr":
+                            inf = Special(tokens[1])
+                            self.ea[inf.name] = inf
+                        elif tokens[0] == "fetch":
+                            inf = Special(tokens[0])
+                            self.fetch = inf
+                        elif tokens[0] == "fetch_noirq":
+                            inf = Special(tokens[0])
+                            self.fetch_noirq = inf
+                        elif tokens[0] == "macro":
+                            inf = Macro(tokens)
+                            self.macros[inf.name] = inf
+                        else:
+                            inf = Opcode(tokens[0], tokens[1], tokens[2], len(tokens) >= 4 and tokens[3] == "196", self.ea)
+                            self.opcode_info.append(inf)
+                            if is_196 or not inf.is_196:
+                                for i in range(inf.rng_start, inf.rng_end+1):
+                                    self.opcode_per_id[i] = inf
         except Exception:
             err = sys.exc_info()[1]
             sys.stderr.write("Cannot read opcodes file %s [%s]\n" % (fname, err))
             sys.exit(1)
 
-        inf = None
-        for line in f:
-            if line.startswith("#"):
-                continue
-            line = line.rstrip()
-            if not line:
-                continue
-            if line.startswith(" ") or line.startswith("\t"):
-                # append instruction to last opcode, maybe expand a macro
-                tokens = line.split()
-                if tokens[0] in self.macros:
-                    self.macros[tokens[0]].apply(inf, tokens)
-                else:
-                    inf.add_source_line(line)
-            else:
-                # New something
-                tokens = line.split()
-                #   Addressing mode header
-                if tokens[0] == "eadr":
-                    inf = Special(tokens[1])
-                    self.ea[inf.name] = inf
-                elif tokens[0] == "fetch":
-                    inf = Special(tokens[0])
-                    self.fetch = inf
-                elif tokens[0] == "fetch_noirq":
-                    inf = Special(tokens[0])
-                    self.fetch_noirq = inf
-                elif tokens[0] == "macro":
-                    inf = Macro(tokens)
-                    self.macros[inf.name] = inf
-                else:
-                    inf = Opcode(tokens[0], tokens[1], tokens[2], len(tokens) >= 4 and tokens[3] == "196", self.ea)
-                    self.opcode_info.append(inf)
-                    if is_196 or not inf.is_196:
-                        for i in range(inf.rng_start, inf.rng_end+1):
-                            self.opcode_per_id[i] = inf
 
     def save_dasm(self, f, t):
         print("const %s_device::disasm_entry %s_device::disasm_entries[0x100] = {" % (t, t), file=f)
@@ -171,24 +171,22 @@ def main(argv):
     if len(argv) != 4:
         print(USAGE % argv[0])
         return 1
-    
+
     t = argv[1]
     opcodes = OpcodeList(argv[2], t == "i8xc196")
-    
+
     try:
-        f = open(argv[3], "w")
+        with open(argv[3], "w") as f:
+            if t != "mcs96":
+                opcodes.save_dasm(f, t)
+            if t != "i8x9x":
+                opcodes.save_opcodes(f, t)
+            if t != "mcs96":
+                opcodes.save_exec(f, t)
     except Exception:
         err = sys.exc_info()[1]
         sys.stderr.write("cannot write file %s [%s]\n" % (argv[3], err))
         sys.exit(1)
-    
-    if t != "mcs96":
-        opcodes.save_dasm(f, t)
-    if t != "i8x9x":
-        opcodes.save_opcodes(f, t)
-    if t != "mcs96":
-        opcodes.save_exec(f, t)
-    f.close()
 
 # ======================================================================
 if __name__ == "__main__":

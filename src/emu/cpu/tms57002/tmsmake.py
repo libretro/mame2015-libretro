@@ -326,18 +326,19 @@ def ins_cmp_dasm(a, b):
 def LoadLst(filename):
     instructions = []
     ins = None
-    for n, line in enumerate(open(filename, "rU")):
-        line = line.rstrip()
-        if not line and ins:
-            # new lines separate intructions
-            ins.Finalize()
-            ins = None
-        elif line[0] in [" ", "\t"]:
-            assert ins
-            ins.AddInfo(line)
-        else:
-            ins = Instruction(line)
-            instructions.append(ins)
+    with open(filename, "r") as f:
+        for n, line in enumerate(f):
+            line = line.rstrip()
+            if not line and ins:
+                # new lines separate intructions
+                ins.Finalize()
+                ins = None
+            elif line[0] in [" ", "\t"]:
+                assert ins
+                ins.AddInfo(line)
+            else:
+                ins = Instruction(line)
+                instructions.append(ins)
     if ins:
         ins.Finalize()
     return instructions
@@ -416,12 +417,12 @@ def EmitCintrp(f, ins_list):
 
 ins_list = LoadLst(sys.argv[1])
 try:
-    f = open(sys.argv[2], "w")
+    with open(sys.argv[2], "w") as f:
+        EmitDasm(f, ins_list)
+        EmitCdec(f, ins_list)
+        EmitCintrp(f, ins_list)
 except Exception:
     err = sys.exc_info()[1]
     sys.stderr.write("cannot write file %s [%s]\n" % (sys.argv[2], err))
     sys.exit(1)
 
-EmitDasm(f, ins_list)
-EmitCdec(f, ins_list)
-EmitCintrp(f, ins_list)
