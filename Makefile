@@ -398,7 +398,7 @@ else ifeq ($(platform), emscripten)
    CC_AS = emcc 
    CC = em++ 
    AR = emar
-   LD = em++
+   LD = emar
    FORCE_DRC_C_BACKEND = 1
    CCOMFLAGS += -DLSB_FIRST -fsigned-char -finline  -fno-common -fno-builtin 
    ARFLAGS := rcs
@@ -412,8 +412,8 @@ else ifeq ($(platform), emscripten)
    PLATCFLAGS += -DALIGN_INTS -DALIGN_SHORTS 
    CCOMFLAGS += $(PLATCFLAGS) #-ffast-math 
    PTR64 = 0
-   CFLAGS +=  -s USE_ZLIB=1 
-   CXXFLAGS += -s USE_ZLIB=1 
+   CFLAGS +=  -s USE_ZLIB=1 -DNO_MEM_TRACKING 
+   CXXFLAGS += -s USE_ZLIB=1 -DNO_MEM_TRACKING 
    LDFLAGS += -s USE_ZLIB=1  $(EXCEPT_FLAGS) 
    LDFLAGSEMULATOR +=
 
@@ -627,7 +627,7 @@ CPPONLYFLAGS += \
 ifneq (,$(findstring clang,$(CC)))
    include $(SRC)/build/flags_clang.mak
 else
-   ifneq (,$(findstring emcc,$(CC)))
+   ifneq (,$(findstring em++,$(CC)))
       # Emscripten compiler is based on clang
       include $(SRC)/build/flags_clang.mak
    else
@@ -920,7 +920,7 @@ $(EMULATOR): $(VERSIONOBJ) $(EMULATOROBJ)
 	@echo Linking $@...
 ifeq ($(TARGETOS),emscripten)
 # Emscripten's linker seems to be stricter about the ordering of files
-	$(LD) $(LDFLAGS) $(LDFLAGSEMULATOR) $(VERSIONOBJ) -Wl,--start-group $(EMULATOROBJ) -Wl,--end-group $(LIBS) -o $@
+	$(AR) rcs $@ $^
 else
 	$(LD) $(LDFLAGS) $(LDFLAGSEMULATOR) $(VERSIONOBJ) $(EMULATOROBJ) $(LIBS) -o $@
 endif
@@ -937,8 +937,11 @@ endif
 $(EMULATOR): $(EMUINFOOBJ) $(DRIVLISTOBJ) $(DRVLIBS) $(LIBOSD) $(LIBBUS) $(LIBOPTIONAL) $(LIBEMU) $(LIBDASM) $(LIBUTIL) $(EXPAT) $(SOFTFLOAT) $(JPEG_LIB) $(FLAC_LIB) $(7Z_LIB) $(FORMATS_LIB) $(LUA_LIB) $(SQLITE3_LIB) $(WEB_LIB) $(ZLIB) $(LIBOCORE) $(MIDI_LIB) $(RESFILE)
 	$(CC) $(CDEFS) $(CFLAGS) -c $(SRC)/version.c -o $(VERSIONOBJ)
 	@echo Linking $(TARGETLIB)
+ifeq ($(TARGETOS),emscripten)
+	$(AR) rcs $@ $^
+else
 	$(LD) $(LDFLAGS) $(LDFLAGSEMULATOR) $(VERSIONOBJ) $^ $(LIBS) -o $(TARGETLIB)
-
+endif
 
 #-------------------------------------------------
 # generic rules
@@ -971,8 +974,7 @@ ifeq ($(TARGETOS),emscripten)
 # Avoid using .a files with Emscripten, link to bitcode instead
 $(OBJ)/%.a:
 	@echo Linking $@...
-	$(RM) $@
-	$(LD) $^ -o $@
+	$(AR) rcs $@ $^
 $(OBJ)/%.bc: $(OBJ)/%.a
 	@cp $< $@
 else
