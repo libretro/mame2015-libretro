@@ -444,10 +444,14 @@ endif
 # webOS (32-bit)
 ifneq (,$(or $(findstring webos,$(CROSS_COMPILE)),$(findstring starfish,$(CROSS_COMPILE))))
    FORCE_DRC_C_BACKEND = 1
-   PTR64 = 0
    PLATCFLAGS += -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK -DARM
-   NOASM = 1
    REALCC = $(CC)
+   ifneq (,$(findstring aarch64,$(CROSS_COMPILE)))
+      PTR64 = 1
+   else
+      PTR64 = 0
+      NOASM = 1
+   endif
 endif
 
 ###########################################################################
