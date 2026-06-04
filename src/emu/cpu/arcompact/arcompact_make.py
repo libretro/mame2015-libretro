@@ -351,85 +351,79 @@ def EmitGroup17(f,funcname, opname, opexecute):
 
 
 try:
-    f = open(sys.argv[1], "w")
+    with open(sys.argv[1], "w") as f:
+        EmitGroup04(f, "04_00", "ADD",  "UINT32 result = b + c;",                 "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_Handle_NZCV_ADD_Flags )
+
+        EmitGroup04(f, "04_02", "SUB",  "UINT32 result = b - c;",                 "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+
+        EmitGroup04(f, "04_04", "AND",  "UINT32 result = b & c;",                 "if (areg != LIMM_REG) { m_regs[areg] = result; }", "if (breg != LIMM_REG) { m_regs[breg] = result; }", 0,0, -1, EmitGroup04_Handle_NZ_Flags  )
+        EmitGroup04(f, "04_05", "OR",   "UINT32 result = b | c;",                 "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+        EmitGroup04(f, "04_06", "BIC",  "UINT32 result = b & (~c);",              "m_regs[areg] = result;", "m_regs[breg] = result;",  0,0, -1, EmitGroup04_unsupported_Flags  )
+        EmitGroup04(f, "04_07", "XOR",  "UINT32 result = b ^ c;",                 "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+
+        EmitGroup04(f, "04_0a", "MOV",  "UINT32 result = c;",                     "m_regs[breg] = result;", "m_regs[breg] = result;", 1,1, -1, EmitGroup04_Handle_NZ_Flags  ) # special case, result always goes to breg
+
+        EmitGroup04(f, "04_0e", "RSUB", "UINT32 result = c - b;",                 "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+        EmitGroup04(f, "04_0f", "BSET", "UINT32 result = b | (1 << (c & 0x1f));", "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+
+        EmitGroup04(f, "04_13", "BMSK", "UINT32 result = b & ((1<<(c+1))-1);",    "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+
+
+        EmitGroup04(f, "04_14", "ADD1", "UINT32 result = b + (c << 1);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+        EmitGroup04(f, "04_15", "ADD2", "UINT32 result = b + (c << 2);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+        EmitGroup04(f, "04_16", "ADD3", "UINT32 result = b + (c << 3);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+        EmitGroup04(f, "04_17", "SUB1", "UINT32 result = b - (c << 1);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+        EmitGroup04(f, "04_18", "SUB2", "UINT32 result = b - (c << 2);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+        EmitGroup04(f, "04_19", "SUB3", "UINT32 result = b - (c << 3);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+
+        EmitGroup04(f, "04_2a", "LR", "m_regs[breg] = READAUX(c);", "", "", 1,1, -1, EmitGroup04_no_Flags  ) # this can't be conditional (todo)
+        EmitGroup04(f, "04_2b", "SR", "WRITEAUX(c,b);", "", "", 1,0, -1, EmitGroup04_no_Flags  ) # this can't be conditional (todo)
+
+
+
+        EmitGroup04(f, "05_00", "ASL", "UINT32 result = b << (c&0x1f);", "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+        EmitGroup04(f, "05_01", "LSR", "UINT32 result = b >> (c&0x1f);", "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
+
+        # the 04_2f subgroup uses the same encoding, but the areg is already used as sub-opcode select, so any modes relying on areg bits for other reasons (sign, condition) (modes 10, 11m0, 11m1) are illegal.  the destination is also breg not areg
+        EmitGroup04(f, "04_2f_02", "LSR1", "UINT32 result = c >> 1;",                                                                                                                             "m_regs[breg] = result;","", 2,1, -1, EmitGroup04_Handle_NZC_LSR1_Flags  ) # no alt handler (invalid path)
+        EmitGroup04(f, "04_2f_03", "ROR", "int shift = 1; UINT32 mask = (1 << (shift)) - 1; mask <<= (32-shift); UINT32 result = ((c >> shift) & ~mask) | ((c << (32-shift)) & mask);",          "m_regs[breg] = result;","", 2,1, -1, EmitGroup04_Handle_NZC_LSR1_Flags  )
+
+
+        EmitGroup04(f, "04_2f_07", "EXTB", "UINT32 result = c & 0x000000ff;",  "m_regs[breg] = result;","", 2,1, -1, EmitGroup04_unsupported_Flags  ) # ^
+        EmitGroup04(f, "04_2f_08", "EXTW", "UINT32 result = c & 0x0000ffff;",  "m_regs[breg] = result;","", 2,1, -1, EmitGroup04_unsupported_Flags  ) # ^
+
+        # xxx_S  c, b, u3  format opcodes (note c is destination)
+        EmitGroup0d(f, "0d_00", "ADD_S", "UINT32 result = m_regs[breg] + u;",         "m_regs[creg] = result;" )
+        EmitGroup0d(f, "0d_01", "SUB_S", "UINT32 result = m_regs[breg] - u;",         "m_regs[creg] = result;" )
+        EmitGroup0d(f, "0d_02", "ASL_S", "UINT32 result = m_regs[breg] << u;",        "m_regs[creg] = result;" )
+
+        # xxx_S b <- b,c format opcodes  (or in some cases xxx_S b,c)
+        EmitGroup0f(f, "0f_02", "SUB_S", "UINT32 result = m_regs[breg] - m_regs[creg];",        "m_regs[breg] = result;" )
+        EmitGroup0f(f, "0f_04", "AND_S", "UINT32 result = m_regs[breg] & m_regs[creg];",        "m_regs[breg] = result;" )
+        EmitGroup0f(f, "0f_05", "OR_S",  "UINT32 result = m_regs[breg] | m_regs[creg];",        "m_regs[breg] = result;" )
+        EmitGroup0f(f, "0f_07", "XOR_S", "UINT32 result = m_regs[breg] ^ m_regs[creg];",        "m_regs[breg] = result;" )
+        EmitGroup0f(f, "0f_0f", "EXTB_S","UINT32 result = m_regs[creg] & 0x000000ff;",          "m_regs[breg] = result;" )
+        EmitGroup0f(f, "0f_10", "EXTW_S","UINT32 result = m_regs[creg] & 0x0000ffff;",          "m_regs[breg] = result;" )
+        EmitGroup0f(f, "0f_13", "NEG_S"," UINT32 result = 0 - m_regs[creg];",                   "m_regs[breg] = result;" )
+
+        EmitGroup0f(f, "0f_14", "ADD1_S"," UINT32 result = m_regs[breg] + (m_regs[creg] <<1);", "m_regs[breg] = result;" )
+        EmitGroup0f(f, "0f_15", "ADD2_S"," UINT32 result = m_regs[breg] + (m_regs[creg] <<2);", "m_regs[breg] = result;" )
+        EmitGroup0f(f, "0f_16", "ADD3_S"," UINT32 result = m_regs[breg] + (m_regs[creg] <<3);", "m_regs[breg] = result;" )
+
+        EmitGroup0f(f, "0f_19", "LSR_S", "UINT32 result = m_regs[breg] >> (m_regs[creg]&0x1f);","m_regs[breg] = result;" )
+        EmitGroup0f(f, "0f_1b", "ASL1_S","UINT32 result = m_regs[creg] << 1;",                  "m_regs[breg] = result;" )
+
+
+        #  xxx_S b, b, u5 format opcodes
+        EmitGroup17(f, "17_00", "ASL_S",  "m_regs[breg] = m_regs[breg] << (u&0x1f);" )
+        EmitGroup17(f, "17_01", "LSR_S",  "m_regs[breg] = m_regs[breg] >> (u&0x1f);" )
+        EmitGroup17(f, "17_02", "ASR_S",  "INT32 temp = (INT32)m_regs[breg]; m_regs[breg] = temp >> (u&0x1f); // treat it as a signed value, so sign extension occurs during shift" )
+        EmitGroup17(f, "17_03", "SUB_S",  "m_regs[breg] = m_regs[breg] - u;" )
+        EmitGroup17(f, "17_04", "BSET_S", "m_regs[breg] = m_regs[breg] | (1 << (u & 0x1f));" )
+
+        EmitGroup17(f, "17_06", "BMSK_S", "m_regs[breg] = m_regs[breg] | ((1 << (u + 1)) - 1);" )
+
 except Exception:
     err = sys.exc_info()[1]
     sys.stderr.write("cannot write file %s [%s]\n" % (sys.argv[1], err))
     sys.exit(1)
-
-
-EmitGroup04(f, "04_00", "ADD",  "UINT32 result = b + c;",                 "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_Handle_NZCV_ADD_Flags )
-
-EmitGroup04(f, "04_02", "SUB",  "UINT32 result = b - c;",                 "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-
-EmitGroup04(f, "04_04", "AND",  "UINT32 result = b & c;",                 "if (areg != LIMM_REG) { m_regs[areg] = result; }", "if (breg != LIMM_REG) { m_regs[breg] = result; }", 0,0, -1, EmitGroup04_Handle_NZ_Flags  )
-EmitGroup04(f, "04_05", "OR",   "UINT32 result = b | c;",                 "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-EmitGroup04(f, "04_06", "BIC",  "UINT32 result = b & (~c);",              "m_regs[areg] = result;", "m_regs[breg] = result;",  0,0, -1, EmitGroup04_unsupported_Flags  )
-EmitGroup04(f, "04_07", "XOR",  "UINT32 result = b ^ c;",                 "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-
-EmitGroup04(f, "04_0a", "MOV",  "UINT32 result = c;",                     "m_regs[breg] = result;", "m_regs[breg] = result;", 1,1, -1, EmitGroup04_Handle_NZ_Flags  ) # special case, result always goes to breg
-
-EmitGroup04(f, "04_0e", "RSUB", "UINT32 result = c - b;",                 "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-EmitGroup04(f, "04_0f", "BSET", "UINT32 result = b | (1 << (c & 0x1f));", "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-
-EmitGroup04(f, "04_13", "BMSK", "UINT32 result = b & ((1<<(c+1))-1);",    "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-
-
-EmitGroup04(f, "04_14", "ADD1", "UINT32 result = b + (c << 1);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-EmitGroup04(f, "04_15", "ADD2", "UINT32 result = b + (c << 2);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-EmitGroup04(f, "04_16", "ADD3", "UINT32 result = b + (c << 3);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-EmitGroup04(f, "04_17", "SUB1", "UINT32 result = b - (c << 1);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-EmitGroup04(f, "04_18", "SUB2", "UINT32 result = b - (c << 2);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-EmitGroup04(f, "04_19", "SUB3", "UINT32 result = b - (c << 3);",          "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-
-EmitGroup04(f, "04_2a", "LR", "m_regs[breg] = READAUX(c);", "", "", 1,1, -1, EmitGroup04_no_Flags  ) # this can't be conditional (todo)
-EmitGroup04(f, "04_2b", "SR", "WRITEAUX(c,b);", "", "", 1,0, -1, EmitGroup04_no_Flags  ) # this can't be conditional (todo)
-
-
-
-EmitGroup04(f, "05_00", "ASL", "UINT32 result = b << (c&0x1f);", "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-EmitGroup04(f, "05_01", "LSR", "UINT32 result = b >> (c&0x1f);", "m_regs[areg] = result;", "m_regs[breg] = result;", 0,0, -1, EmitGroup04_unsupported_Flags  )
-
-# the 04_2f subgroup uses the same encoding, but the areg is already used as sub-opcode select, so any modes relying on areg bits for other reasons (sign, condition) (modes 10, 11m0, 11m1) are illegal.  the destination is also breg not areg
-EmitGroup04(f, "04_2f_02", "LSR1", "UINT32 result = c >> 1;",                                                                                                                             "m_regs[breg] = result;","", 2,1, -1, EmitGroup04_Handle_NZC_LSR1_Flags  ) # no alt handler (invalid path)
-EmitGroup04(f, "04_2f_03", "ROR", "int shift = 1; UINT32 mask = (1 << (shift)) - 1; mask <<= (32-shift); UINT32 result = ((c >> shift) & ~mask) | ((c << (32-shift)) & mask);",          "m_regs[breg] = result;","", 2,1, -1, EmitGroup04_Handle_NZC_LSR1_Flags  )
-
-
-EmitGroup04(f, "04_2f_07", "EXTB", "UINT32 result = c & 0x000000ff;",  "m_regs[breg] = result;","", 2,1, -1, EmitGroup04_unsupported_Flags  ) # ^
-EmitGroup04(f, "04_2f_08", "EXTW", "UINT32 result = c & 0x0000ffff;",  "m_regs[breg] = result;","", 2,1, -1, EmitGroup04_unsupported_Flags  ) # ^
-
-# xxx_S  c, b, u3  format opcodes (note c is destination)
-EmitGroup0d(f, "0d_00", "ADD_S", "UINT32 result = m_regs[breg] + u;",         "m_regs[creg] = result;" )
-EmitGroup0d(f, "0d_01", "SUB_S", "UINT32 result = m_regs[breg] - u;",         "m_regs[creg] = result;" )
-EmitGroup0d(f, "0d_02", "ASL_S", "UINT32 result = m_regs[breg] << u;",        "m_regs[creg] = result;" )
-
-# xxx_S b <- b,c format opcodes  (or in some cases xxx_S b,c)
-EmitGroup0f(f, "0f_02", "SUB_S", "UINT32 result = m_regs[breg] - m_regs[creg];",        "m_regs[breg] = result;" )
-EmitGroup0f(f, "0f_04", "AND_S", "UINT32 result = m_regs[breg] & m_regs[creg];",        "m_regs[breg] = result;" )
-EmitGroup0f(f, "0f_05", "OR_S",  "UINT32 result = m_regs[breg] | m_regs[creg];",        "m_regs[breg] = result;" )
-EmitGroup0f(f, "0f_07", "XOR_S", "UINT32 result = m_regs[breg] ^ m_regs[creg];",        "m_regs[breg] = result;" )
-EmitGroup0f(f, "0f_0f", "EXTB_S","UINT32 result = m_regs[creg] & 0x000000ff;",          "m_regs[breg] = result;" )
-EmitGroup0f(f, "0f_10", "EXTW_S","UINT32 result = m_regs[creg] & 0x0000ffff;",          "m_regs[breg] = result;" )
-EmitGroup0f(f, "0f_13", "NEG_S"," UINT32 result = 0 - m_regs[creg];",                   "m_regs[breg] = result;" )
-
-EmitGroup0f(f, "0f_14", "ADD1_S"," UINT32 result = m_regs[breg] + (m_regs[creg] <<1);", "m_regs[breg] = result;" )
-EmitGroup0f(f, "0f_15", "ADD2_S"," UINT32 result = m_regs[breg] + (m_regs[creg] <<2);", "m_regs[breg] = result;" )
-EmitGroup0f(f, "0f_16", "ADD3_S"," UINT32 result = m_regs[breg] + (m_regs[creg] <<3);", "m_regs[breg] = result;" )
-
-EmitGroup0f(f, "0f_19", "LSR_S", "UINT32 result = m_regs[breg] >> (m_regs[creg]&0x1f);","m_regs[breg] = result;" )
-EmitGroup0f(f, "0f_1b", "ASL1_S","UINT32 result = m_regs[creg] << 1;",                  "m_regs[breg] = result;" )
-
-
-#  xxx_S b, b, u5 format opcodes
-EmitGroup17(f, "17_00", "ASL_S",  "m_regs[breg] = m_regs[breg] << (u&0x1f);" )
-EmitGroup17(f, "17_01", "LSR_S",  "m_regs[breg] = m_regs[breg] >> (u&0x1f);" )
-EmitGroup17(f, "17_02", "ASR_S",  "INT32 temp = (INT32)m_regs[breg]; m_regs[breg] = temp >> (u&0x1f); // treat it as a signed value, so sign extension occurs during shift" )
-EmitGroup17(f, "17_03", "SUB_S",  "m_regs[breg] = m_regs[breg] - u;" )
-EmitGroup17(f, "17_04", "BSET_S", "m_regs[breg] = m_regs[breg] | (1 << (u & 0x1f));" )
-
-EmitGroup17(f, "17_06", "BMSK_S", "m_regs[breg] = m_regs[breg] | ((1 << (u + 1)) - 1);" )
-
-
-
-
-

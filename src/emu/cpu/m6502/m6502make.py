@@ -16,22 +16,22 @@ def load_opcodes(fname):
     opcodes = []
     logging.info("load_opcodes: %s", fname)
     try:
-        f = open(fname, "rU")
+        with open(fname, "r") as f:
+            for line in f:
+                if line.startswith("#"): continue
+                line = line.rstrip()
+                if not line: continue
+                if line.startswith(" ") or line.startswith("\t"):
+                    # append instruction to last opcode
+                    opcodes[-1][1].append(line)
+                else:
+                    # add new opcode
+                    opcodes.append((line, []))
     except Exception:
         err = sys.exc_info()[1]
         logging.error("cannot read opcodes file %s [%s]", fname, err)
         sys.exit(1)
 
-    for line in f:
-        if line.startswith("#"): continue
-        line = line.rstrip()
-        if not line: continue
-        if line.startswith(" ") or line.startswith("\t"):
-            # append instruction to last opcode
-            opcodes[-1][1].append(line)
-        else:
-            # add new opcode
-            opcodes.append((line, []))
     return opcodes
 
 
@@ -39,17 +39,18 @@ def load_disp(fname):
     logging.info("load_disp: %s", fname)
     states = []
     try:
-        f = open(fname, "rU")
+        with open(fname, "r") as f:
+            for line in f:
+                if line.startswith("#"): continue
+                line = line.strip()
+                if not line: continue
+                tokens = line.split()
+                states += tokens
     except Exception:
         err = sys.exc_info()[1]
         logging.error("cannot read display file %s [%s]", fname, err)
         sys.exit(1)
-    for line in f:
-        if line.startswith("#"): continue
-        line = line.strip()
-        if not line: continue
-        tokens = line.split()
-        states += tokens
+
     return states
 
 def emit(f, text):
@@ -229,15 +230,14 @@ def save_tables(f, device, states):
 def save(fname, device, opcodes, states):
     logging.info("saving: %s", fname)
     try:
-        f = open(fname, "w")
+        with open(fname, "w") as f:
+            save_opcodes(f, device, opcodes)
+            emit(f, "\n")
+            save_tables(f, device, states)
     except Exception:
         err = sys.exc_info()[1]
         logging.error("cannot write file %s [%s]", fname, err)
         sys.exit(1)
-    save_opcodes(f,device, opcodes)
-    emit(f, "\n")
-    save_tables(f, device, states)
-    f.close()
 
 
 def main(argv):

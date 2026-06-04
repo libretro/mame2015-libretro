@@ -263,50 +263,49 @@ class OpcodeList:
         self.dispatch = {}
         self.macros = {}
         try:
-            f = open(fname, "r")
+            with open(fname, "r") as f:
+                inf = None
+                for line in f:
+                    if line.startswith("#"):
+                        continue
+                    line = line.rstrip()
+                    if not line:
+                        continue
+                    if line.startswith(" ") or line.startswith("\t"):
+                        if inf is not None:
+                            # append instruction to last opcode, maybe expand a macro
+                            tokens = line.split()
+                            if tokens[0] in self.macros:
+                                self.macros[tokens[0]].apply(inf, tokens)
+                            else:
+                                inf.add_source_line(line)
+                    else:
+                        # New opcode
+                        tokens = line.split()
+                        if tokens[0] == "macro":
+                            inf = Macro(tokens)
+                            self.macros[inf.name] = inf
+                        elif len(tokens) == 2 or len(tokens) == 3:
+                            if len(tokens) >= 3:
+                                otype = name_to_type(tokens[2])
+                            else:
+                                otype = -1
+                            inf = Special(tokens[0], tokens[1], otype, dtype)
+                            self.states_info.append(inf)
+                        else:
+                            if len(tokens) >= 7:
+                                otype = name_to_type(tokens[6])
+                            else:
+                                otype = -1
+                            if otype == -1 or dtype == 0 or (otype != 0 and dtype != 0):
+                                inf = Opcode(tokens[0], tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], otype, dtype)
+                                self.opcode_info.append(inf)
+                            else:
+                                inf = None
         except Exception:
             err = sys.exc_info()[1]
             sys.stderr.write("Cannot read opcodes file %s [%s]\n" % (fname, err))
             sys.exit(1)
-        
-        inf = None
-        for line in f:
-            if line.startswith("#"):
-                continue
-            line = line.rstrip()
-            if not line:
-                continue
-            if line.startswith(" ") or line.startswith("\t"):
-                if inf is not None:
-                    # append instruction to last opcode, maybe expand a macro
-                    tokens = line.split()
-                    if tokens[0] in self.macros:
-                        self.macros[tokens[0]].apply(inf, tokens)
-                    else:
-                        inf.add_source_line(line)
-            else:
-                # New opcode
-                tokens = line.split()
-                if tokens[0] == "macro":
-                    inf = Macro(tokens)
-                    self.macros[inf.name] = inf
-                elif len(tokens) == 2 or len(tokens) == 3:
-                    if len(tokens) >= 3:
-                        otype = name_to_type(tokens[2])
-                    else:
-                        otype = -1
-                    inf = Special(tokens[0], tokens[1], otype, dtype)
-                    self.states_info.append(inf)
-                else:
-                    if len(tokens) >= 7:
-                        otype = name_to_type(tokens[6])
-                    else:
-                        otype = -1
-                    if otype == -1 or dtype == 0 or (otype != 0 and dtype != 0):
-                        inf = Opcode(tokens[0], tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], otype, dtype)
-                        self.opcode_info.append(inf)
-                    else:
-                        inf = None
 
     def get(self, i):
         if i in self.dispatch:
@@ -453,20 +452,18 @@ def main(argv):
     opcodes = OpcodeList(argv[1], dtype)
     
     try:
-        f = open(argv[3], "w")
+        with open(argv[3], "w") as f:
+            opcodes.build_dispatch()
+            opcodes.save_dasm(f, dname)
+            opcodes.save_opcodes(f, dname)
+            if dtype == 0:
+                opcodes.save_dispatch(f, dname)
+            opcodes.save_exec(f, dname, dtype, "full")
+            opcodes.save_exec(f, dname, dtype, "partial")
     except Exception:
         err = sys.exc_info()[1]
         sys.stderr.write("cannot write file %s [%s]\n" % (argv[3], err))
         sys.exit(1)
-
-    opcodes.build_dispatch()
-    opcodes.save_dasm(f, dname)
-    opcodes.save_opcodes(f, dname)
-    if dtype == 0:
-        opcodes.save_dispatch(f, dname)
-    opcodes.save_exec(f, dname, dtype, "full")
-    opcodes.save_exec(f, dname, dtype, "partial")
-    f.close()
 
 # ======================================================================
 if __name__ == "__main__":
