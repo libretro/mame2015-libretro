@@ -68,7 +68,8 @@ OSDOBJS += $(GLOBJ)/glsym_gl.o
 endif
 endif
 
-ifneq ($(platform),android)
+# bionic has pthread in libc and ships no libpthread to link.
+ifeq (,$(findstring android,$(platform)))
 LIBS += -lpthread
 BASELIBS += -lpthread
 endif

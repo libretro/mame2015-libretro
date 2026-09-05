@@ -77,7 +77,10 @@ INLINE float ATTR_CONST _recip_approx(float value)
 
 #define divu_64x32_rem     _divu_64x32_rem
 
-#define compare_exchange64 _compare_exchange64
+/* No compare_exchange64 here: this is the 32-bit x86 block, and the
+   implementation that used to live below it was written in cmpxchgq, which
+   needs 64-bit mode. eminline.h's generic version stands in - the same one
+   x86-64 has always used, nothing having defined the macro there either. */
 
 /*-------------------------------------------------
     mul_32x32 - perform a signed 32 bit x 32 bit
@@ -334,29 +337,6 @@ _modu_64x32(UINT64 a, UINT32 b)
 		: [a]      "A"  (a)         /* 'a' in edx:eax */
 		, [b]      "rm" (b)         /* 'b' in register or memory */
 		: "cc"                      /* Clobbers condition codes */
-	);
-
-	return result;
-}
-
-/*-------------------------------------------------
-    compare_exchange64 - compare the 'compare'
-    value against the memory at 'ptr'; if equal,
-    swap in the 'exchange' value. Regardless,
-    return the previous value at 'ptr'.
--------------------------------------------------*/
-INLINE INT64 ATTR_NONNULL(1) ATTR_FORCE_INLINE
-_compare_exchange64(INT64 volatile *ptr, INT64 compare, INT64 exchange)
-{
-	register INT64 result;
-
-	__asm__ __volatile__ (
-		" lock ; cmpxchgq  %[exchange], %[ptr] ;"
-		: [ptr]      "+m" (*ptr)
-		, [result]   "=a" (result)
-		: [compare]  "1"  (compare)
-		, [exchange] "q"  (exchange)
-		: "cc"
 	);
 
 	return result;

@@ -110,7 +110,7 @@ $(info CPPFLAGS = $(CPPONLYFLAGS))
 BUILD_EXPAT = 1
 
 # uncomment next line to build zlib as part of MAME build
-ifneq ($(platform), android)
+ifeq (,$(findstring android,$(platform)))
    ifneq ($(platform), emscripten)
       BUILD_ZLIB = 1
    endif
@@ -254,40 +254,70 @@ else ifeq ($(platform), tvos-arm64)
    CCOMFLAGS += $(PLATCFLAGS)
 
 # Android
-else ifeq ($(platform), android)
+# The buildbot's android-make template passes the ABI in `platform`
+# (android-arm, android-arm64, android-x86, android-x86_64) and the NDK in
+# NDK_ROOT; plain `android` is the old armeabi-v7a spelling. Everything below
+# is otherwise read off the build host, which is x86-64 Linux.
+else ifneq (,$(findstring android,$(platform)))
    TARGETLIB := $(TARGET_NAME)_libretro_android.so
    TARGETOS=linux
    fpic := -fPIC
    SHARED := -shared -Wl,--version-script=src/osd/retro/link.T
-   CC = @$(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-g++
-   AR = @$(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-ar
-   LD = @$(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-g++
+   # 24, not 21: this is where bionic's pthread_barrier_* arrive.
+   ANDROID_API ?= 24
+   ANDROID_NDK_LLVM ?= $(NDK_ROOT)/toolchains/llvm/prebuilt/linux-x86_64
 
-   FORCE_DRC_C_BACKEND = 1
+   ifeq ($(platform), android-arm64)
+      ANDROID_TRIPLE = aarch64-linux-android
+      PTR64 = 1
+      PLATCFLAGS += -DSDLMAME_NO64BITIO -DSDLMAME_ARM
+      NOASM = 1
+      FORCE_DRC_C_BACKEND = 1
+   else ifeq ($(platform), android-x86)
+      ANDROID_TRIPLE = i686-linux-android
+      PTR64 = 0
+   else ifeq ($(platform), android-x86_64)
+      ANDROID_TRIPLE = x86_64-linux-android
+      PTR64 = 1
+   else
+      ANDROID_TRIPLE = armv7a-linux-androideabi
+      PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -mthumb
+      PLATCFLAGS += -DALIGN_INTS -DALIGN_SHORTS -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK -DARM
+      NOASM = 1
+      FORCE_DRC_C_BACKEND = 1
+   endif
 
-   CCOMFLAGS += -fPIC -fpic -ffunction-sections -funwind-tables
+   # bionic puts the x86 register indices in the global namespace, where glibc
+   # keeps them behind __USE_GNU, and the x86 recompiler backends have REG_EAX
+   # of their own. src/osd/retro/android-shim/sys/ucontext.h, found first,
+   # renames bionic's out of the way.
+   PLATCFLAGS += -I$(CURDIR)/src/osd/retro/android-shim
 
-   PLATCFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -mthumb -DANDROID -DALIGN_INTS -DALIGN_SHORTS -DSDLMAME_NO64BITIO -DSDLMAME_ARM -DRETRO_SETJMP_HACK 
+   CXX = $(ANDROID_NDK_LLVM)/bin/$(ANDROID_TRIPLE)$(ANDROID_API)-clang++
+   REALCC = $(ANDROID_NDK_LLVM)/bin/$(ANDROID_TRIPLE)$(ANDROID_API)-clang
+   AR = @$(ANDROID_NDK_LLVM)/bin/llvm-ar
+   #workaround for mame bug (c++ in .c files)
+   CC := $(CXX)
+   LD := $(CXX)
 
-   PLATCFLAGS += -I$(ANDROID_NDK_ROOT)/platforms/android-19/arch-arm/usr/include -I$(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.9/include
-
-   PLATCFLAGS += -I$(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include
-
+   CCOMFLAGS += $(fpic) -fsigned-char -finline -fno-common -fno-builtin -ffunction-sections -funwind-tables
+   PLATCFLAGS += -DANDROID -fstrict-aliasing
+   # corealloc.h poisons realloc(), and the NDK's libc++ <locale> calls it from
+   # a header, so every translation unit that reaches <locale> stops on
+   # "no member named '__error_realloc_is_dangerous__'". NO_MEM_TRACKING is
+   # this tree's own switch for that; the emscripten build already uses it.
+   PLATCFLAGS += -DNO_MEM_TRACKING
+   # bionic has no pthread_setaffinity_np - sched_setaffinity is what it has -
+   # and sync_retro.c already has a switch for the targets that lack it.
+   PLATCFLAGS += -DNO_AFFINITY_NP
    ifeq ($(VRENDER),opengl)
       PLATCFLAGS += -DHAVE_OPENGL
       LIBS += -lGLESv2
       GLES = 1
    endif
-
-   LDFLAGS += $(fpic) $(SHARED) -L$(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/thumb
-
-   LDFLAGS += -L$(ANDROID_NDK_ROOT)/platforms/android-19/arch-arm/usr/lib  --sysroot=$(ANDROID_NDK_ROOT)/platforms/android-19/arch-arm -march=armv7-a -mthumb -shared
-
-
-   REALCC   = $(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-gcc
+   LDFLAGS += $(fpic) $(SHARED) -static-libstdc++
+   LIBS += -lc -ldl -lm -landroid -llog
    CCOMFLAGS += $(PLATCFLAGS)
-
-   LIBS += -lc -ldl -lm -landroid -llog -lsupc++ $(ANDROID_NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/thumb/libgnustl_static.a -lgcc
 
 # QNX
 else ifeq ($(platform), qnx)
@@ -805,7 +835,7 @@ MIDI_LIB =
 endif
 
 ifneq (,$(findstring clang,$(CC)))
-ifneq ($(platform), android)
+ifeq (,$(findstring android,$(platform)))
 LIBS += -lstdc++ -lpthread
 endif
 endif
@@ -904,7 +934,7 @@ $(sort $(OBJDIRS)):
 
 BUILDTOOLS_CUSTOM = 0
 
-ifeq ($(platform), android)
+ifneq (,$(findstring android,$(platform)))
 BUILDTOOLS_CUSTOM = 1
 else ifeq ($(platform), ios)
 BUILDTOOLS_CUSTOM = 1

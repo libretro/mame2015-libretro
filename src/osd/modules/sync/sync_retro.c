@@ -441,7 +441,9 @@ osd_thread *osd_thread_create(osd_thread_callback callback, void *cbparam)
    thread->handle = (HANDLE)handle;
 #else
 	pthread_attr_init(&attr);
-#ifndef SDLMAME_ARM
+// bionic only grew pthread_attr_setinheritsched at API 28, and the core is
+// built against 24.
+#if !defined(SDLMAME_ARM) && !defined(__ANDROID__)
 	pthread_attr_setinheritsched(&attr, PTHREAD_INHERIT_SCHED);
 #endif
 	if ( pthread_create(&thread->thread, &attr, callback, cbparam) != 0 )
