@@ -37,6 +37,11 @@ include:
   - project: 'libretro-infrastructure/ci-templates'
     file: '/linux-aarch64.yml'
 
+  ################################## CELLULAR ################################
+  # Android
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/android-make.yml'
+
   #################################### MISC ##################################
   # webOS 32-bit (LGTV)
   - project: 'libretro-infrastructure/ci-templates'
@@ -91,6 +96,31 @@ libretro-build-linux-i686:
 libretro-build-linux-aarch64:
   extends:
     - .libretro-linux-aarch64-make-default
+    - .core-defs
+
+################################### CELLULAR #################################
+# Android ARMv7a
+android-armeabi-v7a:
+  extends:
+    - .libretro-android-make-armeabi-v7a
+    - .core-defs
+
+# Android ARMv8a
+android-arm64-v8a:
+  extends:
+    - .libretro-android-make-arm64-v8a
+    - .core-defs
+
+# Android x86
+android-x86:
+  extends:
+    - .libretro-android-make-x86
+    - .core-defs
+
+# Android x86_64
+android-x86_64:
+  extends:
+    - .libretro-android-make-x86_64
     - .core-defs
 
 #############
