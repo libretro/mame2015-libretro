@@ -592,8 +592,8 @@ private:
 	void replaceNode(tree_node*& node1, tree_node*& node2)
 	{
 		// Save both parent references
-		simple_set<T>* node1Parent = node1->parent;
-		simple_set<T>* node2Parent = node2->parent;
+		tree_node* node1Parent = node1->parent;
+		tree_node* node2Parent = node2->parent;
 
 		// First move node2 into node1's place
 		if (node1Parent)
