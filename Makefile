@@ -237,11 +237,14 @@ else ifneq (,$(findstring ios,$(platform)))
 
    IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
    CXX_AS := c++
-   IOS_MINVER ?= 12.0
    ifeq ($(platform),ios-arm64)
+     IOS_MINVER ?= 12.0
      IOS_TARGET := -arch arm64 -isysroot $(IOSSDK) -miphoneos-version-min=$(IOS_MINVER)
      PTR64 = 1
    else
+     # armv7 devices stop at iOS 10, so the arm64 default would leave the
+     # 32-bit build asking the SDK for a target it has no slices for
+     IOS_MINVER ?= 9.0
      IOS_TARGET := -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=$(IOS_MINVER)
    endif
    CC = $(CXX_AS) $(IOS_TARGET)
