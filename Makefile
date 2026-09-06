@@ -175,19 +175,32 @@ ifneq (,$(findstring unix,$(platform)))
 else ifeq ($(platform), osx)
    TARGETLIB := $(TARGET_NAME)_libretro.dylib
    TARGETOS = macosx
-   fpic := -fPIC -mmacosx-version-min=10.7
-   LIBCPLUSPLUS := -stdlib=libc++
+   # Apple silicon starts at 11.0, and CI passes a target of its own - which
+   # it can also pass empty, so this cannot be a plain ?=
+   ifeq ($(strip $(MACOSX_DEPLOYMENT_TARGET)),)
+      ifneq (,$(filter arm64 aarch64,$(UNAME)))
+         MACOSX_DEPLOYMENT_TARGET := 11.0
+      else
+         MACOSX_DEPLOYMENT_TARGET := 10.7
+      endif
+   endif
+   fpic := -fPIC -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET)
+   LIBCXX := libc++
+   LIBCPLUSPLUS := -stdlib=$(LIBCXX)
    LDFLAGSEMULATOR +=  $(LIBCPLUSPLUS)
    PLATCFLAGS += $(fpic)
    SHARED := -dynamiclib
    CXX_AS ?= c++
-   CC ?= cc
+   # the tree is C++ in .c files, so the C compiler has to be the C++ one -
+   # every other platform does this, osx was the one that did not
+   CC := $(CXX_AS)
    LD = $(CXX_AS) -stdlib=$(LIBCXX)
    REALCC   = cc
    CFLAGS += $(LIBCPLUSPLUS)
    LDFLAGS +=  $(fpic) $(SHARED)
    AR ?= @ar
-   PYTHON ?= @python
+   # python2 is gone from macOS; makelist.py runs under python3
+   PYTHON ?= @python3
    ifeq ($(COMMAND_MODE),"legacy")
       ARFLAGS = -crs
    endif
@@ -199,6 +212,13 @@ else ifeq ($(platform), osx)
    endif
    ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
       PTR64 = 1
+   endif
+   ifneq (,$(filter arm64 aarch64,$(UNAME)))
+      PTR64 = 1
+      PLATCFLAGS += -DSDLMAME_ARM
+      # src/emu/cpu/cpu.mak keys off the variable, not the define: without it
+      # the build hands an arm64 core the x86-64 DRC backend
+      FORCE_DRC_C_BACKEND = 1
    endif
    ifneq (,$(findstring Power,$(UNAME)))
       BIGENDIAN=1
