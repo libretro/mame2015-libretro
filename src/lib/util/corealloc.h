@@ -85,6 +85,12 @@ extern const zeromem_t zeromem;
 //**************************************************************************
 
 #ifndef NO_MEM_TRACKING
+// Not on Apple: libc++'s own headers call std::realloc and std::free, and a
+// macro by that name poisons them for every header included after this one -
+// <locale> stops compiling with clang 16. The operator new/delete
+// replacements in corealloc.c are unaffected, so tracking still happens for
+// everything MAME itself allocates.
+#ifndef __APPLE__
 // re-route classic malloc-style allocations
 #undef malloc
 #undef calloc
@@ -95,6 +101,7 @@ extern const zeromem_t zeromem;
 #define calloc(x,y)     __error_use_auto_alloc_clear_or_global_alloc_clear_instead__
 #define realloc(x,y)    __error_realloc_is_dangerous__
 #define free(x)         free_file_line(x, __FILE__, __LINE__, true)
+#endif
 #endif
 
 #endif  /* __COREALLOC_H__ */

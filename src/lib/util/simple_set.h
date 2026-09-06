@@ -218,8 +218,8 @@ public:
 	// Merge a different tree with ours -- O(n).
 	bool merge(const simple_set<T>& b)
 	{
-		tree_node* c = b->clone();
-		bool retVal = merge(c->m_root, m_root);
+		tree_node* c = clone(b.m_root);
+		bool retVal = merge(c, m_root);
 
 		// Re-balance the tree if the merge was successful
 		if (retVal)

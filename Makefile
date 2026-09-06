@@ -175,19 +175,32 @@ ifneq (,$(findstring unix,$(platform)))
 else ifeq ($(platform), osx)
    TARGETLIB := $(TARGET_NAME)_libretro.dylib
    TARGETOS = macosx
-   fpic := -fPIC -mmacosx-version-min=10.7
-   LIBCPLUSPLUS := -stdlib=libc++
+   # Apple silicon starts at 11.0, and CI passes a target of its own - which
+   # it can also pass empty, so this cannot be a plain ?=
+   ifeq ($(strip $(MACOSX_DEPLOYMENT_TARGET)),)
+      ifneq (,$(filter arm64 aarch64,$(UNAME)))
+         MACOSX_DEPLOYMENT_TARGET := 11.0
+      else
+         MACOSX_DEPLOYMENT_TARGET := 10.7
+      endif
+   endif
+   fpic := -fPIC -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET)
+   LIBCXX := libc++
+   LIBCPLUSPLUS := -stdlib=$(LIBCXX)
    LDFLAGSEMULATOR +=  $(LIBCPLUSPLUS)
    PLATCFLAGS += $(fpic)
    SHARED := -dynamiclib
    CXX_AS ?= c++
-   CC ?= cc
+   # the tree is C++ in .c files, so the C compiler has to be the C++ one -
+   # every other platform does this, osx was the one that did not
+   CC := $(CXX_AS)
    LD = $(CXX_AS) -stdlib=$(LIBCXX)
    REALCC   = cc
    CFLAGS += $(LIBCPLUSPLUS)
    LDFLAGS +=  $(fpic) $(SHARED)
    AR ?= @ar
-   PYTHON ?= @python
+   # python2 is gone from macOS; makelist.py runs under python3
+   PYTHON ?= @python3
    ifeq ($(COMMAND_MODE),"legacy")
       ARFLAGS = -crs
    endif
@@ -199,6 +212,13 @@ else ifeq ($(platform), osx)
    endif
    ifeq ($(firstword $(filter ppc64,$(UNAME))),ppc64)
       PTR64 = 1
+   endif
+   ifneq (,$(filter arm64 aarch64,$(UNAME)))
+      PTR64 = 1
+      PLATCFLAGS += -DSDLMAME_ARM
+      # src/emu/cpu/cpu.mak keys off the variable, not the define: without it
+      # the build hands an arm64 core the x86-64 DRC backend
+      FORCE_DRC_C_BACKEND = 1
    endif
    ifneq (,$(findstring Power,$(UNAME)))
       BIGENDIAN=1
@@ -218,15 +238,23 @@ else ifneq (,$(findstring ios,$(platform)))
    IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
    CXX_AS := c++
    ifeq ($(platform),ios-arm64)
-     CC = $(CXX_AS) -arch arm64 -isysroot $(IOSSDK)
+     IOS_MINVER ?= 12.0
+     IOS_TARGET := -arch arm64 -isysroot $(IOSSDK) -miphoneos-version-min=$(IOS_MINVER)
      PTR64 = 1
    else
-     CC = $(CXX_AS) -arch armv7 -isysroot $(IOSSDK)
+     # armv7 devices stop at iOS 10, so the arm64 default would leave the
+     # 32-bit build asking the SDK for a target it has no slices for
+     IOS_MINVER ?= 9.0
+     IOS_TARGET := -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=$(IOS_MINVER)
    endif
-   LD = $(CXX) -stdlib=$(LIBCXX)
+   CC = $(CXX_AS) $(IOS_TARGET)
+   # The link has to carry the sysroot and the deployment target too, or the
+   # dylib comes out stamped for macOS and the frontend will not load it
+   LD = $(CC) -stdlib=$(LIBCXX)
    LDFLAGS +=  $(fpic) $(SHARED)
-   REALCC   = $(CC)
-   PYTHON ?= @python
+   # expat and zlib are built as C with -std=gnu89, which a C++ driver refuses
+   REALCC   = cc $(IOS_TARGET)
+   PYTHON ?= @python3
    CFLAGS += -DIOS
    LDFLAGSEMULATOR += -stdlib=$(LIBCXX)
    PLATCFLAGS += -DSDLMAME_NO64BITIO -DIOS -DSDLMAME_ARM -DHAVE_POSIX_MEMALIGN
@@ -242,12 +270,15 @@ else ifeq ($(platform), tvos-arm64)
    LIBCXX := libc++
    IOSSDK := $(shell xcodebuild -version -sdk appletvos Path)
    CXX_AS := c++
-   CC = $(CXX_AS) -arch arm64 -isysroot $(IOSSDK)
+   TVOS_MINVER ?= 11.0
+   TVOS_TARGET := -arch arm64 -isysroot $(IOSSDK) -mappletvos-version-min=$(TVOS_MINVER)
+   CC = $(CXX_AS) $(TVOS_TARGET)
    PTR64 = 1
-   LD = $(CXX) -stdlib=$(LIBCXX)
+   LD = $(CC) -stdlib=$(LIBCXX)
    LDFLAGS +=  $(fpic) $(SHARED)
-   REALCC   = $(CC)
-   PYTHON ?= @python
+   # expat and zlib are built as C with -std=gnu89, which a C++ driver refuses
+   REALCC   = cc $(TVOS_TARGET)
+   PYTHON ?= @python3
    CFLAGS += -DIOS
    LDFLAGSEMULATOR += -stdlib=$(LIBCXX)
    PLATCFLAGS += -DSDLMAME_NO64BITIO -DIOS -DSDLMAME_ARM -DHAVE_POSIX_MEMALIGN
