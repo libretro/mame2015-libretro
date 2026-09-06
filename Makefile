@@ -237,16 +237,21 @@ else ifneq (,$(findstring ios,$(platform)))
 
    IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
    CXX_AS := c++
+   IOS_MINVER ?= 12.0
    ifeq ($(platform),ios-arm64)
-     CC = $(CXX_AS) -arch arm64 -isysroot $(IOSSDK)
+     IOS_TARGET := -arch arm64 -isysroot $(IOSSDK) -miphoneos-version-min=$(IOS_MINVER)
      PTR64 = 1
    else
-     CC = $(CXX_AS) -arch armv7 -isysroot $(IOSSDK)
+     IOS_TARGET := -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=$(IOS_MINVER)
    endif
-   LD = $(CXX) -stdlib=$(LIBCXX)
+   CC = $(CXX_AS) $(IOS_TARGET)
+   # The link has to carry the sysroot and the deployment target too, or the
+   # dylib comes out stamped for macOS and the frontend will not load it
+   LD = $(CC) -stdlib=$(LIBCXX)
    LDFLAGS +=  $(fpic) $(SHARED)
-   REALCC   = $(CC)
-   PYTHON ?= @python
+   # expat and zlib are built as C with -std=gnu89, which a C++ driver refuses
+   REALCC   = cc $(IOS_TARGET)
+   PYTHON ?= @python3
    CFLAGS += -DIOS
    LDFLAGSEMULATOR += -stdlib=$(LIBCXX)
    PLATCFLAGS += -DSDLMAME_NO64BITIO -DIOS -DSDLMAME_ARM -DHAVE_POSIX_MEMALIGN
@@ -262,12 +267,15 @@ else ifeq ($(platform), tvos-arm64)
    LIBCXX := libc++
    IOSSDK := $(shell xcodebuild -version -sdk appletvos Path)
    CXX_AS := c++
-   CC = $(CXX_AS) -arch arm64 -isysroot $(IOSSDK)
+   TVOS_MINVER ?= 11.0
+   TVOS_TARGET := -arch arm64 -isysroot $(IOSSDK) -mappletvos-version-min=$(TVOS_MINVER)
+   CC = $(CXX_AS) $(TVOS_TARGET)
    PTR64 = 1
-   LD = $(CXX) -stdlib=$(LIBCXX)
+   LD = $(CC) -stdlib=$(LIBCXX)
    LDFLAGS +=  $(fpic) $(SHARED)
-   REALCC   = $(CC)
-   PYTHON ?= @python
+   # expat and zlib are built as C with -std=gnu89, which a C++ driver refuses
+   REALCC   = cc $(TVOS_TARGET)
+   PYTHON ?= @python3
    CFLAGS += -DIOS
    LDFLAGSEMULATOR += -stdlib=$(LIBCXX)
    PLATCFLAGS += -DSDLMAME_NO64BITIO -DIOS -DSDLMAME_ARM -DHAVE_POSIX_MEMALIGN
